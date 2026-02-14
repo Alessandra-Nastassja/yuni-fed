@@ -25,7 +25,7 @@ export default function Ativos() {
   const totalAtivos = ativos.reduce((total, a) => total + a.ativos, 0)
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
       <p className="text-lg">Corretoras vs Ativos</p>
 
       {ativos.map((ativo) => {
@@ -34,25 +34,25 @@ export default function Ativos() {
 
         return (
           <div key={ativo.nome}>
-            <p className="font-bold">{ativo.nome}</p>
+            <p className="font-medium">{ativo.nome}</p>
             <div className="flex gap-2 justify-between">
               <p>Ativos</p>
-              <p className="font-bold">{ativo.ativos}</p>
+              <p className="font-medium">{ativo.ativos}</p>
             </div>
             {/* <div className="flex gap-2 justify-between">
               <p>Variação</p>
-              <p className="font-bold">{ativo.variacao}</p>
+              <p className="font-medium">{ativo.variacao}</p>
             </div> */}
             <div className="flex gap-2 justify-between">
               <p>% na carteira</p>
-              <p className="font-bold">{percentualStr}</p>
+              <p className="font-medium">{percentualStr}</p>
             </div>
           </div>
         )
       })}
 
-      <div className="flex gap-2 justify-between pt-4">
-        <p className="font-bold">Total de ativos</p>
+      <div className="flex gap-2 justify-between mt-5 bg-gray-100 p-4 rounded-lg">
+        <p className="font-medium">Total de ativos</p>
         <p>{totalAtivos}</p>
       </div>
     </div>
