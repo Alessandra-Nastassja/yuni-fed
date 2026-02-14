@@ -26,6 +26,15 @@ export default function AtivosNaoAtivos({
     return String(v)
   }
 
+  const totalAtivosNumber = (ativos ?? []).reduce((sum, obj) => {
+    const objSum = Object.entries(obj)
+      .filter(([k]) => k !== 'ano')
+      .reduce((s, [, v]) => (typeof v === 'number' ? s + v : s), 0)
+    return sum + objSum
+  }, 0)
+
+  const totalAtivos = formatValue(totalAtivosNumber)
+
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
       <p className="text-lg">{title}</p>
@@ -44,6 +53,11 @@ export default function AtivosNaoAtivos({
             ))}
         </article>
       ))}
+
+      <footer className="flex flex-row justify-between mt-2 bg-gray-100 p-4 rounded-lg items-center">
+        <p className="font-medium">{title}</p>
+        <small className="text-gray-600 font-medium">{totalAtivos}</small>
+      </footer>
     </section>
   )
 }

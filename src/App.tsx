@@ -16,6 +16,7 @@ function App() {
 
   const naoAtivos = [
     {
+      ano: 2026,
       veiculos: 7335.00,
       imoveis: 0.00,
       FGTS: 55448.70,
