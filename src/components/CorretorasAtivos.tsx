@@ -1,7 +1,7 @@
 export default function CorretorasAtivos() {
   const ativos = [
     {
-      nome: 'XP Investimentos',
+      nome: 'XP',
       ativos: 73,
       variacao: '37,87%',
     },
@@ -11,7 +11,7 @@ export default function CorretorasAtivos() {
       variacao: '37,87%',
     },
     {
-      nome: 'NU Investimentos',
+      nome: 'NU',
       ativos: 23,
       variacao: '37,87%',
     },
@@ -22,21 +22,21 @@ export default function CorretorasAtivos() {
     },
   ]
 
-  const totalAtivos = ativos.reduce((total, a) => total + a.ativos, 0)
+  const totalInvestimentos = ativos.reduce((total, a) => total + a.ativos, 0)
 
   return (
     <section className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
-      <p className="text-lg">Corretoras vs Ativos</p>
+      <p className="text-lg">Corretoras vs Investimentos</p>
 
       {ativos.map((ativo) => {
-        const percentual = totalAtivos > 0 ? (ativo.ativos / totalAtivos) * 100 : 0
+        const percentual = totalInvestimentos > 0 ? (ativo.ativos / totalInvestimentos) * 100 : 0
         const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
 
         return (
           <article key={ativo.nome}>
             <p className="font-medium">{ativo.nome}</p>
             <div className="flex gap-2 justify-between">
-              <p>Ativos</p>
+              <p>Investimentos</p>
               <p className="font-medium">{ativo.ativos}</p>
             </div>
             {/* <div className="flex gap-2 justify-between">
@@ -54,8 +54,8 @@ export default function CorretorasAtivos() {
       <footer className="flex flex-col mt-5 bg-gray-100 p-4 rounded-lg">
         <p className="font-medium">Total</p>
         <div className="flex justify-between">
-          <small className="text-gray-600">Ativos</small>
-          <small className="text-gray-600 font-medium">{totalAtivos}</small>
+          <small className="text-gray-600">Investimentos</small>
+          <small className="text-gray-600 font-medium">{totalInvestimentos}</small>
         </div>
       </footer>
     </section>
