@@ -41,25 +41,25 @@ function App() {
     {
       nome: 'XP',
       ativos: 73,
-      rentabilidade: '37,87%',
+      rentabilidade: '13,00%',
       valor: 78419.11,
     },
     {
       nome: 'Rico',
       ativos: 37,
-      rentabilidade: '37,87%',
+      rentabilidade: '13,52%',
       valor: 84885.40,
     },
     {
       nome: 'NU',
       ativos: 23,
-      rentabilidade: '37,87%',
+      rentabilidade: '11,95%',
       valor: 11367.95,
     },
     {
       nome: 'Inter',
       ativos: 7,
-      rentabilidade: '37,87%',
+      rentabilidade: '9,00%',
       valor: 1358.54,
     },
   ]

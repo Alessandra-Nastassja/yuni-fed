@@ -43,7 +43,7 @@ export default function PerfilInvestimentos(
             <p>{ativo.nome}</p>
             <div className='flex flex-col items-end'>
               <p className="font-medium">{formatValue(ativo.valor)}</p>
-              <small className="text-xs text-gray-500">({percentualStr})</small>
+              <small className="text-xs text-gray-500">{percentualStr}</small>
             </div>
 
           </article>
