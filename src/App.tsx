@@ -7,20 +7,20 @@ function App() {
   const ativos = [
     {
       ano: 2026,
-      salario: 13878.24,
-      contasReceber: 415.38,
+      'salário': 13878.24,
+      'contas a receber': 415.38,
       investimentos: 200000.00,
-      reservaEmergencia: 32123.85,
+      'Reserva de emergência': 32123.85,
     }
   ]
 
   const naoAtivos = [
     {
       ano: 2026,
-      veiculos: 7335.00,
-      imoveis: 0.00,
+      'veículos': 7335.00,
+      'imóveis': 0.00,
       FGTS: 55448.70,
-      objetosValor: 10000.00,
+      'objetos de valor': 10000.00,
       outros: 0.00,
     }
   ]
