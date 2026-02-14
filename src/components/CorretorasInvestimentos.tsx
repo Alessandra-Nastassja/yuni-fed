@@ -1,40 +1,13 @@
 import { formatValue } from '../utils/formatValue'
 
-export default function CorretorasInvestimentos() {
-  const ativos = [
-    {
-      nome: 'XP',
-      ativos: 73,
-      variacao: '37,87%',
-      valor: 78419.11,
-    },
-    {
-      nome: 'Rico',
-      ativos: 37,
-      variacao: '37,87%',
-      valor: 84885.40,
-    },
-    {
-      nome: 'NU',
-      ativos: 23,
-      variacao: '37,87%',
-      valor: 11367.95,
-    },
-    {
-      nome: 'Inter',
-      ativos: 7,
-      variacao: '37,87%',
-      valor: 1358.54,
-    },
-  ]
-
-  const totalInvestimentos = ativos.reduce((total, a) => total + a.ativos, 0)
+export default function CorretorasInvestimentos({ corretoras = [] }: { corretoras?: any[] }) {
+  const totalInvestimentos = corretoras.reduce((total, a) => total + a.ativos, 0)
 
   return (
     <section className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
       <p className="text-lg">Corretoras vs Investimentos</p>
 
-      {ativos.map((ativo) => {
+      {corretoras.map((ativo) => {
         const percentual = totalInvestimentos > 0 ? (ativo.ativos / totalInvestimentos) * 100 : 0
         const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
 
@@ -69,7 +42,7 @@ export default function CorretorasInvestimentos() {
         </div>
         <div className="flex justify-between">
           <small className="text-gray-600">Valor total</small>
-          <small className="text-gray-600 font-medium">{formatValue(ativos.reduce((total, a) => total + a.valor, 0))}</small>
+          <small className="text-gray-600 font-medium">{formatValue(corretoras.reduce((total, a) => total + a.valor, 0))}</small>
         </div>
       </footer>
     </section>

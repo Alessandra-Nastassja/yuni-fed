@@ -26,12 +26,39 @@ function App() {
     }
   ]
 
+  const corretoras = [
+    {
+      nome: 'XP',
+      ativos: 73,
+      variacao: '37,87%',
+      valor: 78419.11,
+    },
+    {
+      nome: 'Rico',
+      ativos: 37,
+      variacao: '37,87%',
+      valor: 84885.40,
+    },
+    {
+      nome: 'NU',
+      ativos: 23,
+      variacao: '37,87%',
+      valor: 11367.95,
+    },
+    {
+      nome: 'Inter',
+      ativos: 7,
+      variacao: '37,87%',
+      valor: 1358.54,
+    },
+  ]
+
   return (
     <div className='bg-gray-100 m-4 p-4'>
       <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" />
       <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" />
       <PerfilInvestimentos className="mb-4" />
-      <CorretorasInvestimentos />
+      <CorretorasInvestimentos corretoras={corretoras} />
     </div>
   )
 }
