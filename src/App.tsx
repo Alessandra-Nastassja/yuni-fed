@@ -1,7 +1,8 @@
 
 import './App.css'
 import AtivosNaoAtivos from './components/AtivosNaoAtivos.js'
-import CorretorasAtivos from './components/CorretorasAtivos.js'
+import CorretorasInvestimentos from './components/CorretorasInvestimentos.js'
+import PerfilInvestimentos from './components/perfilInvestimentos.js'
 
 function App() {
   const ativos = [
@@ -29,7 +30,8 @@ function App() {
     <div className='bg-gray-100 m-4 p-4'>
       <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" />
       <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" />
-      <CorretorasAtivos />
+      <PerfilInvestimentos className="mb-4" />
+      <CorretorasInvestimentos />
     </div>
   )
 }

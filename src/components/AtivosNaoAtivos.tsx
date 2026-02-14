@@ -1,3 +1,5 @@
+import { formatValue } from '../utils/formatValue'
+
 type Labels = Record<string, string>
 
 export default function AtivosNaoAtivos({
@@ -19,12 +21,7 @@ export default function AtivosNaoAtivos({
       .replace(/^./, (c) => c.toUpperCase())
   }
 
-  const formatValue = (v: any) => {
-    if (typeof v === 'number') {
-      return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-    }
-    return String(v)
-  }
+  // agora usamos util `formatValue` importado
 
   const totalAtivosNumber = (ativos ?? []).reduce((sum, obj) => {
     const objSum = Object.entries(obj)

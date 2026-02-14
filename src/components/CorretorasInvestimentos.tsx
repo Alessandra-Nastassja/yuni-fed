@@ -1,24 +1,30 @@
-export default function CorretorasAtivos() {
+import { formatValue } from '../utils/formatValue'
+
+export default function CorretorasInvestimentos() {
   const ativos = [
     {
       nome: 'XP',
       ativos: 73,
       variacao: '37,87%',
+      valor: 78419.11,
     },
     {
       nome: 'Rico',
       ativos: 37,
       variacao: '37,87%',
+      valor: 84885.40,
     },
     {
       nome: 'NU',
       ativos: 23,
       variacao: '37,87%',
+      valor: 11367.95,
     },
     {
       nome: 'Inter',
       ativos: 7,
       variacao: '37,87%',
+      valor: 1358.54,
     },
   ]
 
@@ -44,6 +50,10 @@ export default function CorretorasAtivos() {
               <p className="font-medium">{ativo.variacao}</p>
             </div> */}
             <div className="flex gap-2 justify-between">
+              <p>Valor</p>
+              <p className="font-medium">{formatValue(ativo.valor)}</p>
+            </div>
+            <div className="flex gap-2 justify-between">
               <p>% na carteira</p>
               <p className="font-medium">{percentualStr}</p>
             </div>
@@ -56,6 +66,10 @@ export default function CorretorasAtivos() {
         <div className="flex justify-between">
           <small className="text-gray-600">Investimentos</small>
           <small className="text-gray-600 font-medium">{totalInvestimentos}</small>
+        </div>
+        <div className="flex justify-between">
+          <small className="text-gray-600">Valor total</small>
+          <small className="text-gray-600 font-medium">{formatValue(ativos.reduce((total, a) => total + a.valor, 0))}</small>
         </div>
       </footer>
     </section>
