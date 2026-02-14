@@ -55,8 +55,8 @@ function App() {
 
   return (
     <div className='bg-gray-100 m-4 p-4'>
-      <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" />
-      <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" />
+      <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" iconColor="bg-green-500" />
+      <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" iconColor="bg-yellow-500" />
       <PerfilInvestimentos className="mb-4" />
       <CorretorasInvestimentos corretoras={corretoras} />
     </div>

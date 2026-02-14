@@ -9,11 +9,13 @@ export default function AtivosNaoAtivos({
   ativos,
   title = 'Ativos',
   labels = {},
+  iconColor = 'bg-blue-500',
 }: {
   className?: string
   ativos?: any[]
   title?: string
   labels?: Labels
+  iconColor?: string
 }) {
   const humanize = (key: string) => {
     if (key === 'FGTS') return 'FGTS'
@@ -53,11 +55,13 @@ export default function AtivosNaoAtivos({
             .filter(([k]) => k !== 'ano')
             .map(([k, v]) => (
               <div key={k} className="flex justify-between items-center gap-2">
-                <div className="flex items-center gap-2 flex-1">
-                  <FontAwesomeIcon icon={getIconForField(k)} className="text-white bg-blue-500 w-4 h-4 rounded-full p-2" />
-                  <p className="font-small">{labels[k] ?? humanize(k)}</p>
+                <div className="flex items-center gap-3 flex-1">
+                  <div className={`flex items-center justify-center w-10 h-10 ${iconColor} rounded-full`}>
+                    <FontAwesomeIcon icon={getIconForField(k)} className="text-white w-5 h-5" />
+                  </div>
+                  <p className="text-base">{labels[k] ?? humanize(k)}</p>
                 </div>
-                <p className="font-small">{formatValue(v)}</p>
+                <p className="text-base">{formatValue(v)}</p>
               </div>
             ))}
         </article>
