@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartLine, faDollarSign, faChartPie, faPiggyBank } from '@fortawesome/free-solid-svg-icons'
+import { faChartLine, faDollarSign, faPiggyBank, faCar, faHouse } from '@fortawesome/free-solid-svg-icons'
 import { formatValue } from '../utils/formatValue'
 
 type Labels = Record<string, string>
@@ -9,7 +9,7 @@ export default function AtivosNaoAtivos({
   ativos,
   title = 'Ativos',
   labels = {},
-  iconColor = 'bg-blue-500',
+  iconColor,
 }: {
   className?: string
   ativos?: any[]
@@ -26,10 +26,11 @@ export default function AtivosNaoAtivos({
   }
 
   const getIconForField = (key: string) => {
-    if (key.toLowerCase().includes('salário') || key.toLowerCase().includes('contas')) return faDollarSign
     if (key.toLowerCase().includes('investimento')) return faChartLine
     if (key.toLowerCase().includes('reserva') || key.toLowerCase().includes('emergência')) return faPiggyBank
-    return faChartPie
+    if (key.toLowerCase().includes('veículos')) return faCar
+    if (key.toLowerCase().includes('imóveis')) return faHouse
+    return faDollarSign
   }
 
   // agora usamos util `formatValue` importado
@@ -53,17 +54,26 @@ export default function AtivosNaoAtivos({
 
           {Object.entries(ativo)
             .filter(([k]) => k !== 'ano')
-            .map(([k, v]) => (
-              <div key={k} className="flex justify-between items-center gap-2">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className={`flex items-center justify-center w-10 h-10 ${iconColor} rounded-full`}>
-                    <FontAwesomeIcon icon={getIconForField(k)} className="text-white w-5 h-5" />
+            .map(([k, v]) => {
+              const isObject = typeof v === 'object' && v !== null
+              const displayValue = isObject ? (v as any).valor : v
+              const description = isObject ? (v as any).descricao : undefined
+
+              return (
+                <div key={k} className="flex justify-between gap-2">
+                  <div className="flex gap-3 flex-1">
+                    <div className={`flex items-center justify-center w-7 h-7 ${iconColor} rounded-full`}>
+                      <FontAwesomeIcon size='sm' icon={getIconForField(k)} className="text-white" />
+                    </div>
+                    <div className='flex flex-col'>
+                      <p className="text-base">{labels[k] ?? humanize(k)}</p>
+                      {description && <small className="text-gray-500">{description}</small>}
+                    </div>
                   </div>
-                  <p className="text-base">{labels[k] ?? humanize(k)}</p>
+                  <p className="text-base">{formatValue(displayValue)}</p>
                 </div>
-                <p className="text-base">{formatValue(v)}</p>
-              </div>
-            ))}
+              )
+            })}
         </article>
       ))}
 

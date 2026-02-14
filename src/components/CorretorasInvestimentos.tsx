@@ -1,11 +1,40 @@
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
+import { Bar } from 'react-chartjs-2'
 import { formatValue } from '../utils/formatValue'
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 
 export default function CorretorasInvestimentos({ corretoras = [] }: { corretoras?: any[] }) {
   const totalInvestimentos = corretoras.reduce((total, a) => total + a.ativos, 0)
 
+  const chartData = {
+    labels: corretoras.map((c) => c.nome),
+    datasets: [
+      {
+        label: 'Valor investido (R$)',
+        data: corretoras.map((c) => c.valor),
+        backgroundColor: [
+          'rgba(77, 167, 104, 0.8)',
+          'rgba(45, 135, 78, 0.8)',
+          'rgba(38, 135, 78, 0.8)',
+          'rgba(0, 102, 51, 0.8)',
+        ],
+        borderColor: [
+          'rgba(77, 167, 104, 1)',
+          'rgba(45, 135, 78, 1)',
+          'rgba(38, 135, 78, 1)',
+          'rgba(0, 102, 51, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  }
+
   return (
     <section className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
-      <p className="text-lg">Corretoras vs Investimentos</p>
+      <p className="text-lg">Corretoras x Investimentos</p>
+
+      <Bar data={chartData} />
 
       {corretoras.map((ativo) => {
         const percentual = totalInvestimentos > 0 ? (ativo.ativos / totalInvestimentos) * 100 : 0
@@ -14,21 +43,20 @@ export default function CorretorasInvestimentos({ corretoras = [] }: { corretora
         return (
           <article key={ativo.nome}>
             <p className="font-medium">{ativo.nome}</p>
-            <div className="flex gap-2 justify-between">
+            {/* <div className="flex gap-2 justify-between">
               <p>Investimentos</p>
               <p className="font-medium">{ativo.ativos}</p>
-            </div>
-            {/* <div className="flex gap-2 justify-between">
-              <p>Variação</p>
-              <p className="font-medium">{ativo.variacao}</p>
             </div> */}
             <div className="flex gap-2 justify-between">
-              <p>Valor</p>
-              <p className="font-medium">{formatValue(ativo.valor)}</p>
+              <p>Rentabilidade</p>
+              <p className="font-medium">{ativo.rentabilidade}</p>
             </div>
             <div className="flex gap-2 justify-between">
-              <p>% na carteira</p>
-              <p className="font-medium">{percentualStr}</p>
+              <p>Valor investido</p>
+              <div className='flex flex-col items-end'>
+                <p className="font-medium">{formatValue(ativo.valor)}</p>
+                <small className="text-xs text-gray-500">({percentualStr})</small>
+              </div>
             </div>
           </article>
         )

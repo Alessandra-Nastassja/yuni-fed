@@ -1,24 +1,27 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
+import formatValue from '../utils/formatValue';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function PerfilInvestimentos({ className }: { className?: string }) {
+export default function PerfilInvestimentos(
+  { perfil, className }: { perfil: any[], className?: string }) {
+
   const data = {
-    labels: ['Conservador', 'Moderado', 'Agressivo'],
+    labels: perfil.map((c) => c.nome),
     datasets: [
       {
         label: 'Valor investido',
-        data: [19547.24,  206388.59, 1966.52],
+        data: perfil.map((c) => c.valor),
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
+          'rgba(74, 222, 128, 0.8)',
+          'rgba(22, 163, 74, 0.8)',
+          'rgba(6, 78, 59, 0.8)',
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
+          'rgba(74, 222, 128, 1)',
+          'rgba(22, 163, 74, 1)',
+          'rgba(6, 78, 59, 1)',
         ],
         borderWidth: 1,
       },
@@ -29,24 +32,23 @@ export default function PerfilInvestimentos({ className }: { className?: string 
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
       <p className="text-lg">Meu perfil de investidor</p>
 
-      <Doughnut data={data} />
+      <Pie data={data} />
 
-      <article className="flex flex-col gap-1">
-        <div className="flex justify-between">
-          <p>Conservador</p>
-          <p className="font-medium">R$ 19.547,24</p>
-        </div>
+      {perfil.map((ativo) => {
+        const percentual = perfil.reduce((total, a) => total + a.valor, 0) > 0 ? (ativo.valor / perfil.reduce((total, a) => total + a.valor, 0)) * 100 : 0
+        const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
 
-        <div className="flex justify-between">
-          <p>Moderado</p>
-          <p className="font-medium">R$ 206.388,59</p>
-        </div>
+        return (
+          <article key={ativo.nome} className="flex justify-between">
+            <p>{ativo.nome}</p>
+            <div className='flex flex-col items-end'>
+              <p className="font-medium">{formatValue(ativo.valor)}</p>
+              <small className="text-xs text-gray-500">({percentualStr})</small>
+            </div>
 
-        <div className="flex justify-between">
-          <p>Agressivo</p>
-          <p className="font-medium">R$ 1.966,52</p>
-        </div>
-      </article>
+          </article>
+        )
+      })}
 
       <footer className="flex flex-row justify-between mt-2 bg-gray-100 p-4 rounded-lg items-center">
         <p className="font-medium">Total</p>
