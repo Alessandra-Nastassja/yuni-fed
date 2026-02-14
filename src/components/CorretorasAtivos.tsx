@@ -1,4 +1,4 @@
-export default function Ativos() {
+export default function CorretorasAtivos() {
   const ativos = [
     {
       nome: 'XP Investimentos',
@@ -51,9 +51,12 @@ export default function Ativos() {
         )
       })}
 
-      <div className="flex gap-2 justify-between mt-5 bg-gray-100 p-4 rounded-lg">
-        <p className="font-medium">Total de ativos</p>
-        <p>{totalAtivos}</p>
+      <div className="flex flex-col mt-5 bg-gray-100 p-4 rounded-lg">
+        <p className="font-medium">Total</p>
+        <div className="flex justify-between">
+          <small className="text-gray-600">Ativos</small>
+          <small className="text-gray-600 font-medium">{totalAtivos}</small>
+        </div>
       </div>
     </div>
   )
