@@ -25,7 +25,7 @@ export default function CorretorasAtivos() {
   const totalAtivos = ativos.reduce((total, a) => total + a.ativos, 0)
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
+    <section className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
       <p className="text-lg">Corretoras vs Ativos</p>
 
       {ativos.map((ativo) => {
@@ -33,7 +33,7 @@ export default function CorretorasAtivos() {
         const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
 
         return (
-          <div key={ativo.nome}>
+          <article key={ativo.nome}>
             <p className="font-medium">{ativo.nome}</p>
             <div className="flex gap-2 justify-between">
               <p>Ativos</p>
@@ -47,17 +47,17 @@ export default function CorretorasAtivos() {
               <p>% na carteira</p>
               <p className="font-medium">{percentualStr}</p>
             </div>
-          </div>
+          </article>
         )
       })}
 
-      <div className="flex flex-col mt-5 bg-gray-100 p-4 rounded-lg">
+      <footer className="flex flex-col mt-5 bg-gray-100 p-4 rounded-lg">
         <p className="font-medium">Total</p>
         <div className="flex justify-between">
           <small className="text-gray-600">Ativos</small>
           <small className="text-gray-600 font-medium">{totalAtivos}</small>
         </div>
-      </div>
-    </div>
+      </footer>
+    </section>
   )
 }
