@@ -71,38 +71,42 @@ function App() {
   const perfil = [
     {
       nome: 'Conservador',
-      valor: 19547.24,
+      tipo: 'Conservador',
+      valor: 219914.85, // 214924.30 + 4990.55
+      distribuicao: {
+        'Título Renda Fixa': 214924.30,
+        'Tesouro Direto': 4990.55,
+        'Fundo Renda Fixa / DI': 0.00,
+        'Previdência Privada': 0.00,
+      }
     },
     {
       nome: 'Moderado',
-      valor: 206388.59,
+      tipo: 'Moderado',
+      valor: 344.96,
+      distribuicao: {
+        'ETF': 344.96,
+        'Fundo Multimercado': 0.00,
+        'FII': 0.00,
+      }
     },
     {
       nome: 'Agressivo',
-      valor: 1966.52,
+      tipo: 'Agressivo',
+      valor: 1687.71,
+      distribuicao: {
+        'Ações': 1687.71,
+        'Fundo Ações': 0.00,
+        'COE': 0.00,
+      }
     },
-  ]
-
-  const distribuicao = [
-  { nome: 'Título Renda Fixa', valor: 214924.30, classificacao: 'Conservador'  },
-  { nome: 'Tesouro direto', valor: 4990.55, classificacao: 'Conservador' },
-  { nome: 'Fundo renda fixa / DI', valor: 0.00, classificacao: 'Conservador' },
-  { nome: 'Previdência privada', valor: 0.00, classificacao: 'Conservador' },
-  { nome: 'Fundo Multimercado', valor: 0.00, classificacao: 'Moderado' },
-  { nome: 'Fundo Ações', valor: 0.00, classificacao: 'Moderado' },
-  { nome: 'ETF', valor: 344.96, classificacao: 'Moderado' },
-  { nome: 'Ações', valor: 1687.71, classificacao: 'Agressivo' },
-  { nome: 'FII', valor: 0.00, classificacao: 'Agressivo' },
-  { nome: 'COE', valor: 0.00, classificacao: 'Agressivo' },
-];
-
+  ];
 
   return (
     <div className='bg-gray-100 m-4 p-4'>
       <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" iconColor="bg-green-500" />
       <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" iconColor="bg-yellow-500" />
       <PerfilInvestimentos perfil={perfil} className="mb-4" />
-      <DistribuicaoCarteira distribuicao={distribuicao} className="mb-4" />
       <CorretorasInvestimentos corretoras={corretoras} />
     </div>
   )

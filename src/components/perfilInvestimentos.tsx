@@ -36,17 +36,31 @@ export default function PerfilInvestimentos(
 
       {perfil.map((ativo) => {
         const percentual = perfil.reduce((total, a) => total + a.valor, 0) > 0 ? (ativo.valor / perfil.reduce((total, a) => total + a.valor, 0)) * 100 : 0
-        const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
+        const percentualStr = percentual.toFixed(0).replace('.', ',') + '%'
 
         return (
-          <article key={ativo.nome} className="flex justify-between">
-            <p>{ativo.nome}</p>
-            <div className='flex flex-col items-end'>
-              <p className="font-medium">{formatValue(ativo.valor)}</p>
-              <small className="text-xs text-gray-500">{percentualStr}</small>
+          <div key={ativo.nome} className="flex flex-col gap-2">
+            <div className="flex justify-between">
+              <p className="font-medium">{ativo.nome}</p>
+              
+              <div className="flex flex-row items-end">
+                <p className="font-medium">{formatValue(ativo.valor)}</p>
+                {/* <small className="text-gray-600">({percentualStr})</small> */}
+              </div>
             </div>
-
-          </article>
+            {ativo.distribuicao && (
+              <div className="space-y-1 pl-4">
+                {Object.entries(ativo.distribuicao)
+                  .filter(([_, valor]) => (valor as number) > 0)
+                  .map(([nome, valor]) => (
+                    <div key={nome} className="flex justify-between text-sm text-gray-600">
+                      <span>{nome}</span>
+                      <span>{formatValue(valor as number)}</span>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
         )
       })}
 
