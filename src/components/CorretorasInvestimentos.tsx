@@ -68,31 +68,30 @@ export default function CorretorasInvestimentos({ corretoras = [] }: { corretora
         const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
 
         return (
-          <article key={ativo.nome}>
-            <p className="text-base font-semibold">{ativo.nome}</p>
-            {/* <div className="flex gap-2 justify-between">
-              <p>Investimentos</p>
-              <p className="text-base">{ativo.ativos}</p>
-            </div> */}
-            <div className="flex gap-2 justify-between">
-              <p>Rentabilidade</p>
-              <div className="flex gap-1 items-center">
-                <FontAwesomeIcon size='xs' icon={getIcon(ativo.rentabilidade)} className={`${getColorClass(ativo.rentabilidade)}`} />
-                <p className={`text-base ${getColorClass(ativo.rentabilidade)}`}>{ativo.rentabilidade}</p>
-              </div>
+          <article className='flex flex-row justify-between gap-2' key={ativo.nome}>
+            <div className="flex flex-col items-start">
+              <p className="text-base font-semibold">{ativo.nome}</p>
+              <small className="text-xs bg-blue-300 p-0.5 rounded">{ativo.meta}</small>
             </div>
-            <div className="flex gap-2 justify-between">
-              <p>Valor investido</p>
-              <div className='flex flex-col items-end'>
-                <p className="text-base">{formatValue(ativo.valor)}</p>
-                <small className="text-xs text-gray-500">({percentualStr})</small>
+            <div className="space-y-1 pl-4">
+              <div className="flex gap-2 justify-end">
+                <div className='flex flex-col items-end'>
+                  <p className="text-base">{formatValue(ativo.valor)}</p>
+                  <small className="text-xs text-gray-500">({percentualStr})</small>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <div className="flex gap-1 items-center">
+                  <FontAwesomeIcon size='xs' icon={getIcon(ativo.rentabilidade)} className={`${getColorClass(ativo.rentabilidade)}`} />
+                  <p className={`text-xs ${getColorClass(ativo.rentabilidade)}`}>{ativo.rentabilidade}</p>
+                </div>
               </div>
             </div>
           </article>
         )
       })}
 
-      <footer className="flex flex-col mt-5 bg-gray-100 p-4 rounded-lg">
+      <footer className="flex flex-col bg-gray-100 p-4 rounded-lg">
         <p className="text-base">Total</p>
         <div className="flex justify-between">
           <small className="text-gray-600">Média de rendimento</small>

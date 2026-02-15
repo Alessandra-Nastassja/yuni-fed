@@ -47,31 +47,34 @@ function App() {
       ativos: 73,
       rentabilidade: '13,00%',
       valor: 78419.11,
+      meta: 'Independência',
     },
     {
       nome: 'Rico',
       ativos: 37,
       rentabilidade: '13,52%',
       valor: 84885.40,
+      meta: 'Minha casa',
     },
     {
       nome: 'NU',
       ativos: 23,
       rentabilidade: '11,95%',
       valor: 11367.95,
+      meta: 'Reforma da casa',
     },
     {
       nome: 'Inter',
       ativos: 7,
       rentabilidade: '9,00%',
       valor: 1358.54,
+      meta: 'Teste/Risco',
     },
   ]
 
   const perfil = [
     {
       nome: 'Conservador',
-      tipo: 'Conservador',
       valor: 219914.85, // 214924.30 + 4990.55
       distribuicao: {
         'Título Renda Fixa': 214924.30,
@@ -82,7 +85,6 @@ function App() {
     },
     {
       nome: 'Moderado',
-      tipo: 'Moderado',
       valor: 344.96,
       distribuicao: {
         'ETF': 344.96,
@@ -92,7 +94,6 @@ function App() {
     },
     {
       nome: 'Agressivo',
-      tipo: 'Agressivo',
       valor: 1687.71,
       distribuicao: {
         'Ações': 1687.71,
