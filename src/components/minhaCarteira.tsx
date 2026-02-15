@@ -4,7 +4,7 @@ import formatValue from '../utils/formatValue';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function PerfilInvestimentos(
+export default function MinhaCarteira(
   { perfil, className }: { perfil: any[], className?: string }) {
 
   const data = {
@@ -30,7 +30,7 @@ export default function PerfilInvestimentos(
 
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
-      <p className="text-lg">Meu perfil de investidor</p>
+      <p className="text-lg">Meus investimentos</p>
 
       <Pie data={data} />
 
