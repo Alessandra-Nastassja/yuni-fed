@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUp, faArrowDown, faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { formatValue } from '../../utils/formatValue'
+import { formatValue } from '../../../../utils/formatValue';
 
 export default function Corretoras({ corretoras = [] }: { corretoras?: any[] }) {
   const totalInvestimentos = corretoras.reduce((total, a) => total + a.ativos, 0)

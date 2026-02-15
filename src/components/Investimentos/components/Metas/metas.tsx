@@ -1,4 +1,4 @@
-import { formatValue } from '../../utils/formatValue'
+import { formatValue } from '../../../../utils/formatValue'
 
 export default function Metas({ className, metas }: { className?: string, metas?: any[] }) {
   return (

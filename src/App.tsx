@@ -1,11 +1,8 @@
 
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
-import AtivosNaoAtivos from './components/AtivosNaoAtivos/ativosNaoAtivos'
-import Corretoras from './components/Corretoras/corretoras'
-import Patrimonio from './components/Patrimonio/patrimonio'
-import Carteira from './components/Carteira/carteira'
-import Metas from './components/Metas/metas'
+import Investimentos from './components/Investimentos/investimentos'
 
 function App() {
   const ativos = [
@@ -73,7 +70,7 @@ function App() {
       valor: 84885.40,
       meta: 'Minha casa',
     },
-     {
+    {
       nome: 'Caixa',
       ativos: 1,
       rentabilidade: '0,00%',
@@ -200,14 +197,17 @@ function App() {
   ]
 
   return (
-    <div className='bg-gray-100 m-4 p-4'>
-      <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" iconColor="bg-green-500" />
-      <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" iconColor="bg-yellow-500" />
-      <Patrimonio patrimonio={patrimonioFinanceiro} className="mb-4" />
-      <Carteira perfil={perfil} className="mb-4" />
-      <Metas metas={metas} className="mb-4" />
-      <Corretoras corretoras={corretoras} />
-    </div>
+    <Routes>
+      <Route path="/investimentos" element={
+        <Investimentos
+          ativos={ativos}
+          naoAtivos={naoAtivos}
+          corretoras={corretoras}
+          perfil={perfil}
+          patrimonioFinanceiro={patrimonioFinanceiro}
+          metas={metas}
+        />} />
+    </Routes>
   )
 }
 

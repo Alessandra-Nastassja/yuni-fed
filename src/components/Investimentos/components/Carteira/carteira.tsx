@@ -1,6 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import formatValue from '../../utils/formatValue';
+import formatValue from '../../../../utils/formatValue';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

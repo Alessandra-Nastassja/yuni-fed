@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartLine, faDollarSign, faPiggyBank, faCar, faHouse } from '@fortawesome/free-solid-svg-icons'
-import { formatValue } from '../../utils/formatValue'
+import { formatValue } from '../../../../utils/formatValue'
 
 type Labels = Record<string, string>
 
