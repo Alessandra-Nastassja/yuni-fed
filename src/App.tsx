@@ -2,7 +2,7 @@
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
-import Investimentos from './components/Investimentos/investimentos'
+import Investimentos from './pages/Investimentos/investimentos'
 
 function App() {
   const ativos = [
@@ -179,19 +179,19 @@ function App() {
     {
       nome: 'Minha casa',
       valorMeta: 300000.00,
-      valorAtual: 0.00,
+      valorAtual: 84885.40,
       prazo: '2028',
     },
     {
       nome: 'Reforma da casa',
       valorMeta: 15000.00,
-      valorAtual: 0.00,
+      valorAtual: 11367.95,
       prazo: '2025',
     },
     {
       nome: 'Reserva de emergência',
-      valorMeta: 32000.00,
-      valorAtual: 232123.85,
+      valorMeta: 35000.00,
+      valorAtual: 32000.00,
       prazo: '2024',
     },
   ]
@@ -206,7 +206,8 @@ function App() {
           perfil={perfil}
           patrimonioFinanceiro={patrimonioFinanceiro}
           metas={metas}
-        />} />
+        />} 
+      />
     </Routes>
   )
 }

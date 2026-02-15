@@ -18,9 +18,16 @@ export default function Metas({ className, metas }: { className?: string, metas?
 
             </div>
 
-            <progress value={meta.valorAtual} max={meta.valorMeta} className="w-full h-4 rounded-lg bg-blue-300">
-              <div className="bg-blue-500 h-full rounded-lg"></div>
-            </progress>
+            <div className="w-full bg-gray-200 rounded-full h-6 relative overflow-hidden">
+              <div
+                className="bg-green-500 h-6 rounded-full transition-all duration-300 flex items-center justify-center"
+                style={{ width: `${(meta.valorAtual / meta.valorMeta * 100).toFixed(2)}%` }}
+              >
+                <span className="text-white text-xs font-medium">
+                  {(meta.valorAtual / meta.valorMeta * 100).toFixed(2)}%
+                </span>
+              </div>
+            </div>
           </div>
         ))
       ) : (
