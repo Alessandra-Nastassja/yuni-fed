@@ -69,7 +69,7 @@ export default function CorretorasInvestimentos({ corretoras = [] }: { corretora
 
         return (
           <article key={ativo.nome}>
-            <p className="text-base">{ativo.nome}</p>
+            <p className="text-base font-semibold">{ativo.nome}</p>
             {/* <div className="flex gap-2 justify-between">
               <p>Investimentos</p>
               <p className="text-base">{ativo.ativos}</p>
