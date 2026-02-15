@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
 import Investimentos from './pages/Investimentos/investimentos'
+import Home from './pages/Home/home'
 
 function App() {
   const ativos = [
@@ -198,6 +199,7 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/investimentos" element={
         <Investimentos
           ativos={ativos}
