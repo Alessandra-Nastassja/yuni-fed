@@ -8,7 +8,6 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 
 export default function CorretorasInvestimentos({ corretoras = [] }: { corretoras?: any[] }) {
   const totalInvestimentos = corretoras.reduce((total, a) => total + a.ativos, 0)
-  const SELIC = 15
 
   // Calcular a mediana das rentabilidades
   const rentabilidades = corretoras.map((c) =>
@@ -77,7 +76,7 @@ export default function CorretorasInvestimentos({ corretoras = [] }: { corretora
               <div className="flex gap-2 justify-end">
                 <div className='flex flex-col items-end'>
                   <p className="text-base">{formatValue(ativo.valor)}</p>
-                  <small className="text-xs text-gray-500">({percentualStr})</small>
+                  {/* <small className="text-xs text-gray-500">({percentualStr})</small> */}
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
@@ -92,7 +91,7 @@ export default function CorretorasInvestimentos({ corretoras = [] }: { corretora
       })}
 
       <footer className="flex flex-col bg-gray-100 p-4 rounded-lg">
-        <p className="text-base">Total</p>
+        <p className="text-base">Visão geral</p>
         <div className="flex justify-between">
           <small className="text-gray-600">Média de rendimento</small>
           <small className="text-gray-600 font-medium">
@@ -102,7 +101,7 @@ export default function CorretorasInvestimentos({ corretoras = [] }: { corretora
           </small>
         </div>
         <div className="flex justify-between">
-          <small className="text-gray-600">Valor total</small>
+          <small className="text-gray-600">Total investido</small>
           <small className="text-gray-600 font-medium">{formatValue(corretoras.reduce((total, a) => total + a.valor, 0))}</small>
         </div>
       </footer>

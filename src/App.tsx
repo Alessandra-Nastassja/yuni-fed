@@ -1,8 +1,9 @@
 
 import './App.css'
+
 import AtivosNaoAtivos from './components/AtivosNaoAtivos.js'
 import CorretorasInvestimentos from './components/CorretorasInvestimentos.js'
-import DistribuicaoCarteira from './components/DistribuicaoCarteira.js'
+import PatrimonioFinanceiro from './components/patrimonioFinanceiro.js'
 import PerfilInvestimentos from './components/perfilInvestimentos.js'
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       'Conta corrente': 0.00,
       'salário': {
         valor: 13878.24,
-        descricao: 'Fonte de renda fixa',
+        descricao: 'Fonte de renda fixa 1',
       },
       'contas a receber': {
         valor: 415.38,
@@ -103,10 +104,43 @@ function App() {
     },
   ];
 
+  const patrimonioFinanceiro = [
+    {
+      ano: 2026,
+      valor: 232123.85,
+    },
+    {
+      ano: 2025,
+      valor: 222448.47,
+    },
+    {
+      ano: 2024,
+      valor: 199276.15,
+    },
+    {
+      ano: 2023,
+      valor: 199276.15,
+    },
+    {
+      ano: 2022,
+      valor: 126141.67,
+    },
+    {
+      ano: 2021,
+      valor: 99470.32,
+    },
+    {
+      ano: 2020,
+      valor: 64501.39,
+    },
+  ]
+
   return (
     <div className='bg-gray-100 m-4 p-4'>
       <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" iconColor="bg-green-500" />
-      <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" iconColor="bg-yellow-500" />
+      <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" iconColor="bg-yellow-500" />  
+      <PatrimonioFinanceiro patrimonio={patrimonioFinanceiro} className="mb-4" />
+
       <PerfilInvestimentos perfil={perfil} className="mb-4" />
       <CorretorasInvestimentos corretoras={corretoras} />
     </div>
