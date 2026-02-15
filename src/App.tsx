@@ -13,11 +13,11 @@ function App() {
       'Conta corrente': 0.00,
       'Salário': {
         valor: 13878.24,
-        descricao: 'Fonte de renda fixa 1',
+        descricao: 'Fonte de renda 1',
       },
       'Meu negócio': {
         valor: 0.00,
-        descricao: 'Fonte de renda fixa 2',
+        descricao: 'Fonte de renda 2',
       },
       investimentos: 200000.00,
       'contas a receber': {
@@ -59,10 +59,24 @@ function App() {
       meta: 'Independência',
     },
     {
+      nome: 'Inter',
+      ativos: 7,
+      rentabilidade: '9,00%',
+      valor: 1358.54,
+      meta: 'Independência',
+    },
+    {
       nome: 'Rico',
       ativos: 37,
       rentabilidade: '13,52%',
       valor: 84885.40,
+      meta: 'Minha casa',
+    },
+     {
+      nome: 'Caixa',
+      ativos: 1,
+      rentabilidade: '0,00%',
+      valor: 0.00,
       meta: 'Minha casa',
     },
     {
@@ -73,11 +87,25 @@ function App() {
       meta: 'Reforma da casa',
     },
     {
-      nome: 'Inter',
-      ativos: 7,
-      rentabilidade: '9,00%',
+      nome: 'PagSeguro',
+      ativos: 1,
+      rentabilidade: '12,00%',
       valor: 1358.54,
-      meta: 'Teste/Risco',
+      meta: 'Reserva de emergência',
+    },
+    {
+      nome: 'PicPay',
+      ativos: 1,
+      rentabilidade: '12,00%',
+      valor: 1358.54,
+      meta: 'Reserva de emergência',
+    },
+    {
+      nome: 'Wise',
+      ativos: 1,
+      rentabilidade: '12,00%',
+      valor: 617.66,
+      meta: 'Viagens',
     },
   ]
 
