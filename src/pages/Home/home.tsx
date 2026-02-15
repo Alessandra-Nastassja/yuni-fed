@@ -2,6 +2,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import yuni from '../../assets/pig.png'
+
 export default function Home() {
   return (
     <main className='flex flex-col justify-between gap-8 p-4 h-screen items-center'>
@@ -12,6 +14,7 @@ export default function Home() {
       </header>
 
       <section className='flex flex-col justify-between items-center'>
+        <img src={yuni} alt="Yuni" className="w-48 mb-4" />
         <h1 className="text-2xl font-bold mb-4 text-blue-400">Bem-vindo!</h1>
         <p className='text-base text-gray-500'>Olá, eu sou a Yuni! Te ajudarei nessa jornada.</p>
       </section>
