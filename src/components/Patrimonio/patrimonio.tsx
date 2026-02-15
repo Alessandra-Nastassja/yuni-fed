@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-export default function PatrimonioFinanceiro({ className, patrimonio }: { className?: string, patrimonio: any[] }) {
+export default function Patrimonio({ className, patrimonio }: { className?: string, patrimonio: any[] }) {
   const patrimonioOrdenado = [...patrimonio].sort(
     (a, b) => a.ano - b.ano
   );

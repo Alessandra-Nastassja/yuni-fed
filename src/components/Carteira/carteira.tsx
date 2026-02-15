@@ -1,10 +1,10 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import formatValue from '../utils/formatValue';
+import formatValue from '../../utils/formatValue';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function MinhaCarteira(
+export default function Carteira(
   { perfil, className }: { perfil: any[], className?: string }) {
 
   const data = {

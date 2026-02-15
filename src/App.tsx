@@ -1,10 +1,11 @@
 
 import './App.css'
 
-import AtivosNaoAtivos from './components/ativosNaoAtivos'
-import CorretorasInvestimentos from './components/corretorasInvestimentos'
-import PatrimonioFinanceiro from './components/patrimonioFinanceiro'
-import MinhaCarteira from './components/minhaCarteira'
+import AtivosNaoAtivos from './components/AtivosNaoAtivos/ativosNaoAtivos'
+import Corretoras from './components/Corretoras/corretoras'
+import Patrimonio from './components/Patrimonio/patrimonio'
+import Carteira from './components/Carteira/carteira'
+import Metas from './components/Metas/metas'
 
 function App() {
   const ativos = [
@@ -171,14 +172,41 @@ function App() {
     },
   ]
 
+  const metas = [
+    {
+      nome: 'Independência',
+      valorMeta: 1000000.00,
+      valorAtual: 232123.85,
+      prazo: '2030',
+    },
+    {
+      nome: 'Minha casa',
+      valorMeta: 300000.00,
+      valorAtual: 0.00,
+      prazo: '2028',
+    },
+    {
+      nome: 'Reforma da casa',
+      valorMeta: 15000.00,
+      valorAtual: 0.00,
+      prazo: '2025',
+    },
+    {
+      nome: 'Reserva de emergência',
+      valorMeta: 32000.00,
+      valorAtual: 232123.85,
+      prazo: '2024',
+    },
+  ]
+
   return (
     <div className='bg-gray-100 m-4 p-4'>
       <AtivosNaoAtivos ativos={ativos} className="mb-4" title="Ativos" iconColor="bg-green-500" />
       <AtivosNaoAtivos ativos={naoAtivos} className="mb-4" title="Não ativos" iconColor="bg-yellow-500" />
       <PatrimonioFinanceiro patrimonio={patrimonioFinanceiro} className="mb-4" />
-
-      <MinhaCarteira perfil={perfil} className="mb-4" />
-      <CorretorasInvestimentos corretoras={corretoras} />
+      <Carteira perfil={perfil} className="mb-4" />
+      <Metas metas={metas} className="mb-4" />
+      <Corretoras corretoras={corretoras} />
     </div>
   )
 }
