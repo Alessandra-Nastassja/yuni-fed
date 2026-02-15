@@ -28,6 +28,19 @@ export default function Carteira(
     ],
   };
 
+  const titles = {
+    tituloRendaFixa: 'Título Renda Fixa',
+    tesouroDireto: 'Tesouro Direto',
+    fundoRendaFixaDI: 'Fundo Renda Fixa / DI',
+    previdenciaPrivada: 'Previdência Privada',
+    etf: 'ETF',
+    fundoMultimercado: 'Fundo Multimercado',
+    fii: 'FII',
+    acoes: 'Ações',
+    fundoAcoes: 'Fundo Ações',
+    coe: 'COE',
+  }
+
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
       <p className="text-lg">Meus investimentos</p>
@@ -54,7 +67,7 @@ export default function Carteira(
                   .filter(([_, valor]) => (valor as number) > 0)
                   .map(([nome, valor]) => (
                     <div key={nome} className="flex justify-between text-sm text-gray-600">
-                      <span>{nome}</span>
+                      <span>{titles[nome as keyof typeof titles] || nome}</span>
                       <span>{formatValue(valor as number)}</span>
                     </div>
                   ))}

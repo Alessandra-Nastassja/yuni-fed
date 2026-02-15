@@ -4,7 +4,7 @@ import Corretoras from "./components/Corretoras/corretoras";
 import Metas from "./components/Metas/metas";
 import Patrimonio from "./components/Patrimonio/patrimonio";
 
-export default function Investimentos({ ativos, naoAtivos, corretoras, perfil, patrimonioFinanceiro, metas }: { ativos: any[], naoAtivos: any[], corretoras: any[], perfil: any, patrimonioFinanceiro: any[], metas: any[] }) {
+export default function Investimentos({ ativos, naoAtivos, corretoras, perfil, patrimonio, metas }: { ativos: any[], naoAtivos: any[], corretoras: any[], perfil: any, patrimonio: any, metas: any[] }) {
   return (
     <section className='bg-gray-100 m-4 p-4 space-y-4'>
       <AtivosNaoAtivos
@@ -17,7 +17,7 @@ export default function Investimentos({ ativos, naoAtivos, corretoras, perfil, p
         title="Não ativos"
         iconColor="bg-yellow-500" />
 
-      <Patrimonio patrimonio={patrimonioFinanceiro} />
+      <Patrimonio patrimonio={patrimonio} />
       <Carteira perfil={perfil} />
       <Metas metas={metas} />
       <Corretoras corretoras={corretoras} />

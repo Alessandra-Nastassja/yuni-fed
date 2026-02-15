@@ -22,12 +22,15 @@ ChartJS.register(
   Legend
 );
 
-export default function Patrimonio({ className, patrimonio }: { className?: string, patrimonio: any[] }) {
+export default function Patrimonio({ className, patrimonio }: { className?: string, patrimonio: any }) {
   const patrimonioOrdenado = [...patrimonio].sort(
     (a, b) => a.ano - b.ano
   );
 
-  const labels = patrimonioOrdenado.map((p) => p.ano.toString());
+  const labels = patrimonioOrdenado.map((p) => {
+    console.log(p);
+    return p.ano?.toString();
+  });
 
   const options = {
     responsive: true,

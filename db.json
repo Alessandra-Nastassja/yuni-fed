@@ -103,32 +103,32 @@
       "nome": "Conservador",
       "valor": 219914.85,
       "distribuicao": {
-        "Título Renda Fixa": 214924.30,
-        "Tesouro Direto": 4990.55,
-        "Fundo Renda Fixa / DI": 0.00,
-        "Previdência Privada": 0.00
+        "tituloRendaFixa": 214924.30,
+        "tesouroDireto": 4990.55,
+        "fundoRendaFixaDI": 0.00,
+        "previdenciaPrivada": 0.00
       }
     },
     {
       "nome": "Moderado",
       "valor": 344.96,
       "distribuicao": {
-        "ETF": 344.96,
-        "Fundo Multimercado": 0.00,
-        "FII": 0.00
+        "etf": 344.96,
+        "fundoMultimercado": 0.00,
+        "fii": 0.00
       }
     },
     {
       "nome": "Agressivo",
       "valor": 1687.71,
       "distribuicao": {
-        "Ações": 1687.71,
-        "Fundo Ações": 0.00,
-        "COE": 0.00
+        "acoes": 1687.71,
+        "fundoAcoes": 0.00,
+        "coe": 0.00
       }
     }
   ],
-  "patrimonioFinanceiro": [
+  "patrimonio": [
     {
       "ano": 2026,
       "valor": 232123.85
