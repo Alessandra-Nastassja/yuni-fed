@@ -28,7 +28,6 @@ export default function Patrimonio({ className, patrimonio }: { className?: stri
   );
 
   const labels = patrimonioOrdenado.map((p) => {
-    console.log(p);
     return p.ano?.toString();
   });
 
