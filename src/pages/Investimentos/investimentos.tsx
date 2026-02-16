@@ -29,8 +29,9 @@ export default function Investimentos({ ativos, naoAtivos, evolucao, corretoras,
         iconColor="bg-yellow-500" />
 
       <Patrimonio patrimonio={evolucao} />
-      {/* <Carteira perfil={perfil} />
       <Metas metas={metas} />
+
+      {/* <Carteira perfil={perfil} />
       <Corretoras corretoras={corretoras} /> */}
     </main>
   )

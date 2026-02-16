@@ -25,9 +25,6 @@ export default function Corretoras({ corretoras = [] }: { corretoras?: any[] }) 
       <p className="font-medium">2026</p>
 
       {corretoras.map((ativo) => {
-        const percentual = totalInvestimentos > 0 ? (ativo.ativos / totalInvestimentos) * 100 : 0
-        const percentualStr = percentual.toFixed(2).replace('.', ',') + '%'
-
         return (
           <article className='flex flex-row justify-between gap-2' key={ativo.nome}>
             <div className="flex flex-col items-start">
@@ -38,7 +35,6 @@ export default function Corretoras({ corretoras = [] }: { corretoras?: any[] }) 
               <div className="flex gap-2 justify-end">
                 <div className='flex flex-col items-end'>
                   <p className="text-base">{formatValue(ativo.valor)}</p>
-                  {/* <small className="text-xs text-gray-500">({percentualStr})</small> */}
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
