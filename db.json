@@ -1,45 +1,4 @@
 {
-  "ativos": [
-    {
-      "ano": 2026,
-      "Conta corrente": 0.00,
-      "Salário": {
-        "valor": 13878.24,
-        "descricao": "Fonte de renda 1"
-      },
-      "Meu negócio": {
-        "valor": 0.00,
-        "descricao": "Fonte de renda 2"
-      },
-      "investimentos": 200000.00,
-      "contas a receber": {
-        "valor": 415.38,
-        "descricao": "Dividendos e JCP"
-      },
-      "Reserva de emergência": 32123.85,
-      "Previdência privada": 0.00,
-      "Outros": {
-        "valor": 0.00,
-        "descricao": "13 salário, férias, bônus, etc."
-      }
-    }
-  ],
-  "naoAtivos": [
-    {
-      "ano": 2026,
-      "veículos": 7335.00,
-      "imóveis": 0.00,
-      "FGTS": 55448.70,
-      "objetos de valor": {
-        "valor": 10000.00,
-        "descricao": "Joias, obras de arte, etc."
-      },
-      "outros": {
-        "valor": 0.00,
-        "descricao": "Qualquer outro ativo"
-      }
-    }
-  ],
   "corretoras": [
     {
       "nome": "XP",
@@ -128,36 +87,6 @@
       }
     }
   ],
-  "patrimonio": [
-    {
-      "ano": 2026,
-      "valor": 232123.85
-    },
-    {
-      "ano": 2025,
-      "valor": 222448.47
-    },
-    {
-      "ano": 2024,
-      "valor": 199276.15
-    },
-    {
-      "ano": 2023,
-      "valor": 199276.15
-    },
-    {
-      "ano": 2022,
-      "valor": 126141.67
-    },
-    {
-      "ano": 2021,
-      "valor": 99470.32
-    },
-    {
-      "ano": 2020,
-      "valor": 64501.39
-    }
-  ],
   "metas": [
     {
       "nome": "Independência",
@@ -182,6 +111,81 @@
       "valorMeta": 35000.00,
       "valorAtual": 32000.00,
       "prazo": "2024"
+    }
+  ],
+  "patrimonio": [
+    {
+      "ativos": [
+        {
+          "ano": 2026,
+          "Conta corrente": 0.00,
+          "Salário": {
+            "valor": 13878.24,
+            "descricao": "Fonte de renda 1"
+          },
+          "Meu negócio": {
+            "valor": 0.00,
+            "descricao": "Fonte de renda 2"
+          },
+          "investimentos": 200000.00,
+          "contas a receber": {
+            "valor": 415.38,
+            "descricao": "Dividendos e JCP"
+          },
+          "Reserva de emergência": 32123.85,
+          "Previdência privada": 0.00,
+          "Outros": {
+            "valor": 0.00,
+            "descricao": "13 salário, férias, bônus, etc."
+          }
+        }
+      ],
+      "naoAtivos": [
+        {
+          "ano": 2026,
+          "veículos": 7335.00,
+          "imóveis": 0.00,
+          "FGTS": 55448.70,
+          "objetos de valor": {
+            "valor": 10000.00,
+            "descricao": "Joias, obras de arte, etc."
+          },
+          "outros": {
+            "valor": 0.00,
+            "descricao": "Qualquer outro ativo"
+          }
+        }
+      ],
+      "evolucao": [
+        {
+          "ano": 2026,
+          "valor": 232123.85
+        },
+        {
+          "ano": 2025,
+          "valor": 222448.47
+        },
+        {
+          "ano": 2024,
+          "valor": 199276.15
+        },
+        {
+          "ano": 2023,
+          "valor": 199276.15
+        },
+        {
+          "ano": 2022,
+          "valor": 126141.67
+        },
+        {
+          "ano": 2021,
+          "valor": 99470.32
+        },
+        {
+          "ano": 2020,
+          "valor": 64501.39
+        }
+      ]
     }
   ]
 }

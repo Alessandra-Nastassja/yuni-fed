@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
 import AtivosNaoAtivos from "./components/AtivosNaoAtivos/ativosNaoAtivos";
 import Carteira from "./components/Carteira/carteira";
 import Corretoras from "./components/Corretoras/corretoras";
 import Metas from "./components/Metas/metas";
 import Patrimonio from "./components/Patrimonio/patrimonio";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-export default function Investimentos({ ativos, naoAtivos, corretoras, perfil, patrimonio, metas }: { ativos: any[], naoAtivos: any[], corretoras: any[], perfil: any, patrimonio: any, metas: any[] }) {
+export default function Investimentos({ ativos, naoAtivos, evolucao, corretoras, perfil, metas }: { ativos: any[], naoAtivos: any[], evolucao: any, corretoras?: any[], perfil?: any, metas?: any[] }) {
+  
   return (
     <main className='m-4 p-4 space-y-4'>
       <header className="mb-8">
@@ -26,10 +28,10 @@ export default function Investimentos({ ativos, naoAtivos, corretoras, perfil, p
         title="Não ativos"
         iconColor="bg-yellow-500" />
 
-      <Patrimonio patrimonio={patrimonio} />
-      <Carteira perfil={perfil} />
+      <Patrimonio patrimonio={evolucao} />
+      {/* <Carteira perfil={perfil} />
       <Metas metas={metas} />
-      <Corretoras corretoras={corretoras} />
+      <Corretoras corretoras={corretoras} /> */}
     </main>
   )
 }
