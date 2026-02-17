@@ -73,7 +73,6 @@ function App() {
           path="/investimentos"
           element={
             <Investimentos
-              metas={meta}
               // corretoras={corretoras}
               // perfil={perfil}
             />

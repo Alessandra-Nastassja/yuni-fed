@@ -1,4 +1,4 @@
-import MetasList from '../Investimentos/components/MetasList/metasList';
+import MetasList from './components/MetasList/metasList';
 
 export default function Home({ metas }: { metas?: any[] }) {
   return (
