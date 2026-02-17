@@ -22,9 +22,8 @@ export default function Metas({ className }: { className?: string }) {
   const [metas, setMetas] = useState<any[]>([]);
   const [form, setForm] = useState({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ nome?: string; valorMeta?: string; valorAtual?: string; prazo?: string }>({});
+  const [errors, setErrors] = useState<{ general?: string; nome?: string; valorMeta?: string; valorAtual?: string; prazo?: string }>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -65,6 +64,11 @@ export default function Metas({ className }: { className?: string }) {
     if (!valorMeta) fieldErrors.valorMeta = 'Informe o valor da meta';
     if (!prazo) fieldErrors.prazo = 'Informe o prazo da meta';
 
+    if (Object.keys(fieldErrors).length > 0) {
+      message = 'Preencha todos os campos obrigatórios.';
+      return { isValid: false, fieldErrors, message };
+    }
+
     if (valorMeta <= 0) {
       fieldErrors.valorMeta = 'O valor da meta deve ser maior que R$0,00';
       message = 'O valor da meta deve ser maior que R$0,00';
@@ -88,13 +92,11 @@ export default function Metas({ className }: { className?: string }) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
     setErrors({});
 
     const validation = validateForm();
     if (!validation.isValid) {
-      setErrors(validation.fieldErrors);
-      setError(validation.message ?? 'Preencha todos os campos obrigatórios');
+      setErrors({ ...validation.fieldErrors, general: validation.message ?? 'Preencha todos os campos obrigatórios' });
       return;
     }
 
@@ -112,7 +114,7 @@ export default function Metas({ className }: { className?: string }) {
       setIsOpen(false);
       fetchData();
     } catch (error) {
-      setError('Erro ao criar meta.');
+      setErrors({ general: 'Erro ao criar meta.' });
     } finally {
       setIsSaving(false);
     }
