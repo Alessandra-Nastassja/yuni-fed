@@ -5,7 +5,7 @@ import { faExternalLink, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { formatValue } from '../../../../utils/formatValue'
 import Modal from '../../../../shared/Modal/Modal'
 
-const API_URL = "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const getMetas = () => fetch(`${API_URL}/metas`).then(r => r.json());
 
