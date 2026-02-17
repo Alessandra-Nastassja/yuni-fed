@@ -23,6 +23,8 @@ export default function Metas({ className }: { className?: string }) {
   const [form, setForm] = useState({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ nome?: string; valorMeta?: string; valorAtual?: string; prazo?: string }>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -39,8 +41,9 @@ export default function Metas({ className }: { className?: string }) {
       const meta = await getMetas();
       const { metas } = meta ?? {};
       setMetas(metas ?? []);
+      setFetchError(null);
     } catch (error) {
-      setError('Erro ao buscar metas.');
+      setFetchError('Erro ao buscar metas.');
     }
   };
 
@@ -48,35 +51,54 @@ export default function Metas({ className }: { className?: string }) {
     fetchData();
   }, []);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError(null);
-
+  const validateForm = () => {
     const nome = form.nome.trim();
     const valorMeta = parseCurrency(form.valorMeta);
     const valorAtual = parseCurrency(form.valorAtual || '');
     const prazo = Number(form.prazo);
     const anoAtual = new Date().getFullYear();
 
-    if (!nome || !valorMeta || !prazo) {
-      setError('Preencha todos os campos obrigatórios.');
-      return;
-    }
+    const fieldErrors: typeof errors = {};
+    let message: string | null = null;
+
+    if (!nome) fieldErrors.nome = 'Informe o nome da meta';
+    if (!valorMeta) fieldErrors.valorMeta = 'Informe o valor da meta';
+    if (!prazo) fieldErrors.prazo = 'Informe o prazo da meta';
 
     if (valorMeta <= 0) {
-      setError('O valor da meta deve ser maior que 0.');
-      return;
+      fieldErrors.valorMeta = 'O valor da meta deve ser maior que R$0,00';
+      message = 'O valor da meta deve ser maior que R$0,00';
+      return { isValid: false, fieldErrors, message };
     }
 
     if (valorAtual < 0 || valorAtual > valorMeta) {
-      setError('O valor atual deve ser entre 0 e o valor da meta.');
-      return;
+      fieldErrors.valorAtual = 'O valor atual deve ser entre R$0,00 e o valor da meta';
+      message = 'O valor atual deve ser entre R$0,00 e o valor da meta';
+      return { isValid: false, fieldErrors, message };
     }
 
     if (prazo < anoAtual) {
-      setError('O prazo deve ser maior ou igual ao ano atual.');
+      fieldErrors.prazo = 'O prazo deve ser maior ou igual ao ano atual';
+      message = 'O prazo deve ser maior ou igual ao ano atual';
+      return { isValid: false, fieldErrors, message };
+    }
+
+    return { isValid: true, fieldErrors: {}, message: null, values: { nome, valorMeta, valorAtual, prazo } };
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setErrors({});
+
+    const validation = validateForm();
+    if (!validation.isValid) {
+      setErrors(validation.fieldErrors);
+      setError(validation.message ?? 'Preencha todos os campos obrigatórios');
       return;
     }
+
+    const { nome, valorMeta, valorAtual, prazo } = validation.values;
 
     try {
       setIsSaving(true);
@@ -108,8 +130,9 @@ export default function Metas({ className }: { className?: string }) {
           <FontAwesomeIcon size='sm' icon={faExternalLink} className="mr-1 text-gray-400" />
         </button>
       </header>
-      {error && (
-        <Alert variant="error">{error}</Alert>
+      
+      {fetchError && (
+        <Alert variant="error">{fetchError}</Alert>
       )}
 
       {metas && metas.length > 0 ? (
@@ -175,10 +198,11 @@ export default function Metas({ className }: { className?: string }) {
               type="text"
               value={form.nome}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.nome ? 'border-red-400' : 'border-gray-200'}`}
               placeholder="Ex.: Minha casa"
-              required
+              aria-invalid={!!errors.nome}
             />
+            {errors.nome && <p className="text-xs text-red-500">{errors.nome}</p>}
           </div>
 
           <div className="space-y-1">
@@ -190,10 +214,11 @@ export default function Metas({ className }: { className?: string }) {
               inputMode="numeric"
               value={formatCurrencyInput(form.valorMeta)}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.valorMeta ? 'border-red-400' : 'border-gray-200'}`}
               placeholder="Ex.: 300000"
-              required
+              aria-invalid={!!errors.valorMeta}
             />
+            {errors.valorMeta && <p className="text-xs text-red-500">{errors.valorMeta}</p>}
           </div>
 
           <div className="space-y-1">
@@ -205,9 +230,11 @@ export default function Metas({ className }: { className?: string }) {
               inputMode="numeric"
               value={formatCurrencyInput(form.valorAtual)}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.valorAtual ? 'border-red-400' : 'border-gray-200'}`}
               placeholder="Ex.: 12000"
+              aria-invalid={!!errors.valorAtual}
             />
+            {errors.valorAtual && <p className="text-xs text-red-500">{errors.valorAtual}</p>}
           </div>
 
           <div className="space-y-1">
@@ -218,17 +245,13 @@ export default function Metas({ className }: { className?: string }) {
               type="number"
               value={form.prazo}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.prazo ? 'border-red-400' : 'border-gray-200'}`}
               placeholder="Ex.: 2028"
               min={2024}
-              required
+              aria-invalid={!!errors.prazo}
             />
+            {errors.prazo && <p className="text-xs text-red-500">{errors.prazo}</p>}
           </div>
-
-          {error && (
-            <p className="text-sm text-red-500">{error}</p>
-          )}
-
           <button
             type="submit"
             disabled={isSaving}
