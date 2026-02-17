@@ -1,6 +1,6 @@
 import { formatValue } from '../../../../utils/formatValue'
 
-export default function Metas({ className, metas }: { className?: string, metas?: any[] }) {
+export default function MetasList({ className, metas }: { className?: string, metas?: any[] }) {
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
       <p className="text-lg">Metas</p>

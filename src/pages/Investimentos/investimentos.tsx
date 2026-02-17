@@ -5,7 +5,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Patrimonio from "./components/Patrimonio/patrimonio";
 import Carteira from "./components/Carteira/carteira";
 import Corretoras from "./components/Corretoras/corretoras";
-import Metas from "./components/Metas/metas";
+import MetasList from "./components/MetasList/metasList";
 
 export default function Investimentos({ corretoras, perfil, metas }: { corretoras?: any[], perfil?: any, metas?: any[] }) {
   
@@ -19,7 +19,7 @@ export default function Investimentos({ corretoras, perfil, metas }: { corretora
 
       <Patrimonio />
 
-      <Metas metas={metas} />
+      <MetasList metas={metas} />
       {/* <Carteira perfil={perfil} />
       <Corretoras corretoras={corretoras} /> */}
     </main>

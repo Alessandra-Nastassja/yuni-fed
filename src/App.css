@@ -1,6 +1,7 @@
 #root {
   /* max-width: 1280px; */
   margin: 0 auto;
+  padding-bottom: 110px;
 }
 
 .logo {
@@ -37,4 +38,65 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.app-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.75rem 1rem calc(env(safe-area-inset-bottom) + 0.75rem);
+  display: flex;
+  justify-content: center;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.footer-pill {
+  pointer-events: auto;
+  width: min(520px, 100%);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem 0.25rem;
+  align-items: center;
+}
+
+.footer-item {
+  color: #9aa1a9;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.2rem;
+}
+
+.footer-item .icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-item svg {
+  width: 100%;
+  height: 100%;
+}
+
+.footer-item.active {
+  color: #2f353d;
+}
+
+@media (max-width: 420px) {
+  .footer-item .label {
+    font-size: 0.65rem;
+  }
 }
