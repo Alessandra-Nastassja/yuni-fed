@@ -9,7 +9,10 @@ import {
   Filler,
   Legend,
 } from 'chart.js';
+import { useEffect, useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
+
+import AtivosNaoAtivos from './components/ativosNaoAtivos';
 
 ChartJS.register(
   CategoryScale,
@@ -22,9 +25,51 @@ ChartJS.register(
   Legend
 );
 
-export default function Patrimonio({ className, patrimonio }: { className?: string, patrimonio: any }) {
-  const patrimonioOrdenado = [...patrimonio].sort(
-    (a, b) => a.ano - b.ano
+const API_URL = "http://localhost:8080";
+
+type PatrimonioEvolucaoItem = {
+  ano: number;
+  valor: number;
+};
+
+type PatrimonioDetalhe = {
+  ativos?: Array<Record<string, any>>;
+  naoAtivos?: Array<Record<string, any>>;
+  evolucao?: PatrimonioEvolucaoItem[];
+};
+
+const normalizePatrimonioPayload = (data: unknown): PatrimonioDetalhe => {
+  const payload = Array.isArray(data) ? data[0] : data;
+  return payload && typeof payload === 'object' ? (payload as PatrimonioDetalhe) : {};
+};
+
+export default function Patrimonio({ className }: { className?: string }) {
+  const [patrimonio, setPatrimonio] = useState<PatrimonioEvolucaoItem[]>([]);
+  const [ativos, setAtivos] = useState<Array<Record<string, any>>>([]);
+  const [naoAtivos, setNaoAtivos] = useState<Array<Record<string, any>>>([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/patrimonio`);
+      const payload = normalizePatrimonioPayload(await response.json());
+  
+      const { evolucao, ativos, naoAtivos } = payload;
+
+      setPatrimonio(Array.isArray(evolucao) ? evolucao : []);
+      setAtivos(Array.isArray(ativos) ? ativos : []);
+      setNaoAtivos(Array.isArray(naoAtivos) ? naoAtivos : []);
+    } catch (error) {
+      console.error('Erro ao buscar dados do patrimônio:', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const patrimonioOrdenado = useMemo(
+    () => [...patrimonio].sort((a, b) => a.ano - b.ano),
+    [patrimonio]
   );
 
   const labels = patrimonioOrdenado.map((p) => {
@@ -36,7 +81,6 @@ export default function Patrimonio({ className, patrimonio }: { className?: stri
     scales: {
       y: {
         min: 0,
-        max: 250000,
       },
     },
   };
@@ -55,10 +99,22 @@ export default function Patrimonio({ className, patrimonio }: { className?: stri
   };
 
   return (
-    <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
-      <p className="text-lg">Evolução do patrimônio</p>
+    <>
+      <AtivosNaoAtivos
+        ativos={ativos}
+        title="Ativos"
+        iconColor="bg-green-500" />
 
-      <Line data={data} options={options} />
-    </section>
+      <AtivosNaoAtivos
+        ativos={naoAtivos}
+        title="Não ativos"
+        iconColor="bg-yellow-500" />
+
+      <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
+        <p className="text-lg">Evolução do patrimônio</p>
+
+        <Line data={data} options={options} />
+      </section>
+    </>
   )
 }

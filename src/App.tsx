@@ -8,15 +8,11 @@ import Financas from './pages/Financas/financas';
 
 const API_URL = "http://localhost:8080";
 
-export const getPatrimonio = () => fetch(`${API_URL}/patrimonio`).then(r => r.json());
 export const getMetas = () => fetch(`${API_URL}/metas`).then(r => r.json());
 // export const getCorretoras = () => fetch(`${API_URL}/corretoras`).then(r => r.json());
 // export const getPerfil = () => fetch(`${API_URL}/perfil`).then(r => r.json());
 
 function App() {
-  const [ativos, setAtivos] = useState([]);
-  const [naoAtivos, setNaoAtivos] = useState([]);
-  const [evolucao, setEvolucao] = useState([]);
   const [meta, setMeta] = useState([]);
   // const [corretoras, setCorretoras] = useState([]);
   // const [perfil, setPerfil] = useState([]);
@@ -27,25 +23,14 @@ function App() {
         // corretoras,
         // perfil,
         meta,
-        patrimonio,
       ] = await Promise.all([
         // getCorretoras(),
         // getPerfil(),
         getMetas(),
-        getPatrimonio(),
       ]);
-
-      const {
-        ativos = [],
-        naoAtivos = [],
-        evolucao = [],
-      } = patrimonio ?? {};
 
       const { metas } = meta ?? {};
 
-      setAtivos(ativos);
-      setNaoAtivos(naoAtivos);
-      setEvolucao(evolucao);
       // setCorretoras(corretoras);
       // setPerfil(perfil);
       setMeta(metas);
@@ -53,7 +38,6 @@ function App() {
       console.error("Erro ao buscar dados:", error);
     }
   };
-
 
   useEffect(() => {
     fetchData();
@@ -66,12 +50,9 @@ function App() {
         path="/investimentos"
         element={
           <Investimentos
-            ativos={ativos}
-            naoAtivos={naoAtivos}
-            evolucao={evolucao}
+            metas={meta}
             // corretoras={corretoras}
             // perfil={perfil}
-            metas={meta}
           />
         }
       />
