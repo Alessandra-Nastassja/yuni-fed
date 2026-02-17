@@ -98,25 +98,19 @@
         "nome": "Teste 1",
         "valorMeta": 100,
         "prazo": 2026,
-        "valorAtual": 0
+        "valorAtual": 5
       },
       {
         "nome": "Teste 2",
         "valorMeta": 100,
         "prazo": 2026,
-        "valorAtual": 0
+        "valorAtual": 50
       },
       {
-        "nome": "Teste",
+        "nome": "Teste 3",
         "valorMeta": 100,
-        "prazo": 2030,
-        "valorAtual": 0
-      },
-      {
-        "nome": "Alessandra Nastassja Alves do Santos",
-        "valorMeta": 100,
-        "prazo": 3909,
-        "valorAtual": 20
+        "prazo": 2026,
+        "valorAtual": 95
       }
     ]
   },

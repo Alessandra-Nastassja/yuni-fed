@@ -99,9 +99,9 @@ export default function MetasCreate({ form, errors, isSaving, nomeMaxLength, onS
         {errors.prazo && <p className="text-xs text-red-500">{errors.prazo}</p>}
       </div>
 
-      {errors.general && (
+      {/* {errors.general && (
         <Alert variant="error">{errors.general}</Alert>
-      )}
+      )} */}
 
       <footer className="flex justify-center">
         <button

@@ -27,16 +27,25 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
             </div>
 
             <div className="w-full bg-gray-200 rounded-full h-6 relative overflow-hidden">
-              <div
-                className="bg-green-500 h-6 rounded-full transition-all duration-300 flex items-center justify-center"
-                style={{
-                  width: `${meta.valorMeta ? ((Number(meta.valorAtual ?? 0) / Number(meta.valorMeta)) * 100).toFixed(2) : 0}%`,
-                }}
-              >
-                <span className="text-white text-xs font-medium">
-                  {meta.valorMeta ? ((Number(meta.valorAtual ?? 0) / Number(meta.valorMeta)) * 100).toFixed(2) : '0.00'}%
-                </span>
-              </div>
+              {(() => {
+                const percentual = meta.valorMeta ? ((Number(meta.valorAtual ?? 0) / Number(meta.valorMeta)) * 100) : 0;
+                let bgColor = 'bg-red-500';
+                if (percentual >= 75) bgColor = 'bg-green-500';
+                else if (percentual >= 25) bgColor = 'bg-yellow-500';
+                
+                return (
+                  <div
+                    className={`${bgColor} h-6 rounded-full transition-all duration-300 flex items-center ${percentual === 0 ? 'ml-2' : 'pl-2'}`}
+                    style={{
+                      width: `${percentual.toFixed(2)}%`,
+                    }}
+                  >
+                    <span className="text-white text-xs font-medium">
+                      {percentual.toFixed(2)}%
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         ))
