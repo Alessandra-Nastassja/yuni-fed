@@ -8,42 +8,42 @@ export default function Footer() {
       <nav className="footer-pill">
         <NavLink
           to="/home"
-          className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
           <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faHouse} className='text-gray-500' />
+            <FontAwesomeIcon size='xl' icon={faHouse} />
           </span>
-          <p className="text-small text-gray-500">Home</p>
+          <p className="text-small">Home</p>
         </NavLink>
 
         <NavLink
           to="/financas"
-          className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
           <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faWallet} className='text-gray-500' />
+            <FontAwesomeIcon size='xl' icon={faWallet} />
           </span>
-          <p className="text-small text-gray-500">Finanças</p>
+          <p className="text-small">Finanças</p>
         </NavLink>
 
         <NavLink
           to="/investimentos"
-          className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
           <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faChartLine} className='text-gray-500' />
+            <FontAwesomeIcon size='xl' icon={faChartLine} />
           </span>
-          <p className="text-small text-gray-500">Investimentos</p>
+          <p className="text-small">Investimentos</p>
         </NavLink>
 
         <NavLink
           to="/configuracoes"
-          className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
           <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faGear} className='text-gray-500' />
+            <FontAwesomeIcon size='xl' icon={faGear} />
           </span>
-          <p className="text-small text-gray-500">Configurações</p>
+          <p className="text-small">Configurações</p>
         </NavLink>
       </nav>
     </footer>
