@@ -36,7 +36,7 @@ export default function Footer() {
           <div className="h-6 w-6" aria-hidden="true">
             <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faChartLine} />
           </div>
-          <p className="text-xs">Investimentos</p>
+          <p className="text-xs">Patrimônio</p>
         </NavLink>
 
         <NavLink
