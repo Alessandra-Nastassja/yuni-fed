@@ -68,7 +68,7 @@ function App() {
       )}
       <Routes>
         <Route path="/" element={<Onboarding />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Home metas={meta} />} />
         <Route
           path="/investimentos"
           element={
