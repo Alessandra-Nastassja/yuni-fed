@@ -10,6 +10,7 @@ import Onboarding from './pages/Onboarding/onboarding';
 import Investimentos from './pages/Investimentos/investimentos'
 import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
+import Novo from './pages/Novo/novo';
 import Footer from './shared/Footer/footer';
 
 const API_URL = "http://localhost:8080";
@@ -78,6 +79,7 @@ function App() {
             />
           }
         />
+        <Route path="/novo" element={<Novo />} />
         <Route path='/financas' element={<Financas />} />
         <Route path='/configuracoes' element={<Configuracoes />} />
       </Routes>

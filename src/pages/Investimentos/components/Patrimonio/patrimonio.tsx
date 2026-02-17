@@ -100,6 +100,7 @@ export default function Patrimonio({ className }: { className?: string }) {
 
   return (
     <>
+      <h1 className="text-2xl font-semibold">Patrimônio</h1>
       <AtivosNaoAtivos
         ativos={ativos}
         title="Ativos"
