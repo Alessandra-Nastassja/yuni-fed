@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faWallet, faChartLine, faGear } from '@fortawesome/free-solid-svg-icons';
 
 export default function Footer() {
   return (
@@ -9,12 +11,9 @@ export default function Footer() {
           className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
         >
           <span className="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 10.5L12 3l9 7.5" />
-              <path d="M5 10v10h14V10" />
-            </svg>
+            <FontAwesomeIcon size='xl' icon={faHouse} className='text-gray-500' />
           </span>
-          <span className="label">Home</span>
+          <p className="text-small text-gray-500">Home</p>
         </NavLink>
 
         <NavLink
@@ -22,12 +21,9 @@ export default function Footer() {
           className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
         >
           <span className="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="M7 9h6M7 13h10" />
-            </svg>
+            <FontAwesomeIcon size='xl' icon={faWallet} className='text-gray-500' />
           </span>
-          <span className="label">Finanças</span>
+          <p className="text-small text-gray-500">Finanças</p>
         </NavLink>
 
         <NavLink
@@ -35,12 +31,9 @@ export default function Footer() {
           className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
         >
           <span className="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 16l4-4 4 4 6-6" />
-              <path d="M20 10V4h-6" />
-            </svg>
+            <FontAwesomeIcon size='xl' icon={faChartLine} className='text-gray-500' />
           </span>
-          <span className="label">Investimentos</span>
+          <p className="text-small text-gray-500">Investimentos</p>
         </NavLink>
 
         <NavLink
@@ -48,12 +41,9 @@ export default function Footer() {
           className={({ isActive }) => `footer-item ${isActive ? 'active' : ''}`}
         >
           <span className="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 15a7.97 7.97 0 0 0 0-6l2-1.2-2-3.5-2.3.8a8.1 8.1 0 0 0-5.2-3l-.5-2.4H10l-.5 2.4a8.1 8.1 0 0 0-5.2 3l-2.3-.8-2 3.5 2 1.2a7.97 7.97 0 0 0 0 6l-2 1.2 2 3.5 2.3-.8a8.1 8.1 0 0 0 5.2 3l.5 2.4h4l.5-2.4a8.1 8.1 0 0 0 5.2-3l2.3.8 2-3.5-2-1.2z" />
-            </svg>
+            <FontAwesomeIcon size='xl' icon={faGear} className='text-gray-500' />
           </span>
-          <span className="label">Configurações</span>
+          <p className="text-small text-gray-500">Configurações</p>
         </NavLink>
       </nav>
     </footer>
