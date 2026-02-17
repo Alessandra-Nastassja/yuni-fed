@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
 import './App.css'
 
 import Home from './pages/Home/home'
@@ -17,6 +20,7 @@ export const getMetas = () => fetch(`${API_URL}/metas`).then(r => r.json());
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [meta, setMeta] = useState([]);
   // const [corretoras, setCorretoras] = useState([]);
   // const [perfil, setPerfil] = useState([]);
@@ -49,7 +53,18 @@ function App() {
 
   return (
     <>
-    
+    {location.pathname !== '/' &&
+      <header className="mb-8">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="text-blue-600 hover:underline"
+          aria-label="Voltar"
+        >
+          <FontAwesomeIcon icon={faArrowLeft} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
+        </button>
+      </header>
+      }
       <Routes>
         <Route path="/" element={<Onboarding />} />
         <Route path="/home" element={<Home />} />
