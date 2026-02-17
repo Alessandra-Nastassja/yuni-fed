@@ -18,14 +18,14 @@
       "nome": "Rico",
       "ativos": 37,
       "rentabilidade": "13,52%",
-      "valor": 84885.40,
+      "valor": 84885.4,
       "meta": "Minha casa"
     },
     {
       "nome": "Caixa",
       "ativos": 1,
       "rentabilidade": "0,00%",
-      "valor": 0.00,
+      "valor": 0,
       "meta": "Minha casa"
     },
     {
@@ -62,10 +62,10 @@
       "nome": "Conservador",
       "valor": 219914.85,
       "distribuicao": {
-        "tituloRendaFixa": 214924.30,
+        "tituloRendaFixa": 214924.3,
         "tesouroDireto": 4990.55,
-        "fundoRendaFixaDI": 0.00,
-        "previdenciaPrivada": 0.00
+        "fundoRendaFixaDI": 0,
+        "previdenciaPrivada": 0
       }
     },
     {
@@ -73,8 +73,8 @@
       "valor": 344.96,
       "distribuicao": {
         "etf": 344.96,
-        "fundoMultimercado": 0.00,
-        "fii": 0.00
+        "fundoMultimercado": 0,
+        "fii": 0
       }
     },
     {
@@ -82,56 +82,63 @@
       "valor": 1687.71,
       "distribuicao": {
         "acoes": 1687.71,
-        "fundoAcoes": 0.00,
-        "coe": 0.00
+        "fundoAcoes": 0,
+        "coe": 0
       }
     }
   ],
-  "metas": [
-    {
-      "nome": "Independência",
-      "valorMeta": 1000000,
-      "prazo": 2030
-    },
-    {
-      "nome": "Minha casa",
-      "valorMeta": 300000,
-      "prazo": 2028
-    },
-    {
-      "nome": "Reforma da casa",
-      "valorMeta": 15000,
-      "prazo": 2025
-    },
-    {
-      "nome": "Reserva de emergência",
-      "valorMeta": 35000,
-      "prazo": 2024
-    }
-  ],
+  "metas": {
+    "metas": [
+      {
+        "nome": "Independência",
+        "valorMeta": 1000000,
+        "prazo": 2030
+      },
+      {
+        "nome": "Minha casa",
+        "valorMeta": 500000,
+        "prazo": 2028
+      },
+      {
+        "nome": "Reforma da casa",
+        "valorMeta": 100000,
+        "prazo": 2025
+      },
+      {
+        "nome": "Reserva de emergência",
+        "valorMeta": 50000,
+        "prazo": 2024
+      },
+      {
+        "nome": "Viagens",
+        "valorMeta": 20000,
+        "prazo": 2026
+      }
+    ]
+  },
   "patrimonio": [
     {
       "ativos": [
         {
           "ano": 2026,
-          "Conta corrente": 0.00,
+          "Conta corrente": 0,
           "Salário": {
             "valor": 13878.24,
             "descricao": "Fonte de renda 1"
           },
           "Meu negócio": {
-            "valor": 0.00,
+            "valor": 0,
             "descricao": "Fonte de renda 2"
           },
-          "investimentos": 200000.00,
+          "investimentos": 200000,
           "contas a receber": {
             "valor": 415.38,
             "descricao": "Dividendos e JCP"
           },
           "Reserva de emergência": 32123.85,
-          "Previdência privada": 0.00,
+          "Previdência privada": 0,
           "Outros": {
-            "valor": 0.00,
+            "valor": 0,
             "descricao": "13 salário, férias, bônus, etc."
           }
         }
@@ -139,15 +146,15 @@
       "naoAtivos": [
         {
           "ano": 2026,
-          "veículos": 7335.00,
-          "imóveis": 0.00,
-          "FGTS": 55448.70,
+          "veículos": 7335,
+          "imóveis": 0,
+          "FGTS": 55448.7,
           "objetos de valor": {
-            "valor": 10000.00,
+            "valor": 10000,
             "descricao": "Joias, obras de arte, etc."
           },
           "outros": {
-            "valor": 0.00,
+            "valor": 0,
             "descricao": "Qualquer outro ativo"
           }
         }
