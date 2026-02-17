@@ -53,7 +53,7 @@ function App() {
 
   return (
     <>
-    {location.pathname !== '/' &&
+    {['/', '/home'].includes(location.pathname) === false && (
       <header className="mb-8">
         <button
           type="button"
@@ -64,7 +64,7 @@ function App() {
           <FontAwesomeIcon icon={faArrowLeft} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
         </button>
       </header>
-      }
+      )}
       <Routes>
         <Route path="/" element={<Onboarding />} />
         <Route path="/home" element={<Home />} />
