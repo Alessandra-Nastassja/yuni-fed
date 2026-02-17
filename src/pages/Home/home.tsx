@@ -1,9 +1,9 @@
-import MetasList from './components/MetasList/metasList';
+import Metas from './components/Metas/metas';
 
-export default function Home({ metas }: { metas?: any[] }) {
+export default function Home() {
   return (
      <main className='m-4 p-4 space-y-4'>
-      <MetasList metas={metas} />
+      <Metas />
     </main>
   )
 }

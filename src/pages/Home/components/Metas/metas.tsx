@@ -1,11 +1,31 @@
-import { formatValue } from '../../../../utils/formatValue'
+import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLink, faEye, faLink, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import { faExternalLink, faTimes } from '@fortawesome/free-solid-svg-icons'
+
+import { formatValue } from '../../../../utils/formatValue'
 import Modal from '../../../../shared/Modal/Modal'
 
-export default function MetasList({ className, metas }: { className?: string, metas?: any[] }) {
+const API_URL = "http://localhost:8080";
+
+const getMetas = () => fetch(`${API_URL}/metas`).then(r => r.json());
+
+export default function Metas({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [metas, setMetas] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const meta = await getMetas();
+        const { metas } = meta ?? {};
+        setMetas(metas ?? []);
+      } catch (error) {
+        console.error("Erro ao buscar metas:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
