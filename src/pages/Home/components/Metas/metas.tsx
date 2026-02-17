@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLink, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { parseCurrency } from '../../../../utils/currency'
-
+import Loading from '../../../../shared/Loading/Loading'
 import Modal from '../../../../shared/Modal/Modal'
 import Alert from '../../../../shared/Alert/Alert'
 
@@ -26,6 +26,7 @@ export default function Metas({ className }: { className?: string }) {
   const [metas, setMetas] = useState<any[]>([]);
   const [form, setForm] = useState({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ general?: string; nome?: string; valorMeta?: string; valorAtual?: string; prazo?: string }>({});
 
@@ -50,12 +51,15 @@ export default function Metas({ className }: { className?: string }) {
 
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const meta = await getMetas();
       const { metas } = meta ?? {};
       setMetas(metas ?? []);
       setFetchError(null);
     } catch (error) {
       setFetchError('Erro ao buscar metas.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,23 +138,27 @@ export default function Metas({ className }: { className?: string }) {
   };
 
   return (
-    <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
-      <header className="flex items-center justify-between">
-        <p className="text-lg">Metas</p>
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="text-sm text-blue-500 hover:underline inline-flex items-center"
-        >
-          <FontAwesomeIcon size='sm' icon={faExternalLink} className="mr-1 text-gray-400" />
-        </button>
-      </header>
+    <>
+      <Loading isLoading={isLoading} message="Carregando metas..." />
       
-      {fetchError && (
-        <Alert variant="error">{fetchError}</Alert>
-      )}
+      <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
+        <header className="flex items-center justify-between">
+          <p className="text-lg">Metas</p>
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            className="text-sm text-blue-500 hover:underline inline-flex items-center"
+          >
+            <FontAwesomeIcon size='sm' icon={faExternalLink} className="mr-1 text-gray-400" />
+          </button>
+        </header>
+        
+        {fetchError && (
+          <Alert variant="error">{fetchError}</Alert>
+        )}
 
-      <MetasList metas={metas} onAddClick={() => setIsOpen(true)} />
+        <MetasList metas={metas} onAddClick={() => setIsOpen(true)} />
+      </section>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <header className="mb-4 flex items-center justify-between">
@@ -175,6 +183,6 @@ export default function Metas({ className }: { className?: string }) {
           onChange={handleChange}
         />
       </Modal>
-    </section>
+    </>
   )
 }

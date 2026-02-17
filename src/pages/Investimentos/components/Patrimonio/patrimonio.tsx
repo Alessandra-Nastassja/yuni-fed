@@ -12,6 +12,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+import Loading from '../../../../shared/Loading/Loading'
 import AtivosNaoAtivos from './components/ativosNaoAtivos';
 
 ChartJS.register(
@@ -47,9 +48,11 @@ export default function Patrimonio({ className }: { className?: string }) {
   const [patrimonio, setPatrimonio] = useState<PatrimonioEvolucaoItem[]>([]);
   const [ativos, setAtivos] = useState<Array<Record<string, any>>>([]);
   const [naoAtivos, setNaoAtivos] = useState<Array<Record<string, any>>>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(`${API_URL}/patrimonio`);
       const payload = normalizePatrimonioPayload(await response.json());
   
@@ -60,6 +63,8 @@ export default function Patrimonio({ className }: { className?: string }) {
       setNaoAtivos(Array.isArray(naoAtivos) ? naoAtivos : []);
     } catch (error) {
       console.error('Erro ao buscar dados do patrimônio:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -100,6 +105,8 @@ export default function Patrimonio({ className }: { className?: string }) {
 
   return (
     <>
+      <Loading isLoading={isLoading} message="Carregando patrimônio..." />
+      
       <h1 className="text-2xl font-bold mb-4">Patrimônio</h1>
 
       <AtivosNaoAtivos
