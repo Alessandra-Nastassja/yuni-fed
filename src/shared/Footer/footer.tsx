@@ -4,46 +4,49 @@ import { faHouse, faWallet, faChartLine, faGear } from '@fortawesome/free-solid-
 
 export default function Footer() {
   return (
-    <footer className="app-footer" aria-label="Navegação principal">
-      <nav className="footer-pill">
+    <footer
+      className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pointer-events-none"
+      aria-label="Navegação principal"
+    >
+      <nav className="pointer-events-auto w-full max-w-[520px] rounded-full bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] grid grid-cols-4 gap-1 px-3 py-2 items-center">
         <NavLink
           to="/home"
-          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
+          className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
-          <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faHouse} />
-          </span>
-          <p className="text-small">Home</p>
+          <div className="h-6 w-6" aria-hidden="true">
+            <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faHouse} />
+          </div>
+          <p className="text-xs">Home</p>
         </NavLink>
 
         <NavLink
           to="/financas"
-          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
+          className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
-          <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faWallet} />
-          </span>
-          <p className="text-small">Finanças</p>
+          <div className="h-6 w-6" aria-hidden="true">
+            <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faWallet} />
+          </div>
+          <p className="text-xs">Finanças</p>
         </NavLink>
 
         <NavLink
           to="/investimentos"
-          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
+          className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
-          <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faChartLine} />
-          </span>
-          <p className="text-small">Investimentos</p>
+          <div className="h-6 w-6" aria-hidden="true">
+            <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faChartLine} />
+          </div>
+          <p className="text-xs">Investimentos</p>
         </NavLink>
 
         <NavLink
           to="/configuracoes"
-          className={({ isActive }) => `footer-item ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
+          className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
-          <span className="icon" aria-hidden="true">
-            <FontAwesomeIcon size='xl' icon={faGear} />
-          </span>
-          <p className="text-small">Configurações</p>
+          <div className="h-6 w-6" aria-hidden="true">
+            <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faGear} />
+          </div>
+          <p className="text-xs">Configurações</p>
         </NavLink>
       </nav>
     </footer>

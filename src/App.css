@@ -39,39 +39,4 @@
   color: #888;
 }
 
-.app-footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0.75rem 1rem calc(env(safe-area-inset-bottom) + 0.75rem);
-  display: flex;
-  justify-content: center;
-  z-index: 50;
-  pointer-events: none;
-}
-
-.footer-pill {
-  pointer-events: auto;
-  width: min(520px, 100%);
-  background: #fff;
-  border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.25rem;
-  padding: 0.35rem 0.75rem 0.25rem;
-  align-items: center;
-}
-
-.footer-item {
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.7rem;
-  padding: 0.3rem 0.2rem;
-}
 
