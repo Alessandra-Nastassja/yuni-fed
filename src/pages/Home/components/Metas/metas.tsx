@@ -3,7 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLink, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { formatValue } from '../../../../utils/formatValue'
+import { formatCurrencyInput, parseCurrency } from '../../../../utils/currency'
 import Modal from '../../../../shared/Modal/Modal'
+import Alert from '../../../../shared/Alert/Alert'
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,18 +16,6 @@ const createMeta = (payload: { nome: string; valorMeta: number; prazo: number; v
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   }).then(r => r.json());
-
-const parseCurrency = (value: string) => {
-  const digits = value.replace(/\D/g, '');
-  return digits ? Number(digits) / 100 : 0;
-};
-
-const formatCurrencyInput = (value: string) => {
-  if (!value) return '';
-  return formatValue(parseCurrency(value));
-};
-
-
 
 export default function Metas({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +40,7 @@ export default function Metas({ className }: { className?: string }) {
       const { metas } = meta ?? {};
       setMetas(metas ?? []);
     } catch (error) {
-      console.error("Erro ao buscar metas:", error);
+      setError('Erro ao buscar metas.');
     }
   };
 
@@ -100,7 +90,7 @@ export default function Metas({ className }: { className?: string }) {
       setIsOpen(false);
       fetchData();
     } catch (error) {
-      console.error('Erro ao criar meta:', error);
+      setError('Erro ao criar meta.');
     } finally {
       setIsSaving(false);
     }
@@ -118,6 +108,10 @@ export default function Metas({ className }: { className?: string }) {
           <FontAwesomeIcon size='sm' icon={faExternalLink} className="mr-1 text-gray-400" />
         </button>
       </header>
+      {error && (
+        <Alert variant="error">{error}</Alert>
+      )}
+
       {metas && metas.length > 0 ? (
         metas.map((meta, index) => (
           <div key={index} className="flex flex-col justify-between gap-2">

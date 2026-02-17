@@ -95,24 +95,10 @@
         "prazo": 2030
       },
       {
-        "nome": "Minha casa",
-        "valorMeta": 500000,
-        "prazo": 2028
-      },
-      {
-        "nome": "Reforma da casa",
-        "valorMeta": 100000,
-        "prazo": 2025
-      },
-      {
-        "nome": "Reserva de emergência",
-        "valorMeta": 50000,
-        "prazo": 2024
-      },
-      {
-        "nome": "Viagens",
-        "valorMeta": 20000,
-        "prazo": 2026
+        "nome": "Teste 1",
+        "valorMeta": 100,
+        "prazo": 2026,
+        "valorAtual": 0
       }
     ]
   },
