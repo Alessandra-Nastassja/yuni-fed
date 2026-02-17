@@ -18,6 +18,7 @@ const createMeta = (payload: { nome: string; valorMeta: number; prazo: number; v
   }).then(r => r.json());
 
 export default function Metas({ className }: { className?: string }) {
+  const nomeMaxLength = 40;
   const [isOpen, setIsOpen] = useState(false);
   const [metas, setMetas] = useState<any[]>([]);
   const [form, setForm] = useState({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
@@ -30,6 +31,10 @@ export default function Metas({ className }: { className?: string }) {
     if (name === 'valorMeta' || name === 'valorAtual') {
       const digits = value.replace(/\D/g, '');
       setForm(prev => ({ ...prev, [name]: digits }));
+      return;
+    }
+    if (name === 'nome') {
+      setForm(prev => ({ ...prev, [name]: value.slice(0, nomeMaxLength) }));
       return;
     }
     setForm(prev => ({ ...prev, [name]: value }));
@@ -193,7 +198,6 @@ export default function Metas({ className }: { className?: string }) {
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-1">
-            <label className="text-sm text-gray-600" htmlFor="nome">Nome</label>
             <input
               id="nome"
               name="nome"
@@ -201,14 +205,17 @@ export default function Metas({ className }: { className?: string }) {
               value={form.nome}
               onChange={handleChange}
               className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.nome ? 'border-red-400' : 'border-gray-200'}`}
-              placeholder="Ex.: Minha casa"
+              placeholder="Nome da meta"
               aria-invalid={!!errors.nome}
+              maxLength={nomeMaxLength}
             />
+            <p className="text-xs text-right text-gray-400">
+              {nomeMaxLength - form.nome.length} caracteres restantes
+            </p>
             {errors.nome && <p className="text-xs text-red-500">{errors.nome}</p>}
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm text-gray-600" htmlFor="valorMeta">Valor da meta</label>
             <input
               id="valorMeta"
               name="valorMeta"
@@ -217,14 +224,13 @@ export default function Metas({ className }: { className?: string }) {
               value={formatCurrencyInput(form.valorMeta)}
               onChange={handleChange}
               className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.valorMeta ? 'border-red-400' : 'border-gray-200'}`}
-              placeholder="Ex.: 300000"
+              placeholder="Valor da meta (R$)"
               aria-invalid={!!errors.valorMeta}
             />
             {errors.valorMeta && <p className="text-xs text-red-500">{errors.valorMeta}</p>}
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm text-gray-600" htmlFor="valorAtual">Valor atual</label>
             <input
               id="valorAtual"
               name="valorAtual"
@@ -233,14 +239,13 @@ export default function Metas({ className }: { className?: string }) {
               value={formatCurrencyInput(form.valorAtual)}
               onChange={handleChange}
               className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.valorAtual ? 'border-red-400' : 'border-gray-200'}`}
-              placeholder="Ex.: 12000"
+              placeholder="Valor atual (R$)"
               aria-invalid={!!errors.valorAtual}
             />
             {errors.valorAtual && <p className="text-xs text-red-500">{errors.valorAtual}</p>}
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm text-gray-600" htmlFor="prazo">Prazo (ano)</label>
             <input
               id="prazo"
               name="prazo"
@@ -248,7 +253,7 @@ export default function Metas({ className }: { className?: string }) {
               value={form.prazo}
               onChange={handleChange}
               className={`w-full rounded-lg border px-3 py-2 text-sm ${errors.prazo ? 'border-red-400' : 'border-gray-200'}`}
-              placeholder="Ex.: 2028"
+              placeholder="Prazo (ano)"
               min={2024}
               aria-invalid={!!errors.prazo}
             />
