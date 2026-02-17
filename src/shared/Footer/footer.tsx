@@ -5,7 +5,7 @@ import { faHouse, faWallet, faPlus, faChartLine, faGear } from '@fortawesome/fre
 export default function Footer() {
   return (
     <footer
-      className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pointer-events-none"
+      className="fixed bottom-0 left-0 right-0 z-40 flex justify-center px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pointer-events-none"
       aria-label="Navegação principal"
     >
       <nav className="pointer-events-auto relative w-full max-w-[520px] rounded-full bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] grid grid-cols-4 gap-1 px-3 py-2 items-center">

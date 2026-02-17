@@ -1,9 +1,24 @@
 import { formatValue } from '../../../../utils/formatValue'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExternalLink, faEye, faLink, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { useState } from 'react'
+import Modal from '../../../../shared/Modal/Modal'
 
 export default function MetasList({ className, metas }: { className?: string, metas?: any[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
-      <p className="text-lg">Metas</p>
+      <header className="flex items-center justify-between">
+        <p className="text-lg">Metas</p>
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="text-sm text-blue-500 hover:underline inline-flex items-center"
+        >
+          <FontAwesomeIcon size='sm' icon={faExternalLink} className="mr-1 text-gray-400" />
+        </button>
+      </header>
       {metas && metas.length > 0 ? (
         metas.map((meta, index) => (
           <div key={index} className="flex flex-col justify-between gap-2">
@@ -32,6 +47,23 @@ export default function MetasList({ className, metas }: { className?: string, me
       ) : (
         <p className="text-sm text-gray-500">Nenhuma meta cadastrada.</p>
       )}
+
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <div className="mb-4 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="text-gray-400 hover:text-gray-600"
+            aria-label="Fechar"
+          >
+            <FontAwesomeIcon icon={faTimes} size="lg" />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          
+        </div>
+      </Modal>
     </section>
   )
 }
