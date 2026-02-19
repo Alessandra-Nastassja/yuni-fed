@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuildingColumns,
@@ -11,7 +11,126 @@ import {
   faPercent,
   faShield,
   faTag,
+  IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
+
+import { formatValue } from '../../../../utils/formatValue'
+
+// Componentes reutilizáveis
+interface FieldProps {
+  id: string;
+  name: string;
+  label: string;
+  icon: IconDefinition;
+  type?: string;
+  inputMode?: string;
+  placeholder?: string;
+  maxLength?: number;
+  readOnly?: boolean;
+  disabled?: boolean;
+}
+
+function InputField({ id, name, label, icon, type = "text", inputMode, placeholder, maxLength, readOnly, disabled }: FieldProps) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+        <FontAwesomeIcon icon={icon} className="text-gray-400" />
+        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
+        <input
+          id={id}
+          name={name}
+          type={type}
+          inputMode={inputMode}
+          className="w-full bg-transparent outline-none text-right"
+          placeholder={placeholder}
+          maxLength={maxLength}
+          readOnly={readOnly}
+          disabled={disabled}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface SelectFieldProps extends Omit<FieldProps, 'type'> {
+  options: Array<{ value: string; label: string }>;
+  onChange?: (value: string) => void;
+  defaultValue?: string;
+}
+
+function SelectField({ id, name, label, icon, options, onChange, defaultValue = "" }: SelectFieldProps) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+        <FontAwesomeIcon icon={icon} className="text-gray-400" />
+        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
+        <select
+          id={id}
+          name={name}
+          className="w-full bg-transparent outline-none"
+          defaultValue={defaultValue}
+          onChange={(event) => onChange?.(event.target.value)}
+        >
+          <option value="" disabled>Selecione</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+interface RiskFieldProps {
+  id: string;
+  name: string;
+  label: string;
+  options: Array<{ value: string; label: string }>;
+  onChange?: (value: string) => void;
+  defaultValue?: string;
+}
+
+function RiskSelectField({ id, name, label, options, onChange, defaultValue = "" }: RiskFieldProps) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+        <FontAwesomeIcon icon={faShield} className="text-gray-400" />
+        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
+        <select
+          id={id}
+          name={name}
+          className="w-full bg-transparent outline-none"
+          defaultValue={defaultValue}
+          onChange={(event) => onChange?.(event.target.value)}
+        >
+          <option value="" disabled>Selecione</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+interface AlertBoxProps {
+  children: ReactNode;
+  type?: 'info' | 'success' | 'warning';
+}
+
+function AlertBox({ children, type = 'info' }: AlertBoxProps) {
+  const styles = {
+    info: 'bg-blue-50 border border-gray-200',
+    success: 'bg-green-50 text-green-700',
+    warning: 'rounded-lg px-3 py-2 text-xs',
+  };
+  
+  return (
+    <div className={`rounded-lg px-3 py-2 text-sm ${styles[type]}`}>
+      {children}
+    </div>
+  );
+}
 
 export default function AtivosCreate() {
   const [tipoAtivo, setTipoAtivo] = useState("");
@@ -98,822 +217,569 @@ export default function AtivosCreate() {
   return (
     <main className='m-4 p-4'>
       <form className="space-y-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-            <FontAwesomeIcon icon={faTag} className="text-gray-400" />
-            <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="nome">Nome</label>
-            <input
-              id="nome"
-              name="nome"
-              type="text"
-              className="w-full bg-transparent outline-none"
-              placeholder="Nome do ativo"
-            />
-          </div>
-        </div>
+        <InputField
+          id="nome"
+          name="nome"
+          label="Nome"
+          icon={faTag}
+          placeholder="Nome do ativo"
+          maxLength={30}
+        />
 
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-            <FontAwesomeIcon icon={faList} className="text-gray-400" />
-            <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipo">Tipo</label>
-            <select
-              id="tipo"
-              name="tipo"
-              className="w-full bg-transparent outline-none"
-              defaultValue=""
-              onChange={(event) => setTipoAtivo(event.target.value)}
-            >
-              <option value="" disabled>Selecione</option>
-              <option value="conta_corrente" >Conta corrente</option>
-              <option value="meu_negocio" >Meu negocio</option>
-              <option value="investimentos">Investimentos</option>
-              <option value="contas_a_receber">Contas a receber</option>
-              <option value="reserva_emergencia">Reserva de emergencia</option>
-              <option value="previdencia_privada">Previdencia privada</option>
-              <option value="outros">Outros</option>
-            </select>
-          </div>
-        </div>
+        <SelectField
+          id="tipo"
+          name="tipo"
+          label="Tipo"
+          icon={faList}
+          options={[
+            { value: "conta_corrente", label: "Conta corrente" },
+            { value: "meu_negocio", label: "Meu negocio" },
+            { value: "investimentos", label: "Investimentos" },
+            { value: "contas_a_receber", label: "Contas a receber" },
+            { value: "reserva_emergencia", label: "Reserva de emergencia" },
+            { value: "previdencia_privada", label: "Previdencia privada" },
+            { value: "outros", label: "Outros" },
+          ]}
+          onChange={(value) => setTipoAtivo(value)}
+          defaultValue=""
+        />
 
         {tipoAtivo === "investimentos" && (
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-              <FontAwesomeIcon icon={faList} className="text-gray-400" />
-              <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipoInvestimento">Categoria de investimento</label>
-              <select
-                id="tipoInvestimento"
-                name="tipoInvestimento"
-                className="w-full bg-transparent outline-none"
-                defaultValue=""
-                onChange={(event) => {
-                  setTipoInvestimento(event.target.value);
-                  setTipoTesouro("");
-                  setTipoTaxa("");
-                  setTipoRendaVariavel("");
-                }}
-              >
-                <option value="" disabled>Selecione</option>
-                <option value="tesouro_direto">Tesouro direto</option>
-                <option value="renda_fixa">Renda fixa</option>
-                <option value="renda_variavel">Renda variavel</option>
-                <option value="outros">Outros</option>
-              </select>
-            </div>
-          </div>
+          <SelectField
+            id="tipoInvestimento"
+            name="tipoInvestimento"
+            label="Categoria de investimento"
+            icon={faList}
+            options={[
+              { value: "tesouro_direto", label: "Tesouro direto" },
+              { value: "renda_fixa", label: "Renda fixa" },
+              { value: "renda_variavel", label: "Renda variavel" },
+              { value: "outros", label: "Outros" },
+            ]}
+            onChange={(value) => {
+              setTipoInvestimento(value);
+              setTipoTesouro("");
+              setTipoTaxa("");
+              setTipoRendaVariavel("");
+            }}
+            defaultValue=""
+          />
         )}
 
         {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-              <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-              <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorAtual">Valor atual</label>
-              <input
-                id="valorAtual"
-                name="valorAtual"
-                type="text"
-                inputMode="decimal"
-                className="w-full bg-transparent outline-none text-right"
-                placeholder="R$ 0,00"
-              />
-            </div>
-          </div>
+          <InputField
+            id="valorAtual"
+            name="valorAtual"
+            label="Valor atual"
+            icon={faDollarSign}
+            type="text"
+            inputMode="decimal"
+            placeholder="R$ 0,00"
+          />
         )}
 
         {tipoAtivo === "investimentos" && tipoInvestimento === "tesouro_direto" && (
           <>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faList} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipoTesouro">Tipo de investimento</label>
-                <select
-                  id="tipoTesouro"
-                  name="tipoTesouro"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => setTipoTesouro(event.target.value)}
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="tesouro_selic">Tesouro Selic</option>
-                  <option value="tesouro_ipca">IPCA+</option>
-                  <option value="tesouro_prefixado">Prefixado</option>
-                </select>
-              </div>
-            </div>
+            <SelectField
+              id="tipoTesouro"
+              name="tipoTesouro"
+              label="Tipo de investimento"
+              icon={faList}
+              options={[
+                { value: "tesouro_selic", label: "Tesouro Selic" },
+                { value: "tesouro_ipca", label: "IPCA+" },
+                { value: "tesouro_prefixado", label: "Prefixado" },
+              ]}
+              onChange={(value) => setTipoTesouro(value)}
+              defaultValue=""
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorInvestido">Valor investido</label>
-                <input
-                  id="valorInvestido"
-                  name="valorInvestido"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorInvestido"
+              name="valorInvestido"
+              label="Valor investido"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorAtual">Valor atual</label>
-                <input
-                  id="valorAtual"
-                  name="valorAtual"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorAtual"
+              name="valorAtual"
+              label="Valor atual"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataCompra">Data de compra</label>
-                <input
-                  id="dataCompra"
-                  name="dataCompra"
-                  type="date"
-                  className="w-full bg-transparent outline-none"
-                />
-              </div>
-            </div>
+            <InputField
+              id="dataCompra"
+              name="dataCompra"
+              label="Data de compra"
+              icon={faCalendarDays}
+              type="date"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataVencimento">Data de vencimento</label>
-                <input
-                  id="dataVencimento"
-                  name="dataVencimento"
-                  type="date"
-                  className="w-full bg-transparent outline-none"
-                />
-              </div>
-            </div>
+            <InputField
+              id="dataVencimento"
+              name="dataVencimento"
+              label="Data de vencimento"
+              icon={faCalendarDays}
+              type="date"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faBuildingColumns} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="corretora">Corretora</label>
-                <input
-                  id="corretora"
-                  name="corretora"
-                  type="text"
-                  className="w-full bg-transparent outline-none"
-                  placeholder="Nome da corretora"
-                />
-              </div>
-            </div>
+            <InputField
+              id="corretora"
+              name="corretora"
+              label="Corretora"
+              icon={faBuildingColumns}
+              placeholder="Nome da corretora"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faChartLine} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="taxaRentabilidade">Taxa de rentabilidade</label>
-                <input
-                  id="taxaRentabilidade"
-                  name="taxaRentabilidade"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder={taxaTesouroPlaceholder}
-                />
-              </div>
-            </div>
+            <InputField
+              id="taxaRentabilidade"
+              name="taxaRentabilidade"
+              label="Taxa de rentabilidade"
+              icon={faChartLine}
+              type="text"
+              inputMode="decimal"
+              placeholder={taxaTesouroPlaceholder}
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-blue-50 px-3 py-2 text-sm">
+            <AlertBox type="info">
+              <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faShield} className="text-blue-400" />
-                <label className="text-sm text-blue-700 whitespace-nowrap">Nível de risco</label>
+                <span className="text-sm text-blue-700">Nível de risco</span>
                 <span className="text-xs text-blue-600 font-medium ml-auto">Baixo</span>
               </div>
-            </div>
+            </AlertBox>
           </>
         )}
 
         {tipoAtivo === "investimentos" && tipoInvestimento === "renda_fixa" && (
           <>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faTag} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipoAtivoRendaFixa">Tipo de ativo</label>
-                <select
-                  id="tipoAtivoRendaFixa"
-                  name="tipoAtivoRendaFixa"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => {
-                    setTipoAtivoRendaFixa(event.target.value);
-                    setTipoTaxa("");
-                    setTipoDebenture("");
-                  }}
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="cdb">CDB</option>
-                  <option value="lci">LCI</option>
-                  <option value="lca">LCA</option>
-                  <option value="lc">LC</option>
-                  <option value="cri">CRI</option>
-                  <option value="cra">CRA</option>
-                  <option value="debenture">Debenture</option>
-                  <option value="outros">Outros</option>
-                </select>
-              </div>
-            </div>
+            <SelectField
+              id="tipoAtivoRendaFixa"
+              name="tipoAtivoRendaFixa"
+              label="Tipo de ativo"
+              icon={faTag}
+              options={[
+                { value: "cdb", label: "CDB" },
+                { value: "lci", label: "LCI" },
+                { value: "lca", label: "LCA" },
+                { value: "lc", label: "LC" },
+                { value: "cri", label: "CRI" },
+                { value: "cra", label: "CRA" },
+                { value: "debenture", label: "Debenture" },
+                { value: "outros", label: "Outros" },
+              ]}
+              onChange={(value) => {
+                setTipoAtivoRendaFixa(value);
+                setTipoTaxa("");
+                setTipoDebenture("");
+              }}
+              defaultValue=""
+            />
 
             {tipoAtivoRendaFixa === "debenture" && (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <FontAwesomeIcon icon={faList} className="text-gray-400" />
-                  <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipoDebenture">Tipo de debenture</label>
-                  <select
-                    id="tipoDebenture"
-                    name="tipoDebenture"
-                    className="w-full bg-transparent outline-none"
-                    defaultValue=""
-                    onChange={(event) => setTipoDebenture(event.target.value)}
-                  >
-                    <option value="" disabled>Selecione</option>
-                    <option value="comum">Comum</option>
-                    <option value="incentivada">Incentivada</option>
-                  </select>
-                </div>
-              </div>
+              <SelectField
+                id="tipoDebenture"
+                name="tipoDebenture"
+                label="Tipo de debenture"
+                icon={faList}
+                options={[
+                  { value: "comum", label: "Comum" },
+                  { value: "incentivada", label: "Incentivada" },
+                ]}
+                onChange={(value) => setTipoDebenture(value)}
+                defaultValue=""
+              />
             )}
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorInvestido">Valor investido</label>
-                <input
-                  id="valorInvestido"
-                  name="valorInvestido"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorInvestido"
+              name="valorInvestido"
+              label="Valor investido"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorAtual">Valor atual</label>
-                <input
-                  id="valorAtual"
-                  name="valorAtual"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorAtual"
+              name="valorAtual"
+              label="Valor atual"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faBuildingColumns} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="corretora">Corretora</label>
-                <input
-                  id="corretora"
-                  name="corretora"
-                  type="text"
-                  className="w-full bg-transparent outline-none"
-                  placeholder="Nome da corretora"
-                />
-              </div>
-            </div>
+            <InputField
+              id="corretora"
+              name="corretora"
+              label="Corretora"
+              icon={faBuildingColumns}
+              placeholder="Nome da corretora"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataCompra">Data de compra</label>
-                <input
-                  id="dataCompra"
-                  name="dataCompra"
-                  type="date"
-                  className="w-full bg-transparent outline-none"
-                />
-              </div>
-            </div>
+            <InputField
+              id="dataCompra"
+              name="dataCompra"
+              label="Data de compra"
+              icon={faCalendarDays}
+              type="date"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataVencimento">Data de vencimento</label>
-                <input
-                  id="dataVencimento"
-                  name="dataVencimento"
-                  type="date"
-                  className="w-full bg-transparent outline-none"
-                />
-              </div>
-            </div>
+            <InputField
+              id="dataVencimento"
+              name="dataVencimento"
+              label="Data de vencimento"
+              icon={faCalendarDays}
+              type="date"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faList} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipoTaxa">Tipo de taxa</label>
-                <select
-                  id="tipoTaxa"
-                  name="tipoTaxa"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => setTipoTaxa(event.target.value)}
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="prefixado">Prefixado</option>
-                  <option value="pos_fixado_cdi">% CDI</option>
-                  <option value="ipca">IPCA + taxa</option>
-                </select>
-              </div>
-            </div>
+            <SelectField
+              id="tipoTaxa"
+              name="tipoTaxa"
+              label="Tipo de taxa"
+              icon={faList}
+              options={[
+                { value: "prefixado", label: "Prefixado" },
+                { value: "pos_fixado_cdi", label: "% CDI" },
+                { value: "ipca", label: "IPCA + taxa" },
+              ]}
+              onChange={(value) => setTipoTaxa(value)}
+              defaultValue=""
+            />
 
             {tipoTaxa === "prefixado" && (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <FontAwesomeIcon icon={faChartLine} className="text-gray-400" />
-                  <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="taxaContratada">Taxa contratada</label>
-                  <input
-                    id="taxaContratada"
-                    name="taxaContratada"
-                    type="text"
-                    inputMode="decimal"
-                    className="w-full bg-transparent outline-none text-right"
-                    placeholder="Taxa anual (%)"
-                  />
-                </div>
-              </div>
+              <InputField
+                id="taxaContratada"
+                name="taxaContratada"
+                label="Taxa contratada"
+                icon={faChartLine}
+                type="text"
+                inputMode="decimal"
+                placeholder="Taxa anual (%)"
+              />
             )}
 
             {tipoTaxa === "pos_fixado_cdi" && (
               <>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="percentualCdi">% do CDI</label>
-                    <input
-                      id="percentualCdi"
-                      name="percentualCdi"
-                      type="text"
-                      inputMode="decimal"
-                      className="w-full bg-transparent outline-none text-right"
-                      placeholder="110%"
-                    />
-                  </div>
-                </div>
+                <InputField
+                  id="percentualCdi"
+                  name="percentualCdi"
+                  label="% do CDI"
+                  icon={faPercent}
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="110%"
+                />
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="cdiAtual">CDI atual</label>
-                    <input
-                      id="cdiAtual"
-                      name="cdiAtual"
-                      type="text"
-                      className="w-full bg-transparent outline-none text-right text-gray-500"
-                      placeholder="10,65% a.a"
-                      readOnly
-                    />
-                  </div>
-                </div>
+                <InputField
+                  id="cdiAtual"
+                  name="cdiAtual"
+                  label="CDI atual"
+                  icon={faPercent}
+                  type="text"
+                  placeholder="10,65% a.a"
+                  readOnly
+                />
               </>
             )}
 
             {tipoTaxa === "ipca" && (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                  <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="ipcaTaxa">IPCA + taxa</label>
-                  <input
-                    id="ipcaTaxa"
-                    name="ipcaTaxa"
-                    type="text"
-                    inputMode="decimal"
-                    className="w-full bg-transparent outline-none text-right"
-                    placeholder="IPCA + 0,00%"
-                  />
-                </div>
-              </div>
+              <InputField
+                id="ipcaTaxa"
+                name="ipcaTaxa"
+                label="IPCA + taxa"
+                icon={faPercent}
+                type="text"
+                inputMode="decimal"
+                placeholder="IPCA + 0,00%"
+              />
             )}
 
             {isIrIsentoRendaFixa ? (
-              <div className="rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700">
-                Isento de IR
-              </div>
-            ) : (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                  <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="irEstimado">IR estimado</label>
-                  <input
-                    id="irEstimado"
-                    name="irEstimado"
-                    type="text"
-                    inputMode="decimal"
-                    className="w-full bg-transparent outline-none text-right"
-                    placeholder="0,00%"
-                    readOnly={!isIrManualRendaFixa}
-                  />
+              <AlertBox type="success">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium">Isento de IR</span>
                 </div>
-              </div>
+              </AlertBox>
+            ) : (
+              <InputField
+                id="irEstimado"
+                name="irEstimado"
+                label="IR estimado"
+                icon={faPercent}
+                type="text"
+                inputMode="decimal"
+                placeholder="0,00%"
+                readOnly={!isIrManualRendaFixa}
+              />
             )}
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRiscoRendaFixa">Nível de risco</label>
-                <select
-                  id="categoriaRiscoRendaFixa"
-                  name="categoriaRiscoRendaFixa"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => setCategoriaRisco(event.target.value)}
-                >
-                  <option value="" disabled>Selecione</option>
-                  {riscoOptions.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <RiskSelectField
+              id="categoriaRiscoRendaFixa"
+              name="categoriaRiscoRendaFixa"
+              label="Nível de risco"
+              options={riscoOptions}
+              onChange={(value) => setCategoriaRisco(value)}
+              defaultValue=""
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorFinalEstimado">Valor final estimado</label>
-                <input
-                  id="valorFinalEstimado"
-                  name="valorFinalEstimado"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                  readOnly
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorFinalEstimado"
+              name="valorFinalEstimado"
+              label="Valor final estimado"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+              readOnly
+            />
           </>
         )}
 
         {tipoAtivo === "investimentos" && tipoInvestimento === "renda_variavel" && (
           <>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faList} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="tipoRendaVariavel">Tipo de ativo</label>
-                <select
-                  id="tipoRendaVariavel"
-                  name="tipoRendaVariavel"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => setTipoRendaVariavel(event.target.value)}
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="acoes">Acoes</option>
-                  <option value="fii">FII</option>
-                  <option value="etf">ETF</option>
-                </select>
-              </div>
-            </div>
+            <SelectField
+              id="tipoRendaVariavel"
+              name="tipoRendaVariavel"
+              label="Tipo de ativo"
+              icon={faList}
+              options={[
+                { value: "acoes", label: "Acoes" },
+                { value: "fii", label: "FII" },
+                { value: "etf", label: "ETF" },
+              ]}
+              onChange={(value) => setTipoRendaVariavel(value)}
+              defaultValue=""
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faHashtag} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="quantidade">Quantidade</label>
-                <input
-                  id="quantidade"
-                  name="quantidade"
-                  type="number"
-                  inputMode="numeric"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="0"
-                />
-              </div>
-            </div>
+            <InputField
+              id="quantidade"
+              name="quantidade"
+              label="Quantidade"
+              icon={faHashtag}
+              type="number"
+              inputMode="numeric"
+              placeholder="0"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="precoMedio">Preco medio</label>
-                <input
-                  id="precoMedio"
-                  name="precoMedio"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="precoMedio"
+              name="precoMedio"
+              label="Preco medio"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorAtual">Valor atual</label>
-                <input
-                  id="valorAtual"
-                  name="valorAtual"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorAtual"
+              name="valorAtual"
+              label="Valor atual"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faBuildingColumns} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="corretora">Corretora</label>
-                <input
-                  id="corretora"
-                  name="corretora"
-                  type="text"
-                  className="w-full bg-transparent outline-none"
-                  placeholder="Nome da corretora"
-                />
-              </div>
-            </div>
+            <InputField
+              id="corretora"
+              name="corretora"
+              label="Corretora"
+              icon={faBuildingColumns}
+              placeholder="Nome da corretora"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRiscoRendaVariavel">Nível de risco</label>
-                <select
-                  id="categoriaRiscoRendaVariavel"
-                  name="categoriaRiscoRendaVariavel"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => setCategoriaRisco(event.target.value)}
-                >
-                  <option value="" disabled>Selecione</option>
-                  {riscoOptions.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <RiskSelectField
+              id="categoriaRiscoRendaVariavel"
+              name="categoriaRiscoRendaVariavel"
+              label="Nível de risco"
+              options={riscoOptions}
+              onChange={(value) => setCategoriaRisco(value)}
+              defaultValue=""
+            />
 
             {tipoRendaVariavel === "acoes" && (
               <>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataCompra">Data de compra</label>
-                    <input
-                      id="dataCompra"
-                      name="dataCompra"
-                      type="date"
-                      className="w-full bg-transparent outline-none"
-                    />
-                  </div>
-                </div>
+                <InputField
+                  id="dataCompra"
+                  name="dataCompra"
+                  label="Data de compra"
+                  icon={faCalendarDays}
+                  type="date"
+                />
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dividendosRecebidos">Dividendos recebidos</label>
-                    <input
-                      id="dividendosRecebidos"
-                      name="dividendosRecebidos"
-                      type="text"
-                      inputMode="decimal"
-                      className="w-full bg-transparent outline-none text-right"
-                      placeholder="R$ 0,00"
-                    />
-                  </div>
-                </div>
+                <InputField
+                  id="dividendosRecebidos"
+                  name="dividendosRecebidos"
+                  label="Dividendos recebidos"
+                  icon={faDollarSign}
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="R$ 0,00"
+                />
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="irEstimado">IR estimado</label>
-                    <select
-                      id="irEstimado"
-                      name="irEstimado"
-                      className="w-full bg-transparent outline-none"
-                      defaultValue=""
-                    >
-                      <option value="" disabled>Selecione</option>
-                      <option value="15">15% (normal)</option>
-                      <option value="20">20% (day trade)</option>
-                    </select>
-                  </div>
-                </div>
+                <SelectField
+                  id="irEstimado"
+                  name="irEstimado"
+                  label="IR estimado"
+                  icon={faPercent}
+                  options={[
+                    { value: "15", label: "15% (normal)" },
+                    { value: "20", label: "20% (day trade)" },
+                  ]}
+                  defaultValue=""
+                />
               </>
             )}
 
             {tipoRendaVariavel === "fii" && (
               <>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dividendYield">Dividend yield</label>
-                    <input
-                      id="dividendYield"
-                      name="dividendYield"
-                      type="text"
-                      inputMode="decimal"
-                      className="w-full bg-transparent outline-none text-right"
-                      placeholder="0,00%"
-                    />
-                  </div>
-                </div>
+                <InputField
+                  id="dividendYield"
+                  name="dividendYield"
+                  label="Dividend yield"
+                  icon={faPercent}
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="0,00%"
+                />
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                    <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="irEstimado">IR estimado</label>
-                    <input
-                      id="irEstimado"
-                      name="irEstimado"
-                      type="text"
-                      inputMode="decimal"
-                      className="w-full bg-transparent outline-none text-right"
-                      placeholder="20%"
-                    />
-                  </div>
-                </div>
+                <InputField
+                  id="irEstimado"
+                  name="irEstimado"
+                  label="IR estimado"
+                  icon={faPercent}
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="20%"
+                />
               </>
             )}
 
             {tipoRendaVariavel === "etf" && (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                  <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="irEstimado">IR estimado</label>
-                  <select
-                    id="irEstimado"
-                    name="irEstimado"
-                    className="w-full bg-transparent outline-none"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>Selecione</option>
-                    <option value="15">15% (normal)</option>
-                    <option value="20">20% (day trade)</option>
-                  </select>
-                </div>
-              </div>
+              <SelectField
+                id="irEstimado"
+                name="irEstimado"
+                label="IR estimado"
+                icon={faPercent}
+                options={[
+                  { value: "15", label: "15% (normal)" },
+                  { value: "20", label: "20% (day trade)" },
+                ]}
+                defaultValue=""
+              />
             )}
           </>
         )}
 
         {tipoAtivo === "investimentos" && tipoInvestimento !== "tesouro_direto" && tipoInvestimento !== "renda_fixa" && tipoInvestimento !== "renda_variavel" && tipoInvestimento !== "" && (
           <>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRisco">Nível de risco</label>
-                <select
-                  id="categoriaRisco"
-                  name="categoriaRisco"
-                  className="w-full bg-transparent outline-none"
-                  defaultValue=""
-                  onChange={(event) => setCategoriaRisco(event.target.value)}
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="baixo">Baixo</option>
-                  <option value="medio">Médio</option>
-                  <option value="alto">Alto</option>
-                </select>
-              </div>
-            </div>
+            <RiskSelectField
+              id="categoriaRisco"
+              name="categoriaRisco"
+              label="Nível de risco"
+              options={[
+                { value: "baixo", label: "Baixo" },
+                { value: "medio", label: "Médio" },
+                { value: "alto", label: "Alto" },
+              ]}
+              onChange={(value) => setCategoriaRisco(value)}
+              defaultValue=""
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorAtual">Valor atual</label>
-                <input
-                  id="valorAtual"
-                  name="valorAtual"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorAtual"
+              name="valorAtual"
+              label="Valor atual"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faBuildingColumns} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="corretora">Corretora</label>
-                <input
-                  id="corretora"
-                  name="corretora"
-                  type="text"
-                  className="w-full bg-transparent outline-none"
-                  placeholder="Nome da corretora"
-                />
-              </div>
-            </div>
+            <InputField
+              id="corretora"
+              name="corretora"
+              label="Corretora"
+              icon={faBuildingColumns}
+              placeholder="Nome da corretora"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataCompra">Data de compra</label>
-                <input
-                  id="dataCompra"
-                  name="dataCompra"
-                  type="date"
-                  className="w-full bg-transparent outline-none"
-                />
-              </div>
-            </div>
+            <InputField
+              id="dataCompra"
+              name="dataCompra"
+              label="Data de compra"
+              icon={faCalendarDays}
+              type="date"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faCalendarDays} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="dataVencimento">Data de vencimento</label>
-                <input
-                  id="dataVencimento"
-                  name="dataVencimento"
-                  type="date"
-                  className="w-full bg-transparent outline-none"
-                />
-              </div>
-            </div>
+            <InputField
+              id="dataVencimento"
+              name="dataVencimento"
+              label="Data de vencimento"
+              icon={faCalendarDays}
+              type="date"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faHashtag} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="quantidade">Quantidade</label>
-                <input
-                  id="quantidade"
-                  name="quantidade"
-                  type="number"
-                  inputMode="numeric"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="0"
-                />
-              </div>
-            </div>
+            <InputField
+              id="quantidade"
+              name="quantidade"
+              label="Quantidade"
+              icon={faHashtag}
+              type="number"
+              inputMode="numeric"
+              placeholder="0"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="irEstimado">IR estimado</label>
-                <input
-                  id="irEstimado"
-                  name="irEstimado"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="0,00%"
-                />
-              </div>
-            </div>
+            <InputField
+              id="irEstimado"
+              name="irEstimado"
+              label="IR estimado"
+              icon={faPercent}
+              type="text"
+              inputMode="decimal"
+              placeholder="0,00%"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorFinalEstimado">Valor final estimado</label>
-                <input
-                  id="valorFinalEstimado"
-                  name="valorFinalEstimado"
-                  type="text"
-                  inputMode="decimal"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="R$ 0,00"
-                />
-              </div>
-            </div>
+            <InputField
+              id="valorFinalEstimado"
+              name="valorFinalEstimado"
+              label="Valor final estimado"
+              icon={faDollarSign}
+              type="text"
+              inputMode="decimal"
+              placeholder="R$ 0,00"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faClock} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="anosRentabilidade">Anos de rentabilidade</label>
-                <input
-                  id="anosRentabilidade"
-                  name="anosRentabilidade"
-                  type="number"
-                  inputMode="numeric"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="0"
-                />
-              </div>
-            </div>
+            <InputField
+              id="anosRentabilidade"
+              name="anosRentabilidade"
+              label="Anos de rentabilidade"
+              icon={faClock}
+              type="number"
+              inputMode="numeric"
+              placeholder="0"
+            />
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                <FontAwesomeIcon icon={faClock} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="anosParaVencer">Anos para vencer</label>
-                <input
-                  id="anosParaVencer"
-                  name="anosParaVencer"
-                  type="number"
-                  inputMode="numeric"
-                  className="w-full bg-transparent outline-none text-right"
-                  placeholder="0"
-                />
-              </div>
-            </div>
+            <InputField
+              id="anosParaVencer"
+              name="anosParaVencer"
+              label="Anos para vencer"
+              icon={faClock}
+              type="number"
+              inputMode="numeric"
+              placeholder="0"
+            />
           </>
         )}
       </form>
