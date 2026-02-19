@@ -106,7 +106,7 @@ export default function Patrimonio() {
     <main className='m-4 p-4 space-y-4'>
       <Loading isLoading={isLoading} message="Carregando patrimônio..." />
       
-      <AtivosList />
+      <AtivosList title="Ativos" iconColor="bg-green-500" />
 
       <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
         <p className="text-lg">Evolução do patrimônio</p>

@@ -50,7 +50,7 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
 
         {ativosVazios ? (
           <div className="flex items-center justify-center text-gray-500">
-            <p>Nenhum ativo foi cadastrado</p>
+            <p className="text-sm flex gap-1 text-gray-500">Nenhum ativo foi cadastrado</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
