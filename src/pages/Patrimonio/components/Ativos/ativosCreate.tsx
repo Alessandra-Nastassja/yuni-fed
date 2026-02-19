@@ -1,23 +1,17 @@
-import { useState, ReactNode } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBuildingColumns,
-  faCalendarDays,
-  faChartLine,
-  faClock,
   faDollarSign,
-  faHashtag,
   faList,
-  faPercent,
   faShield,
   faTag,
-  IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { formatValue } from '../../../../utils/formatValue'
 
 import SelectField from "../../../../shared/SelectField/selectField";
 import InputField from "../../../../shared/InputField/inputField";
+
 import { TesouroDiretoForm } from "./components/TesouroDiretoForm";
 import { RendaFixaForm } from "./components/RendaFixaForm";
 import { RendaVariavelForm } from "./components/RendaVariavelForm";

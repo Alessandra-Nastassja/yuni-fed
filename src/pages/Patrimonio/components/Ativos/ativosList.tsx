@@ -3,7 +3,7 @@ export default function AtivosList() {
      <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
       <p className="text-lg">Ativos</p>
       <p className="text-sm flex gap-1 text-gray-500">
-        Página de lista de ativos em desenvolvimento.
+        Componente de lista de ativos em desenvolvimento.
       </p>
     </section>
   )
