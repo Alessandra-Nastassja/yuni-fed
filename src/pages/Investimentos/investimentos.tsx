@@ -1,14 +1,9 @@
-import Patrimonio from "./components/Patrimonio/patrimonio";
-import Carteira from "./components/Carteira/carteira";
-import Corretoras from "./components/Corretoras/corretoras";
-
-export default function Investimentos({ corretoras, perfil }: { corretoras?: any[], perfil?: any }) {
+export default function Investimentos() {
   
   return (
-    <main className='p-4 space-y-4'>
-      <Patrimonio />
-      {/* <Carteira perfil={perfil} />
-      <Corretoras corretoras={corretoras} /> */}
+    <main className='m-4 p-4'>
+      <h1 className="text-2xl font-bold mb-4">Investimentos</h1>
+      <p className="text-gray-500">Página de investimentos em desenvolvimento.</p>
     </main>
   )
 }

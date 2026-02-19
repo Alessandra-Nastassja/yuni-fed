@@ -18,8 +18,6 @@ function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const { alert, hideAlert } = useAlert();
-  // const [corretoras, setCorretoras] = useState([]);
-  // const [perfil, setPerfil] = useState([]);
 
   return (
     <>
@@ -39,8 +37,6 @@ function AppContent() {
         >
           <FontAwesomeIcon icon={faArrowLeft} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
         </button>
-
-        
       </header>
       )}
       <Routes>
@@ -48,11 +44,7 @@ function AppContent() {
         <Route path="/home" element={<Home />} />
         <Route
           path="/investimentos"
-          element={
-            <Investimentos
-              // corretoras={corretoras}
-              // perfil={perfil}
-            />
+          element={<Investimentos/>
           }
         />
         <Route path="/novo" element={<Novo />} />

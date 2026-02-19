@@ -14,7 +14,7 @@ export default function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center pointer-events-auto">
       <button
         type="button"
         aria-label="Fechar modal"

@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faWallet, faPlus, faChartLine, faGear } from '@fortawesome/free-solid-svg-icons';
+import NewOptionModal from '../Footer/components/NewOptionModal';
 
 export default function Footer() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <footer
       className="fixed bottom-0 left-0 right-0 z-40 flex justify-center px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pointer-events-none"
@@ -50,13 +54,18 @@ export default function Footer() {
         </NavLink>
 
         <NavLink
-          to="/novo"
+          to="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setIsModalOpen(true);
+          }}
           className="absolute -top-15 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-400 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
           aria-label="Adicionar"
         >
           <FontAwesomeIcon className="h-5 w-5" icon={faPlus} />
         </NavLink>
       </nav>
+      <NewOptionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </footer>
   );
 }
