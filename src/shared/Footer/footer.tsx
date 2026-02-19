@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faWallet, faPlus, faChartLine, faGear } from '@fortawesome/free-solid-svg-icons';
 import NewOptionModal from '../Footer/components/NewOptionModal';
 
 export default function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <footer
@@ -53,17 +54,19 @@ export default function Footer() {
           <p className="text-xs">Configurações</p>
         </NavLink>
 
-        <NavLink
-          to="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setIsModalOpen(true);
-          }}
-          className="absolute -top-15 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-400 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
-          aria-label="Adicionar"
-        >
-          <FontAwesomeIcon className="h-5 w-5" icon={faPlus} />
-        </NavLink>
+        {['/financas', '/patrimonio'].includes(location.pathname) && (
+          <NavLink
+            to="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsModalOpen(true);
+            }}
+            className="absolute -top-15 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-400 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+            aria-label="Adicionar"
+          >
+            <FontAwesomeIcon className="h-5 w-5" icon={faPlus} />
+          </NavLink>
+        )}
       </nav>
       <NewOptionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </footer>

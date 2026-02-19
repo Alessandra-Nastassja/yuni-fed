@@ -7,12 +7,12 @@ import Onboarding from './pages/Onboarding/onboarding';
 import Patrimonio from './pages/Patrimonio/patrimonio'
 import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
+import AtivosCreate from './pages/Patrimonio/components/Ativos/ativosCreate';
 
 import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
+import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
-import AtivosCreate from './pages/Patrimonio/components/Ativos/ativosCreate';
-import Header from './shared/Header/header';
 
 function AppContent() {
   const location = useLocation();
@@ -22,12 +22,15 @@ function AppContent() {
     <>
     {alert.isVisible && (
       <div className="fixed top-4 right-4 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-        <Alert variant={alert.variant} onClose={hideAlert}>{alert.message}</Alert>
+        <Alert 
+          variant={alert.variant} 
+          onClose={hideAlert}>{alert.message}
+        </Alert>
       </div>
     )}
 
-      <Header />
-    
+      {location.pathname !== '/' && <Menu />}
+      
       <Routes>
         <Route path="/" element={<Onboarding />} />
         <Route path="/home" element={<Home />} />

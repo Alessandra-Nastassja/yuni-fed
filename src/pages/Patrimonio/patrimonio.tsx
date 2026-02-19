@@ -104,8 +104,7 @@ export default function Patrimonio() {
   return (
     <main className='m-4 p-4 space-y-4'>
       <Loading isLoading={isLoading} message="Carregando patrimônio..." />
-      <h1 className="text-2xl font-bold mb-4">Patrimônio</h1>
-
+      
       {/* <AtivosList /> */}
 
       <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
