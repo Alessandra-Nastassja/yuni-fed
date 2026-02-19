@@ -15,6 +15,7 @@ const optionsByRoute: Record<string, Array<{
   color: string;
   iconColor: string;
   type: string;
+  page: string;
 }>> = {
   '/financas': [
     {
@@ -24,6 +25,7 @@ const optionsByRoute: Record<string, Array<{
       color: 'bg-green-100',
       iconColor: 'text-green-500',
       type: 'receita',
+      page: '',
     },
     {
       id: 'despesa',
@@ -32,6 +34,7 @@ const optionsByRoute: Record<string, Array<{
       color: 'bg-red-100',
       iconColor: 'text-red-500',
       type: 'despesa',
+      page: '',
     },
     // {
     //   id: 'despesa_cartao',
@@ -58,6 +61,7 @@ const optionsByRoute: Record<string, Array<{
       color: 'bg-purple-100',
       iconColor: 'text-purple-500',
       type: 'ativos',
+      page: '/novo-ativo',
     },
     {
       id: 'naoAtivos',
@@ -65,7 +69,8 @@ const optionsByRoute: Record<string, Array<{
       icon: faCoins,
       color: 'bg-blue-100',
       iconColor: 'text-blue-500',
-      type: 'naoAtivos ',
+      type: 'naoAtivos',
+      page: '/novo-nao-ativo',
     },
   ],
 };
@@ -100,7 +105,7 @@ export default function NewOptionModal({ isOpen, onClose }: NewOptionModalProps)
             key={option.id}
             type="button"
             onClick={() => {
-              navigate('/novo', { state: { type: option.type } });
+              navigate(option.page, { state: { type: option.type } });
               onClose();
             }}
             className="flex items-center gap-4 p-4 rounded-lg transition-colors hover:bg-gray-50 active:bg-gray-100"
