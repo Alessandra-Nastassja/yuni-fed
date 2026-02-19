@@ -34,7 +34,7 @@ export default function Footer() {
         </NavLink>
 
         <NavLink
-          to="/investimentos"
+          to="/patrimonio"
           className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
           <div className="h-6 w-6" aria-hidden="true">

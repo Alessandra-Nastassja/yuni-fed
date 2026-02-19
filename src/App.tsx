@@ -6,7 +6,7 @@ import './App.css'
 
 import Home from './pages/Home/home'
 import Onboarding from './pages/Onboarding/onboarding';
-import Investimentos from './pages/Investimentos/investimentos'
+import Patrimonio from './pages/Patrimonio/patrimonio'
 import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
 import Novo from './pages/Novo/novo';
@@ -43,9 +43,8 @@ function AppContent() {
         <Route path="/" element={<Onboarding />} />
         <Route path="/home" element={<Home />} />
         <Route
-          path="/investimentos"
-          element={<Investimentos/>
-          }
+          path="/patrimonio"
+          element={<Patrimonio />}
         />
         <Route path="/novo" element={<Novo />} />
         <Route path='/financas' element={<Financas />} />

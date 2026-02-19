@@ -50,7 +50,7 @@ const optionsByRoute: Record<string, Array<{
     //   type: 'transferencia',
     // },
   ],
-  '/investimentos': [
+  '/patrimonio': [
     {
       id: 'ativos',
       label: 'Ativos',
