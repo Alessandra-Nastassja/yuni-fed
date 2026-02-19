@@ -5,7 +5,7 @@ import { faExternalLink, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { parseCurrency } from '../../../../utils/currency'
 import Loading from '../../../../shared/Loading/Loading'
 import Modal from '../../../../shared/Modal/Modal'
-import Alert from '../../../../shared/Alert/Alert'
+import { useAlert } from '../../../../shared/Alert/AlertContext'
 
 import MetasCreate from './MetasCreate'
 import MetasList from './MetasList'
@@ -22,12 +22,12 @@ const createMeta = (payload: { nome: string; valorMeta: number; prazo: number; v
 
 export default function Metas({ className }: { className?: string }) {
   const nomeMaxLength = 40;
+  const { showAlert } = useAlert();
   const [isOpen, setIsOpen] = useState(false);
   const [metas, setMetas] = useState<any[]>([]);
   const [form, setForm] = useState({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ general?: string; nome?: string; valorMeta?: string; valorAtual?: string; prazo?: string }>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,9 +55,8 @@ export default function Metas({ className }: { className?: string }) {
       const meta = await getMetas();
       const { metas } = meta ?? {};
       setMetas(metas ?? []);
-      setFetchError(null);
     } catch (error) {
-      setFetchError('Erro ao buscar metas.');
+      showAlert('Erro ao buscar metas.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -129,9 +128,10 @@ export default function Metas({ className }: { className?: string }) {
       } as any);
       setForm({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
       setIsOpen(false);
+      showAlert('Meta criada com sucesso!', 'success');
       fetchData();
     } catch (error) {
-      setErrors({ general: 'Erro ao criar meta.' });
+      showAlert('Erro ao criar meta.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -152,10 +152,6 @@ export default function Metas({ className }: { className?: string }) {
             <FontAwesomeIcon size='sm' icon={faExternalLink} className="mr-1 text-gray-400" />
           </button>
         </header>
-        
-        {fetchError && (
-          <Alert variant="error">{fetchError}</Alert>
-        )}
 
         <MetasList metas={metas} onAddClick={() => setIsOpen(true)} />
       </section>

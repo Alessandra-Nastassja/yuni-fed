@@ -44,38 +44,46 @@ export default function AtivosNaoAtivos({
 
   const totalAtivos = formatValue(totalAtivosNumber)
 
+  const ativosVazios = !ativos || ativos.length === 0;
+
   return (
     <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg ${className}`}>
       <p className="text-lg">{title}</p>
 
-      {(ativos ?? []).map((ativo, index) => (
-        <article key={index} className="flex flex-col gap-5">
-          {ativo.ano && <p className="font-medium">{ativo.ano}</p>}
+      {ativosVazios ? (
+        <div className="flex items-center justify-center text-gray-500">
+          <p>Nenhum ativo foi cadastrado</p>
+        </div>
+      ) : (
+        (ativos ?? []).map((ativo, index) => (
+          <article key={index} className="flex flex-col gap-5">
+            {ativo.ano && <p className="font-medium">{ativo.ano}</p>}
 
-          {Object.entries(ativo)
-            .filter(([k]) => k !== 'ano')
-            .map(([k, v]) => {
-              const isObject = typeof v === 'object' && v !== null
-              const displayValue = isObject ? (v as any).valor : v
-              const description = isObject ? (v as any).descricao : undefined
+            {Object.entries(ativo)
+              .filter(([k]) => k !== 'ano')
+              .map(([k, v]) => {
+                const isObject = typeof v === 'object' && v !== null
+                const displayValue = isObject ? (v as any).valor : v
+                const description = isObject ? (v as any).descricao : undefined
 
-              return (
-                <div key={k} className="flex justify-between gap-2">
-                  <div className="flex gap-3 flex-1">
-                    <div className={`flex items-center justify-center w-7 h-7 ${iconColor} rounded-full`}>
-                      <FontAwesomeIcon size='sm' icon={getIconForField(k)} className="text-white" />
+                return (
+                  <div key={k} className="flex justify-between gap-2">
+                    <div className="flex gap-3 flex-1">
+                      <div className={`flex items-center justify-center w-7 h-7 ${iconColor} rounded-full`}>
+                        <FontAwesomeIcon size='sm' icon={getIconForField(k)} className="text-white" />
+                      </div>
+                      <div className='flex flex-col'>
+                        <p className="text-base">{labels[k] ?? humanize(k)}</p>
+                        {description && <small className="text-gray-500">{description}</small>}
+                      </div>
                     </div>
-                    <div className='flex flex-col'>
-                      <p className="text-base">{labels[k] ?? humanize(k)}</p>
-                      {description && <small className="text-gray-500">{description}</small>}
-                    </div>
+                    <p className="text-base">{formatValue(displayValue)}</p>
                   </div>
-                  <p className="text-base">{formatValue(displayValue)}</p>
-                </div>
-              )
-            })}
-        </article>
-      ))}
+                )
+              })}
+          </article>
+        ))
+      )}
 
       <footer className="flex flex-row justify-between mt-2 bg-gray-100 p-4 rounded-lg items-center">
         <div className="flex items-center gap-2">

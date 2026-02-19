@@ -1,4 +1,6 @@
 import { ReactNode } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error';
 
@@ -13,17 +15,28 @@ export default function Alert({
   children,
   variant = 'info',
   className,
+  onClose,
 }: {
   children: ReactNode;
   variant?: AlertVariant;
   className?: string;
+  onClose?: () => void;
 }) {
   return (
     <div
       role="alert"
-      className={`rounded-lg border px-3 py-2 text-sm ${variantStyles[variant]} ${className ?? ''}`}
+      className={`rounded-lg border px-3 py-2 text-sm flex items-center justify-between ${variantStyles[variant]} ${className ?? ''}`}
     >
-      {children}
+      <span>{children}</span>
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="ml-2 p-1 hover:opacity-70"
+          aria-label="Fechar alerta"
+        >
+          <FontAwesomeIcon icon={faTimes} size="sm" />
+        </button>
+      )}
     </div>
   );
 }

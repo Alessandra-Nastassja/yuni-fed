@@ -11,15 +11,24 @@ import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
 import Novo from './pages/Novo/novo';
 import Footer from './shared/Footer/footer';
+import Alert from './shared/Alert/Alert';
+import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
 
-function App() {
+function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { alert, hideAlert } = useAlert();
   // const [corretoras, setCorretoras] = useState([]);
   // const [perfil, setPerfil] = useState([]);
 
   return (
     <>
+    {alert.isVisible && (
+      <div className="fixed top-4 right-4 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+        <Alert variant={alert.variant} onClose={hideAlert}>{alert.message}</Alert>
+      </div>
+    )}
+    
     {['/', '/home'].includes(location.pathname) === false && (
       <header className="mb-8">
         <button
@@ -30,6 +39,8 @@ function App() {
         >
           <FontAwesomeIcon icon={faArrowLeft} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
         </button>
+
+        
       </header>
       )}
       <Routes>
@@ -51,6 +62,14 @@ function App() {
       
       {location.pathname !== '/' && <Footer />}
     </>
+  )
+}
+
+function App() {
+  return (
+    <AlertProvider>
+      <AppContent />
+    </AlertProvider>
   )
 }
 
