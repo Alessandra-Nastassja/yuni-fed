@@ -21,6 +21,64 @@ export default function AtivosCreate() {
   const [tipoAtivoRendaFixa, setTipoAtivoRendaFixa] = useState("");
   const [tipoDebenture, setTipoDebenture] = useState("");
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
+  const [categoriaRisco, setCategoriaRisco] = useState("");
+
+  const getRiscoOptions = () => {
+    if (tipoInvestimento === "tesouro_direto") {
+      return [{ value: "baixo", label: "Baixo" }];
+    } else if (tipoInvestimento === "renda_fixa") {
+      if (["lci", "lca", "cri", "cra"].includes(tipoAtivoRendaFixa)) {
+        return [{ value: "baixo", label: "Baixo" }];
+      } else if (tipoAtivoRendaFixa === "cdb" || tipoAtivoRendaFixa === "lc") {
+        return [
+          { value: "baixo", label: "Baixo" },
+          { value: "medio", label: "Médio" }
+        ];
+      } else if (tipoAtivoRendaFixa === "debenture") {
+        return [
+          { value: "medio", label: "Médio" },
+          { value: "alto", label: "Alto" }
+        ];
+      } else {
+        return [
+          { value: "baixo", label: "Baixo" },
+          { value: "medio", label: "Médio" },
+          { value: "alto", label: "Alto" }
+        ];
+      }
+    } else if (tipoInvestimento === "renda_variavel") {
+      if (tipoRendaVariavel === "acoes") {
+        return [
+          { value: "medio", label: "Médio" },
+          { value: "alto", label: "Alto" }
+        ];
+      } else if (tipoRendaVariavel === "fii") {
+        return [
+          { value: "baixo", label: "Baixo" },
+          { value: "medio", label: "Médio" }
+        ];
+      } else if (tipoRendaVariavel === "etf") {
+        return [
+          { value: "baixo", label: "Baixo" },
+          { value: "medio", label: "Médio" },
+          { value: "alto", label: "Alto" }
+        ];
+      }
+      return [
+        { value: "baixo", label: "Baixo" },
+        { value: "medio", label: "Médio" },
+        { value: "alto", label: "Alto" }
+      ];
+    }
+    return [
+      { value: "baixo", label: "Baixo" },
+      { value: "medio", label: "Médio" },
+      { value: "alto", label: "Alto" }
+    ];
+  };
+
+  const shouldShowRisco = tipoAtivo === "investimentos" && tipoInvestimento !== "";
+  const riscoOptions = shouldShowRisco ? getRiscoOptions() : [];
 
   const isIrIsentoRendaFixa =
     ["lci", "lca", "cri", "cra"].includes(tipoAtivoRendaFixa) ||
@@ -224,6 +282,14 @@ export default function AtivosCreate() {
                   className="w-full bg-transparent outline-none text-right"
                   placeholder={taxaTesouroPlaceholder}
                 />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-blue-50 px-3 py-2 text-sm">
+                <FontAwesomeIcon icon={faShield} className="text-blue-400" />
+                <label className="text-sm text-blue-700 whitespace-nowrap">Nível de risco</label>
+                <span className="text-xs text-blue-600 font-medium ml-auto">Baixo</span>
               </div>
             </div>
           </>
@@ -460,6 +526,25 @@ export default function AtivosCreate() {
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                <FontAwesomeIcon icon={faShield} className="text-gray-400" />
+                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRiscoRendaFixa">Nível de risco</label>
+                <select
+                  id="categoriaRiscoRendaFixa"
+                  name="categoriaRiscoRendaFixa"
+                  className="w-full bg-transparent outline-none"
+                  defaultValue=""
+                  onChange={(event) => setCategoriaRisco(event.target.value)}
+                >
+                  <option value="" disabled>Selecione</option>
+                  {riscoOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
                 <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
                 <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="valorFinalEstimado">Valor final estimado</label>
                 <input
@@ -553,6 +638,25 @@ export default function AtivosCreate() {
                   className="w-full bg-transparent outline-none"
                   placeholder="Nome da corretora"
                 />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                <FontAwesomeIcon icon={faShield} className="text-gray-400" />
+                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRiscoRendaVariavel">Nível de risco</label>
+                <select
+                  id="categoriaRiscoRendaVariavel"
+                  name="categoriaRiscoRendaVariavel"
+                  className="w-full bg-transparent outline-none"
+                  defaultValue=""
+                  onChange={(event) => setCategoriaRisco(event.target.value)}
+                >
+                  <option value="" disabled>Selecione</option>
+                  {riscoOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -665,16 +769,17 @@ export default function AtivosCreate() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
                 <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRisco">Risco</label>
+                <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="categoriaRisco">Nível de risco</label>
                 <select
                   id="categoriaRisco"
                   name="categoriaRisco"
                   className="w-full bg-transparent outline-none"
                   defaultValue=""
+                  onChange={(event) => setCategoriaRisco(event.target.value)}
                 >
                   <option value="" disabled>Selecione</option>
                   <option value="baixo">Baixo</option>
-                  <option value="medio">Medio</option>
+                  <option value="medio">Médio</option>
                   <option value="alto">Alto</option>
                 </select>
               </div>
