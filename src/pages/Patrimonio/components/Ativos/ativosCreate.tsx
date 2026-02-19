@@ -7,8 +7,6 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { formatValue } from '../../../../utils/formatValue'
-
 import SelectField from "../../../../shared/SelectField/selectField";
 import InputField from "../../../../shared/InputField/inputField";
 

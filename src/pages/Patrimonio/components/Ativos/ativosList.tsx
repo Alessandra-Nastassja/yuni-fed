@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import formatValue from "../../../../utils/formatValue";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
+
+import formatValue from "../../../../utils/formatValue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getAtivos = () => fetch(`${API_URL}/ativos`).then(r => r.json());
