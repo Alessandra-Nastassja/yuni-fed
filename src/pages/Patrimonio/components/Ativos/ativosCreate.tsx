@@ -53,6 +53,7 @@ export default function AtivosCreate() {
   const [tipoInvestimento, setTipoInvestimento] = useState("");
   const [tipoAtivoRendaFixa, setTipoAtivoRendaFixa] = useState("");
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
+  const [tipoFonteRenda, setTipoFonteRenda] = useState("");
 
   const getRiscoOptions = () => {
     if (tipoInvestimento === "tesouro_direto") {
@@ -127,6 +128,22 @@ export default function AtivosCreate() {
           onChange={(value) => setTipoAtivo(value)}
           defaultValue=""
         />
+
+        {['conta_corrente', 'meu_negocio'].includes(tipoAtivo) && (
+          <SelectField
+            id="tipoFonteRenda"
+            name="tipoFonteRenda"
+            label="Tipo de Fonte de Renda"
+            icon={faList}
+            options={[
+              { value: "fonte_renda-1", label: "Fonte de renda 1" },
+              { value: "fonte_renda-2", label: "Fonte de renda 2" },
+              { value: "outros", label: "Outros" },
+            ]}
+            onChange={(value) => setTipoFonteRenda(value)}
+            defaultValue=""
+          />
+        )}
 
         {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
           <InputField

@@ -5,7 +5,7 @@ export default function Home() {
   return (
      <main className='m-4 p-4 space-y-4'>
       <Metas />
-      <AtivosList />
+      <AtivosList title="Ativos" iconColor="bg-green-500" />
     </main>
   )
 }

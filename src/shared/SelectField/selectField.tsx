@@ -25,7 +25,7 @@ export default function SelectField({ id, name, label, icon, options, onChange, 
     <div className="space-y-1">
       <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
         <FontAwesomeIcon icon={icon} className="text-gray-400" />
-        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
+        <label className="text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
         <select
           id={id}
           name={name}
@@ -35,7 +35,7 @@ export default function SelectField({ id, name, label, icon, options, onChange, 
         >
           <option value="" disabled>Selecione</option>
           {options.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
+            <option className="text-medium" key={option.value} value={option.value}>{option.label}</option>
           ))}
         </select>
       </div>
