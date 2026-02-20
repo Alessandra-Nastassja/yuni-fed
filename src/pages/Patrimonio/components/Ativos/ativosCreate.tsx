@@ -205,6 +205,16 @@ export default function AtivosCreate() {
     <main className="m-4 p-4">
       <Loading isLoading={isLoading} message="Criando ativo..." />
       <form className="space-y-4" onSubmit={handleSubmit}>
+        <SelectField
+          id="tipo"
+          name="tipo"
+          label="Tipo"
+          icon={faList}
+          options={ATIVOS_TIPO_OPTIONS}
+          onChange={(value) => setTipoAtivo(value)}
+          defaultValue=""
+        />
+        
         {tipoAtivo === "conta_corrente" ? (
           <SelectField
             id="nome"
@@ -224,16 +234,6 @@ export default function AtivosCreate() {
             maxLength={30}
           />
         )}
-
-        <SelectField
-          id="tipo"
-          name="tipo"
-          label="Tipo"
-          icon={faList}
-          options={ATIVOS_TIPO_OPTIONS}
-          onChange={(value) => setTipoAtivo(value)}
-          defaultValue=""
-        />
 
         {['conta_corrente', 'meu_negocio'].includes(tipoAtivo) && (
           <SelectField

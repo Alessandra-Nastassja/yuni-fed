@@ -2,7 +2,7 @@ import { formatValue } from '../../../../utils/formatValue'
 
 interface Meta {
   descricao: string
-  valorObjetivo: number
+  valorMeta: number
   valorAtual?: number
 }
 
@@ -15,11 +15,11 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
   return (
     <>
       {metas && metas.length > 0 ? (
-        // TODO: fazer ordenação por percentual de alcance da meta (valorAtual / valorObjetivo) no back
+        // TODO: fazer ordenação por percentual de alcance da meta (valorAtual / valorMeta) no back
         metas
         .sort((a, b) => {
-          const pa = a.valorObjetivo ? (Number(a.valorAtual ?? 0) / Number(a.valorObjetivo)) * 100 : 0
-          const pb = b.valorObjetivo ? (Number(b.valorAtual ?? 0) / Number(b.valorObjetivo)) * 100 : 0
+          const pa = a.valorMeta ? (Number(a.valorAtual ?? 0) / Number(a.valorMeta)) * 100 : 0
+          const pb = b.valorMeta ? (Number(b.valorAtual ?? 0) / Number(b.valorMeta)) * 100 : 0
           return pa - pb
         })
         .map((meta, index) => (
@@ -29,13 +29,13 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
 
               <div className="flex justify-between gap-1">
                 <small className="text-xs text-gray-500">R$ {formatValue(meta.valorAtual ?? 0)}</small>
-                <small className="text-xs text-gray-500">de R$ {formatValue(meta.valorObjetivo)}</small>
+                <small className="text-xs text-gray-500">de R$ {formatValue(meta.valorMeta)}</small>
               </div>
             </div>
 
             <div className="w-full bg-gray-200 rounded-full h-6 relative overflow-hidden">
               {(() => {
-                const percentual = meta.valorObjetivo ? ((Number(meta.valorAtual ?? 0) / Number(meta.valorObjetivo)) * 100) : 0;
+                const percentual = meta.valorMeta ? ((Number(meta.valorAtual ?? 0) / Number(meta.valorMeta)) * 100) : 0;
                 let bgColor = 'bg-red-500';
                 if (percentual >= 75) bgColor = 'bg-green-500';
                 else if (percentual >= 25) bgColor = 'bg-yellow-500';

@@ -51,7 +51,7 @@ DELETE /api/metas/:id       → Deletar
 
 ### 2. Metas com Progresso Automático
 - Campo `percentualProgresso` calculado automaticamente
-- Estrutura simplificada: `descricao`, `valorObjetivo`, `valorAtual`, `prazo`
+- Estrutura simplificada: `descricao`, `valorMeta`, `valorAtual`, `prazo`
 
 ### 3. Operações CRUD Completas
 - Todos os endpoints agora suportam: GET, POST, PUT, DELETE
@@ -102,7 +102,7 @@ DELETE /api/metas/:id       → Deletar
 {
   "id": 1,
   "descricao": "Independência Financeira",
-  "valorObjetivo": 1000000.00,
+  "valorMeta": 1000000.00,
   "valorAtual": 79777.65,
   "prazo": "2030-12-31",
   "percentualProgresso": 8.0,
@@ -134,7 +134,7 @@ curl -X POST http://localhost:8080/api/metas \
   -H "Content-Type: application/json" \
   -d '{
     "descricao": "Carro Novo",
-    "valorObjetivo": 80000.00,
+    "valorMeta": 80000.00,
     "valorAtual": 20000.00,
     "prazo": "2027-12-31"
   }'
@@ -191,7 +191,7 @@ interface Meta {
 interface Meta {
   id: number;
   descricao: string;
-  valorObjetivo: number;
+  valorMeta: number;
   valorAtual: number;
   prazo: string; // ISO date: "2028-12-31"
   percentualProgresso: number;

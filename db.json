@@ -148,7 +148,7 @@
     {
       "id": 1,
       "descricao": "Independência Financeira",
-      "valorObjetivo": 1000000,
+      "valorMeta": 1000000,
       "valorAtual": 79777.65,
       "prazo": "2030-12-31",
       "percentualProgresso": 8,
@@ -158,7 +158,7 @@
     {
       "id": 2,
       "descricao": "Comprar Apartamento",
-      "valorObjetivo": 500000,
+      "valorMeta": 500000,
       "valorAtual": 150000,
       "prazo": "2028-12-31",
       "percentualProgresso": 30,
@@ -168,7 +168,7 @@
     {
       "id": 3,
       "descricao": "Viagem Europa",
-      "valorObjetivo": 30000,
+      "valorMeta": 30000,
       "valorAtual": 28500,
       "prazo": "2027-06-30",
       "percentualProgresso": 95,

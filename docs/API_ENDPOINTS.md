@@ -399,7 +399,7 @@ curl -X GET http://localhost:8080/api/metas \
     {
       "id": 1,
       "descricao": "Comprar apartamento",
-      "valorObjetivo": 500000.00,
+      "valorMeta": 500000.00,
       "valorAtual": 150000.00,
       "prazo": "2028-12-31",
       "percentualProgresso": 30.0
@@ -422,7 +422,7 @@ curl -X POST http://localhost:8080/api/metas \
   -H "Content-Type: application/json" \
   -d '{
     "descricao": "Comprar apartamento",
-    "valorObjetivo": 500000.00,
+    "valorMeta": 500000.00,
     "valorAtual": 150000.00,
     "prazo": "2028-12-31"
   }'
@@ -435,7 +435,7 @@ curl -X POST http://localhost:8080/api/metas \
     {
       "id": 1,
       "descricao": "Comprar apartamento",
-      "valorObjetivo": 500000.00,
+      "valorMeta": 500000.00,
       "valorAtual": 150000.00,
       "prazo": "2028-12-31",
       "percentualProgresso": 30.0
@@ -451,7 +451,7 @@ curl -X PUT http://localhost:8080/api/metas/1 \
   -H "Content-Type: application/json" \
   -d '{
     "descricao": "Comprar apartamento atualizado",
-    "valorObjetivo": 550000.00,
+    "valorMeta": 550000.00,
     "valorAtual": 200000.00,
     "prazo": "2029-12-31"
   }'
@@ -494,7 +494,7 @@ curl -X DELETE http://localhost:8080/api/metas/1 \
 
 ### Metas
 - `descricao`: Obrigatório
-- `valorObjetivo`: Obrigatório, maior que zero
+- `valorMeta`: Obrigatório, maior que zero
 - `valorAtual`: Obrigatório, maior ou igual a zero
 - `prazo`: Obrigatório, formato: YYYY-MM-DD
 
@@ -587,7 +587,7 @@ interface RendaVariavel {
 interface Meta {
   id: number;
   descricao: string;
-  valorObjetivo: number;
+  valorMeta: number;
   valorAtual: number;
   prazo: string;
   percentualProgresso: number;

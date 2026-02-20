@@ -42,7 +42,7 @@ curl http://localhost:8080/api/metas
 
 **"SQL":**
 ```sql
-INSERT INTO metas (descricao, valorObjetivo, valorAtual, prazo) 
+INSERT INTO metas (descricao, valorMeta, valorAtual, prazo) 
 VALUES ('Casa Própria', 500000.00, 0, '2028-12-31');
 
 INSERT INTO ativos (nome, tipo, valorAtual) 
@@ -64,7 +64,7 @@ curl -X POST http://localhost:8080/api/metas \
   -H "Content-Type: application/json" \
   -d '{
     "descricao": "Casa Própria",
-    "valorObjetivo": 500000.00,
+    "valorMeta": 500000.00,
     "valorAtual": 0,
     "prazo": "2028-12-31"
   }'

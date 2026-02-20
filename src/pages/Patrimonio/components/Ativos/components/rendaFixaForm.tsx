@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuildingColumns,
@@ -62,11 +62,72 @@ export function RendaFixaForm({ riscoOptions, onChange }: RendaFixaFormProps) {
   const [tipoAtivo, setTipoAtivo] = useState("");
   const [tipoDebenture, setTipoDebenture] = useState("");
   const [tipoTaxa, setTipoTaxa] = useState("");
+  const [dataCompra, setDataCompra] = useState("");
+  const [dataVencimento, setDataVencimento] = useState("");
+  const [irEstimado, setIrEstimado] = useState("");
 
   const isIsentoIR = ["lci", "lca", "cri", "cra"].includes(tipoAtivo) ||
     (tipoAtivo === "debenture" && tipoDebenture === "incentivada");
 
   const isManualIR = tipoAtivo === "outros";
+
+  // Calcula IR automático baseado no prazo do investimento
+  const calcularIR = (dataInicio: string, dataFim: string) => {
+    if (!dataInicio || !dataFim) return "";
+    
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const diffTime = Math.abs(fim.getTime() - inicio.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 180) return "22.5";
+    if (diffDays <= 360) return "20";
+    if (diffDays <= 720) return "17.5";
+    return "15";
+  };
+
+  // Atualiza IR automaticamente quando o tipo de ativo ou datas mudarem
+  useEffect(() => {
+    if (isIsentoIR) {
+      setIrEstimado("");
+      return;
+    }
+
+    if (isManualIR) {
+      // Para "outros", mantém o valor manual
+      return;
+    }
+
+    // Para CDB, LC, Debenture comum: calcular automaticamente
+    if (["cdb", "lc", "debenture"].includes(tipoAtivo) || (tipoAtivo === "debenture" && tipoDebenture === "comum")) {
+      if (dataCompra && dataVencimento) {
+        const ir = calcularIR(dataCompra, dataVencimento);
+        setIrEstimado(ir);
+      } else {
+        // Valor padrão mais comum (acima de 720 dias)
+        setIrEstimado("15");
+      }
+    }
+  }, [tipoAtivo, tipoDebenture, dataCompra, dataVencimento, isIsentoIR, isManualIR]);
+
+  // Captura mudanças nos campos de data via DOM
+  useEffect(() => {
+    const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement;
+    const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement;
+
+    const handleDataChange = () => {
+      if (dataCompraInput?.value) setDataCompra(dataCompraInput.value);
+      if (dataVencimentoInput?.value) setDataVencimento(dataVencimentoInput.value);
+    };
+
+    dataCompraInput?.addEventListener("change", handleDataChange);
+    dataVencimentoInput?.addEventListener("change", handleDataChange);
+
+    return () => {
+      dataCompraInput?.removeEventListener("change", handleDataChange);
+      dataVencimentoInput?.removeEventListener("change", handleDataChange);
+    };
+  }, []);
 
   return (
     <>
@@ -200,20 +261,38 @@ export function RendaFixaForm({ riscoOptions, onChange }: RendaFixaFormProps) {
       )}
 
       {isIsentoIR ? (
-        <AlertBox type="success">
-          <span className="text-xs font-medium">Isento de IR</span>
-        </AlertBox>
-      ) : (
+        <>
+          <AlertBox type="success">
+            <span className="text-xs font-medium">Isento de IR</span>
+          </AlertBox>
+          <input type="hidden" id="irEstimado" name="irEstimado" value="0" />
+        </>
+      ) : isManualIR ? (
         <InputField
           id="irEstimado"
           name="irEstimado"
-          label="IR estimado"
+          label="IR estimado (%)"
           icon={faPercent}
           type="text"
           inputMode="decimal"
-          placeholder="0,00%"
-          readOnly={!isManualIR}
+          placeholder="15% a 22,5%"
         />
+      ) : (
+        <>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50">
+              <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
+              <label className="text-sm text-gray-600 whitespace-nowrap">IR estimado (%)</label>
+              <input
+                type="text"
+                className="w-full bg-transparent outline-none text-right"
+                value={irEstimado ? `${irEstimado}%` : "Calculando..."}
+                readOnly
+              />
+            </div>
+          </div>
+          <input type="hidden" id="irEstimado" name="irEstimado" value={irEstimado} />
+        </>
       )}
 
       <RiskSelectField

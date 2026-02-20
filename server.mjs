@@ -22,8 +22,8 @@ const readDb = async () => {
 const getTimestamp = () => new Date().toISOString();
 
 // Calcular percentual de progresso da meta
-const calcularProgresso = (valorAtual, valorObjetivo) => {
-  return valorObjetivo > 0 ? ((valorAtual / valorObjetivo) * 100).toFixed(1) : 0;
+const calcularProgresso = (valorAtual, valorMeta) => {
+  return valorMeta > 0 ? ((valorAtual / valorMeta) * 100).toFixed(1) : 0;
 };
 
 // ===== ATIVOS SIMPLES =====
@@ -176,7 +176,7 @@ app.get('/metas', async (_req, res) => {
   // Calcular percentual de progresso para cada meta
   const metasComProgresso = (db.data.metas || []).map(meta => ({
     ...meta,
-    percentualProgresso: parseFloat(calcularProgresso(meta.valorAtual, meta.valorObjetivo))
+    percentualProgresso: parseFloat(calcularProgresso(meta.valorAtual, meta.valorMeta))
   }));
   
   res.json({ metas: metasComProgresso });
@@ -194,7 +194,7 @@ app.get('/metas/:id', async (req, res) => {
   
   const metaComProgresso = {
     ...meta,
-    percentualProgresso: parseFloat(calcularProgresso(meta.valorAtual, meta.valorObjetivo))
+    percentualProgresso: parseFloat(calcularProgresso(meta.valorAtual, meta.valorMeta))
   };
   
   res.json({ metas: [metaComProgresso] });
@@ -208,7 +208,7 @@ app.post('/metas', async (req, res) => {
   const novaMeta = {
     id: db.data.metas.length > 0 ? Math.max(...db.data.metas.map(m => m.id)) + 1 : 1,
     ...payload,
-    percentualProgresso: parseFloat(calcularProgresso(payload.valorAtual || 0, payload.valorObjetivo)),
+    percentualProgresso: parseFloat(calcularProgresso(payload.valorAtual || 0, payload.valorMeta)),
     dataCriacao: getTimestamp(),
     dataAtualizacao: getTimestamp()
   };
@@ -235,7 +235,7 @@ app.put('/metas/:id', async (req, res) => {
     id,
     percentualProgresso: parseFloat(calcularProgresso(
       req.body.valorAtual || db.data.metas[index].valorAtual,
-      req.body.valorObjetivo || db.data.metas[index].valorObjetivo
+      req.body.valorMeta || db.data.metas[index].valorMeta
     )),
     dataAtualizacao: getTimestamp()
   };
