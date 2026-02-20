@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,6 +13,7 @@ import InputField from "../../../../shared/InputField/inputField";
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
 import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
+import { applyMoneyMask } from "../../../../utils/currencyMask";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
@@ -106,6 +107,25 @@ export default function AtivosCreate() {
   };
 
   const riscoOptions = getRiscoOptions();
+
+  useEffect(() => {
+    // Aplicar máscara de moeda nos campos de dinheiro
+    const moneyInputs = ['valorAtual', 'precoMedio', 'precoAtual', 'dividendosRecebidos', 'dividendYield'];
+    moneyInputs.forEach(inputId => {
+      const input = document.getElementById(inputId);
+      if (input) applyMoneyMask(inputId);
+    });
+  }, []);
+
+  // Aplicar máscara específica quando o tipo de ativo muda (para não-investimentos)
+  useEffect(() => {
+    if (tipoAtivo && tipoAtivo !== "investimentos") {
+      setTimeout(() => {
+        const valorAtualInput = document.getElementById("valorAtual");
+        if (valorAtualInput) applyMoneyMask("valorAtual");
+      }, 0);
+    }
+  }, [tipoAtivo]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -266,14 +286,15 @@ export default function AtivosCreate() {
 
       const tipoFormatado = formatTipoAtivo(tipo);
       showAlert(`"${nomeRaw}" (${tipoFormatado}) criado com sucesso!`, "success");
-      setTimeout(() => {
-        navigate("/patrimonio");
-      }, 1500);
+
+      // Mantém loading visível durante 1.5s
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      navigate("/patrimonio");
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error("Erro:", error);
       showAlert("Erro ao criar ativo. Tente novamente.", "error");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -394,7 +415,7 @@ export default function AtivosCreate() {
           disabled={isLoading}
           className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
         >
-          Salvar Ativo
+          Salvar
         </button>
       </form>
     </main>

@@ -22,6 +22,7 @@ import {
 } from "../../../../../const/ativos";
 import { calcularValorAtualRendaFixa } from "../../../../../utils/investmentCalculations";
 import { formatValue } from "../../../../../utils/formatValue";
+import { applyMoneyMask } from "../../../../../utils/currencyMask";
 
 interface RendaFixaFormProps {
   riscoOptions: Array<{ value: string; label: string }>;
@@ -142,6 +143,13 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
       setValorFinalEstimado("");
     }
   };
+
+  // Aplicar máscaras de moeda nos campos de dinheiro
+  useEffect(() => {
+    applyMoneyMask("valorInvestido");
+    // applyMoneyMask("taxaContratada");
+    applyMoneyMask("cdiAtual");
+  }, []);
 
   // Atualiza IR automaticamente quando o tipo de ativo ou datas mudarem
   useEffect(() => {
@@ -332,9 +340,10 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
           name="taxaContratada"
           label="Taxa contratada"
           icon={faChartLine}
-          type="text"
+          type="number"
           inputMode="decimal"
           placeholder="Taxa anual (%)"
+          maxLength={3}
         />
       )}
 

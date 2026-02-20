@@ -13,6 +13,7 @@ import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CORRETORAS_OPTIONS } from "../../../../../const/ativos";
+import { applyMoneyMask } from "../../../../../utils/currencyMask";
 
 interface RendaVariavelFormProps {
   riscoOptions: Array<{ value: string; label: string }>;
@@ -55,6 +56,12 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
 
   useEffect(() => {
+    // Aplicar máscaras de moeda
+    applyMoneyMask("precoMedio");
+    applyMoneyMask("precoAtual");
+    applyMoneyMask("dividendosRecebidos");
+    applyMoneyMask("dividendYield");
+
     const quantidadeInput = document.getElementById("quantidade") as HTMLInputElement;
     const precoAtualInput = document.getElementById("precoAtual") as HTMLInputElement;
     const precoMedioInput = document.getElementById("precoMedio") as HTMLInputElement;
@@ -151,6 +158,7 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
         type="text"
         inputMode="decimal"
         placeholder="R$ 0,00"
+        readOnly
       />
 
       <SelectField

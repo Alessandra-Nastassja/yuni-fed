@@ -15,6 +15,7 @@ import AlertBox from "../../../../../shared/Alert/AlertBox";
 import { TESOURO_TIPO_OPTIONS, CORRETORAS_OPTIONS } from "../../../../../const/ativos";
 import { calcularValorAtualTesouroDireto } from "../../../../../utils/investmentCalculations";
 import { formatValue } from "../../../../../utils/formatValue";
+import { applyMoneyMask } from "../../../../../utils/currencyMask";
 
 interface TesouroDiretoFormProps {
 }
@@ -23,6 +24,9 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
   const [tipoTesouro, setTipoTesouro] = useState("");
 
   useEffect(() => {
+    // Aplicar máscara de moeda
+    applyMoneyMask("valorInvestido");
+
     const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement | null;
     const taxaRentabilidadeInput = document.getElementById("taxaRentabilidade") as HTMLInputElement | null;
     const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement | null;
@@ -104,6 +108,7 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         type="text"
         inputMode="decimal"
         placeholder="R$ 0,00"
+        readOnly
       />
 
       <InputField
@@ -136,7 +141,7 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         name="taxaRentabilidade"
         label="Taxa de rentabilidade"
         icon={faChartLine}
-        type="text"
+        type="number"
         inputMode="decimal"
         placeholder={getTaxaPlaceholder()}
       />
