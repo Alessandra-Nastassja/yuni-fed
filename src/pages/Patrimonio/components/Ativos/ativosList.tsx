@@ -4,9 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
-import { ATIVOS_TIPO_OPTIONS } from "../../../../const/ativos";
-
 import formatValue from "../../../../utils/formatValue";
+import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getAtivos = () => fetch(`${API_URL}/ativos`).then(r => r.json());
@@ -18,11 +17,6 @@ interface Ativo {
   categoriaRisco: string | null;
   valorAtual: number;
 }
-
-const formatTipoAtivo = (tipo: string): string => {
-  const option = ATIVOS_TIPO_OPTIONS.find(opt => opt.value === tipo);
-  return option ? option.label : tipo;
-};
 
 export default function AtivosList({ title, className, iconColor = "bg-green-500" }: { title: string; className?: string; iconColor?: string }) {
   const [isLoading, setIsLoading] = useState(false);

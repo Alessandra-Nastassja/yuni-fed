@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   faBuildingColumns,
   faCalendarDays,
@@ -54,6 +54,49 @@ function RiskSelectField({ id, name, label, options, onChange, defaultValue = ""
 export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
 
+  useEffect(() => {
+    const quantidadeInput = document.getElementById("quantidade") as HTMLInputElement;
+    const precoAtualInput = document.getElementById("precoAtual") as HTMLInputElement;
+    const precoMedioInput = document.getElementById("precoMedio") as HTMLInputElement;
+    const valorAtualInput = document.getElementById("valorAtual") as HTMLInputElement;
+
+    const calcularValor = () => {
+      if (quantidadeInput?.value && (precoAtualInput?.value || precoMedioInput?.value)) {
+        const quantidade = parseFloat(quantidadeInput.value);
+        const precoAtual = precoAtualInput?.value 
+          ? parseFloat(precoAtualInput.value.replace(/[^\d,.-]/g, "").replace(",", ".")) 
+          : parseFloat((precoMedioInput.value || "0").replace(/[^\d,.-]/g, "").replace(",", "."));
+        
+        const valorAtual = quantidade * precoAtual;
+        if (valorAtualInput) {
+          valorAtualInput.value = valorAtual.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        }
+      }
+    };
+
+    const listeners = [
+      () => quantidadeInput?.addEventListener("change", calcularValor),
+      () => precoAtualInput?.addEventListener("change", calcularValor),
+      () => precoMedioInput?.addEventListener("change", calcularValor),
+      () => {
+        quantidadeInput?.addEventListener("input", calcularValor);
+        precoAtualInput?.addEventListener("input", calcularValor);
+        precoMedioInput?.addEventListener("input", calcularValor);
+      }
+    ];
+
+    listeners.forEach(listener => listener());
+
+    return () => {
+      quantidadeInput?.removeEventListener("change", calcularValor);
+      quantidadeInput?.removeEventListener("input", calcularValor);
+      precoAtualInput?.removeEventListener("change", calcularValor);
+      precoAtualInput?.removeEventListener("input", calcularValor);
+      precoMedioInput?.removeEventListener("change", calcularValor);
+      precoMedioInput?.removeEventListener("input", calcularValor);
+    };
+  }, []);
+
   return (
     <>
       <SelectField
@@ -91,9 +134,19 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
       />
 
       <InputField
+        id="precoAtual"
+        name="precoAtual"
+        label="Preço atual (mercado)"
+        icon={faDollarSign}
+        type="text"
+        inputMode="decimal"
+        placeholder="R$ 0,00"
+      />
+
+      <InputField
         id="valorAtual"
         name="valorAtual"
-        label="Valor atual"
+        label="Valor atual (calculado)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"

@@ -12,6 +12,7 @@ import SelectField from "../../../../shared/SelectField/selectField";
 import InputField from "../../../../shared/InputField/inputField";
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
+import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
@@ -105,11 +106,6 @@ export default function AtivosCreate() {
   };
 
   const riscoOptions = getRiscoOptions();
-
-  const formatTipoAtivo = (tipo: string): string => {
-    const option = ATIVOS_TIPO_OPTIONS.find(opt => opt.value === tipo);
-    return option ? option.label : tipo;
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -218,23 +214,36 @@ export default function AtivosCreate() {
           payload.valorAtual = valorAtualCalculado;
         } else if (tipoInvestimento === "renda_variavel") {
           const quantidade = parseFloat((formData.get("quantidade") as string) || "0");
-          const precoAtualMercado = parseFloat(((formData.get("precoAtualMercado") as string) || (formData.get("valorAtual") as string) || "0")
+          const precoMedio = parseFloat((formData.get("precoMedio") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+          const precoAtual = parseFloat(((formData.get("precoAtual") as string) || (formData.get("valorAtual") as string) || "0")
             .replace(/[^\d,.-]/g, "")
-            .replace(",", "."));
+            .replace(",", ".")) || precoMedio;
           const valorAtualCalculado = calcularValorAtualRendaVariavel({
             quantidade,
-            precoAtualMercado,
+            precoAtualMercado: precoAtual,
           });
 
-          payload.rendaVariavel = {
-            tipoRendaVariavel: formData.get("tipoRendaVariavel"),
+          const tipoRenda = formData.get("tipoRendaVariavel") as string;
+          const rendaVariavelPayload: any = {
+            tipoRendaVariavel: tipoRenda,
             quantidade,
-            precoMedio: parseFloat((formData.get("precoMedio") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
+            precoMedio,
             valorAtual: valorAtualCalculado,
             corretora: formData.get("corretora"),
-            dataCompra: formData.get("dataCompra"),
-            categoriaRiscoRendaVariavel: formData.get("categoriaRisco"),
+            categoriaRiscoRendaVariavel: formData.get("categoriaRiscoRendaVariavel"),
           };
+
+          if (tipoRenda === "acoes") {
+            rendaVariavelPayload.dataCompra = formData.get("dataCompra");
+            rendaVariavelPayload.dividendosRecebidos = parseFloat((formData.get("dividendosRecebidos") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+            rendaVariavelPayload.irEstimadoAcoes = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
+          } else if (tipoRenda === "fii") {
+            rendaVariavelPayload.irEstimadoFii = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
+          } else if (tipoRenda === "etf") {
+            rendaVariavelPayload.irEstimadoEtf = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
+          }
+
+          payload.rendaVariavel = rendaVariavelPayload;
           payload.valorAtual = valorAtualCalculado;
         }
       }
