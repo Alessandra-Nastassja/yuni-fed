@@ -147,7 +147,7 @@
   "metas": [
     {
       "id": 1,
-      "descricao": "Independência Financeira",
+      "nome": "Independência Financeira",
       "valorMeta": 1000000,
       "valorAtual": 79777.65,
       "prazo": "2030-12-31",
@@ -157,7 +157,7 @@
     },
     {
       "id": 2,
-      "descricao": "Comprar Apartamento",
+      "nome": "Comprar Apartamento",
       "valorMeta": 500000,
       "valorAtual": 150000,
       "prazo": "2028-12-31",
@@ -167,7 +167,7 @@
     },
     {
       "id": 3,
-      "descricao": "Viagem Europa",
+      "nome": "Viagem Europa",
       "valorMeta": 30000,
       "valorAtual": 28500,
       "prazo": "2027-06-30",

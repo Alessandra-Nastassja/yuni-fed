@@ -23,6 +23,12 @@ import {
   RISCO_BAIXO_MEDIO_ALTO,
   RISCO_MEDIO_ALTO,
 } from "../../../../const/ativos";
+import {
+  calcularValorAtualRendaFixa,
+  calcularValorAtualRendaVariavel,
+  calcularValorAtualTesouroDireto,
+  calcularValorFinalEstimadoRendaFixa,
+} from "../../../../utils/investmentCalculations";
 
 import { TesouroDiretoForm } from "./components/tesouroDiretoForm";
 import { RendaFixaForm } from "./components/rendaFixaForm";
@@ -104,8 +110,12 @@ export default function AtivosCreate() {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const nome = formData.get("nome") as string;
+    const nomeRaw = formData.get("nome") as string;
     const tipo = formData.get("tipo") as string;
+
+    const nome = tipo === "conta_corrente"
+      ? (BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw)
+      : nomeRaw;
 
     if (!nome || !tipo) {
       showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
@@ -136,41 +146,91 @@ export default function AtivosCreate() {
         payload.tipoInvestimento = tipoInvestimento;
 
         if (tipoInvestimento === "tesouro_direto") {
+          const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+          const taxaRentabilidade = parseFloat((formData.get("taxaRentabilidade") as string) || "0");
+          const dataCompra = formData.get("dataCompra") as string;
+          const dataVencimento = formData.get("dataVencimento") as string;
+          const valorAtualCalculado = calcularValorAtualTesouroDireto({
+            valorInvestido,
+            taxaRentabilidade,
+            dataCompra,
+            dataVencimento,
+          });
+
           payload.tesouroDireto = {
             tipoTesouro: formData.get("tipoTesouro"),
-            valorInvestido: parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
-            valorAtual: parseFloat((formData.get("valorAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
-            dataCompra: formData.get("dataCompra"),
-            dataVencimento: formData.get("dataVencimento"),
+            valorInvestido,
+            valorAtual: valorAtualCalculado,
+            dataCompra,
+            dataVencimento,
             corretora: formData.get("corretora"),
-            taxaRentabilidade: parseFloat((formData.get("taxaRentabilidade") as string) || "0"),
+            taxaRentabilidade,
           };
+          payload.valorAtual = valorAtualCalculado;
         } else if (tipoInvestimento === "renda_fixa") {
+          const tipoAtivoRendaFixa = formData.get("tipoAtivoRendaFixa") as string;
+          const tipoDebenture = formData.get("tipoDebenture") as string;
+          const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+          const valorAtualCalculado = calcularValorAtualRendaFixa({
+            valorInvestido,
+            tipoTaxa: (formData.get("tipoTaxa") as string) || "",
+            taxaContratada: formData.get("taxaContratada") as string,
+            percentualCdi: formData.get("percentualCdi") as string,
+            cdiAtual: formData.get("cdiAtual") as string,
+            ipcaTaxa: formData.get("ipcaTaxa") as string,
+            dataCompra: formData.get("dataCompra") as string,
+            dataVencimento: formData.get("dataVencimento") as string,
+          });
+
+          const isIsentoIR = ["lci", "lca", "cri", "cra"].includes(tipoAtivoRendaFixa) ||
+            (tipoAtivoRendaFixa === "debenture" && tipoDebenture === "incentivada");
+
+          const valorFinalEstimado = calcularValorFinalEstimadoRendaFixa({
+            valorAtual: valorAtualCalculado,
+            valorInvestido,
+            dataCompra: formData.get("dataCompra") as string,
+            dataVencimento: formData.get("dataVencimento") as string,
+            isento: isIsentoIR,
+          });
+
           payload.rendaFixa = {
-            tipoAtivoRendaFixa: formData.get("tipoAtivoRendaFixa"),
-            valorInvestido: parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
-            valorAtual: parseFloat((formData.get("valorAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
+            tipoAtivoRendaFixa,
+            tipoDebenture: tipoDebenture || undefined,
+            valorInvestido,
+            valorAtual: valorAtualCalculado,
             corretora: formData.get("corretora"),
             dataCompra: formData.get("dataCompra"),
             dataVencimento: formData.get("dataVencimento"),
             tipoTaxa: formData.get("tipoTaxa"),
             taxaContratada: formData.get("taxaContratada") ? parseFloat(formData.get("taxaContratada") as string) : undefined,
             percentualCdi: formData.get("percentualCdi") ? parseFloat(formData.get("percentualCdi") as string) : undefined,
-            cdiAtual: formData.get("cdiAtual") ? parseFloat(formData.get("cdiAtual") as string) : undefined,
+            cdiAtual: formData.get("cdiAtual") ? parseFloat((formData.get("cdiAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0") : undefined,
             ipcaTaxa: formData.get("ipcaTaxa") ? parseFloat(formData.get("ipcaTaxa") as string) : undefined,
-            categoriaRiscoRendaFixa: formData.get("categoriaRisco"),
-            isento: formData.get("isento") === "on",
+            categoriaRiscoRendaFixa: formData.get("categoriaRiscoRendaFixa"),
+            irEstimado: formData.get("irEstimado") ? parseFloat(formData.get("irEstimado") as string) : undefined,
+            valorFinalEstimado,
           };
+          payload.valorAtual = valorAtualCalculado;
         } else if (tipoInvestimento === "renda_variavel") {
+          const quantidade = parseFloat((formData.get("quantidade") as string) || "0");
+          const precoAtualMercado = parseFloat(((formData.get("precoAtualMercado") as string) || (formData.get("valorAtual") as string) || "0")
+            .replace(/[^\d,.-]/g, "")
+            .replace(",", "."));
+          const valorAtualCalculado = calcularValorAtualRendaVariavel({
+            quantidade,
+            precoAtualMercado,
+          });
+
           payload.rendaVariavel = {
             tipoRendaVariavel: formData.get("tipoRendaVariavel"),
-            quantidade: parseFloat((formData.get("quantidade") as string) || "0"),
+            quantidade,
             precoMedio: parseFloat((formData.get("precoMedio") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
-            valorAtual: parseFloat((formData.get("valorAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0"),
+            valorAtual: valorAtualCalculado,
             corretora: formData.get("corretora"),
             dataCompra: formData.get("dataCompra"),
             categoriaRiscoRendaVariavel: formData.get("categoriaRisco"),
           };
+          payload.valorAtual = valorAtualCalculado;
         }
       }
 
@@ -214,7 +274,7 @@ export default function AtivosCreate() {
           onChange={(value) => setTipoAtivo(value)}
           defaultValue=""
         />
-        
+
         {tipoAtivo === "conta_corrente" ? (
           <SelectField
             id="nome"

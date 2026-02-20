@@ -1,7 +1,7 @@
 import { formatValue } from '../../../../utils/formatValue'
 
 interface Meta {
-  descricao: string
+  nome: string
   valorMeta: number
   valorAtual?: number
 }
@@ -25,7 +25,7 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
         .map((meta, index) => (
           <section key={index} className="flex flex-col justify-between gap-2">
             <div className='flex justify-between gap-5'>
-              <p className="text-base">{meta.descricao}</p>
+              <p className="text-base">{meta.nome}</p>
 
               <div className="flex justify-between gap-1">
                 <small className="text-xs text-gray-500">R$ {formatValue(meta.valorAtual ?? 0)}</small>
