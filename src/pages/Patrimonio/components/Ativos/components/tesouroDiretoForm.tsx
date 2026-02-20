@@ -12,7 +12,7 @@ import {
 import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import AlertBox from "../../../../../shared/Alert/AlertBox";
-import { TESOURO_TIPO_OPTIONS } from "../../../../../const/ativos";
+import { TESOURO_TIPO_OPTIONS, CORRETORAS_OPTIONS } from "../../../../../const/ativos";
 
 interface TesouroDiretoFormProps {
   onChange?: (data: any) => void;
@@ -82,12 +82,13 @@ export function TesouroDiretoForm({ onChange }: TesouroDiretoFormProps) {
         type="date"
       />
 
-      <InputField
+      <SelectField
         id="corretora"
         name="corretora"
         label="Corretora"
         icon={faBuildingColumns}
-        placeholder="Nome da corretora"
+        options={CORRETORAS_OPTIONS}
+        defaultValue=""
       />
 
       <InputField

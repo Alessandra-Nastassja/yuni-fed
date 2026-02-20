@@ -15,6 +15,7 @@ import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import AlertBox from "../../../../../shared/Alert/AlertBox";
 import {
+  CORRETORAS_OPTIONS,
   DEBENTURE_TIPO_OPTIONS,
   RENDA_FIXA_TIPO_ATIVO_OPTIONS,
   TAXA_TIPO_OPTIONS,
@@ -115,12 +116,13 @@ export function RendaFixaForm({ riscoOptions, onChange }: RendaFixaFormProps) {
         placeholder="R$ 0,00"
       />
 
-      <InputField
+      <SelectField
         id="corretora"
         name="corretora"
         label="Corretora"
         icon={faBuildingColumns}
-        placeholder="Nome da corretora"
+        options={CORRETORAS_OPTIONS}
+        defaultValue=""
       />
 
       <InputField

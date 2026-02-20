@@ -28,14 +28,14 @@ const calcularProgresso = (valorAtual, valorObjetivo) => {
 
 // ===== ATIVOS SIMPLES =====
 
-// GET /api/ativos - Listar todos os ativos
-app.get('/api/ativos', async (_req, res) => {
+// GET /ativos - Listar todos os ativos
+app.get('/ativos', async (_req, res) => {
   await readDb();
   res.json({ ativos: db.data.ativos || [] });
 });
 
-// GET /api/ativos/:id - Obter ativo por ID
-app.get('/api/ativos/:id', async (req, res) => {
+// GET /ativos/:id - Obter ativo por ID
+app.get('/ativos/:id', async (req, res) => {
   await readDb();
   const id = parseInt(req.params.id);
   const ativo = db.data.ativos.find(a => a.id === id);
@@ -47,8 +47,8 @@ app.get('/api/ativos/:id', async (req, res) => {
   res.json({ ativos: [ativo] });
 });
 
-// POST /api/ativos - Criar ativo simples
-app.post('/api/ativos', async (req, res) => {
+// POST /ativos - Criar ativo simples
+app.post('/ativos', async (req, res) => {
   await readDb();
   const payload = req.body || {};
   
@@ -65,8 +65,8 @@ app.post('/api/ativos', async (req, res) => {
   res.status(201).json({ ativos: [novoAtivo] });
 });
 
-// POST /api/ativos/lote - Criar múltiplos ativos
-app.post('/api/ativos/lote', async (req, res) => {
+// POST /ativos/lote - Criar múltiplos ativos
+app.post('/ativos/lote', async (req, res) => {
   await readDb();
   const { ativos } = req.body || { ativos: [] };
   
@@ -83,8 +83,8 @@ app.post('/api/ativos/lote', async (req, res) => {
   res.status(201).json({ ativos: novosAtivos });
 });
 
-// POST /api/ativos/completo - Criar ativo completo (com investimentos)
-app.post('/api/ativos/completo', async (req, res) => {
+// POST /ativos/completo - Criar ativo completo (com investimentos)
+app.post('/ativos/completo', async (req, res) => {
   await readDb();
   const payload = req.body || {};
   
@@ -128,8 +128,8 @@ app.post('/api/ativos/completo', async (req, res) => {
   res.status(201).json(novoAtivo);
 });
 
-// PUT /api/ativos/:id - Atualizar ativo
-app.put('/api/ativos/:id', async (req, res) => {
+// PUT /ativos/:id - Atualizar ativo
+app.put('/ativos/:id', async (req, res) => {
   await readDb();
   const id = parseInt(req.params.id);
   const index = db.data.ativos.findIndex(a => a.id === id);
@@ -151,8 +151,8 @@ app.put('/api/ativos/:id', async (req, res) => {
   res.json({ ativos: [ativoAtualizado] });
 });
 
-// DELETE /api/ativos/:id - Deletar ativo
-app.delete('/api/ativos/:id', async (req, res) => {
+// DELETE /ativos/:id - Deletar ativo
+app.delete('/ativos/:id', async (req, res) => {
   await readDb();
   const id = parseInt(req.params.id);
   const index = db.data.ativos.findIndex(a => a.id === id);
@@ -169,8 +169,8 @@ app.delete('/api/ativos/:id', async (req, res) => {
 
 // ===== METAS =====
 
-// GET /api/metas - Listar todas as metas
-app.get('/api/metas', async (_req, res) => {
+// GET /metas - Listar todas as metas
+app.get('/metas', async (_req, res) => {
   await readDb();
   
   // Calcular percentual de progresso para cada meta
@@ -182,8 +182,8 @@ app.get('/api/metas', async (_req, res) => {
   res.json({ metas: metasComProgresso });
 });
 
-// GET /api/metas/:id - Obter meta por ID
-app.get('/api/metas/:id', async (req, res) => {
+// GET /metas/:id - Obter meta por ID
+app.get('/metas/:id', async (req, res) => {
   await readDb();
   const id = parseInt(req.params.id);
   const meta = db.data.metas.find(m => m.id === id);
@@ -200,8 +200,8 @@ app.get('/api/metas/:id', async (req, res) => {
   res.json({ metas: [metaComProgresso] });
 });
 
-// POST /api/metas - Criar meta
-app.post('/api/metas', async (req, res) => {
+// POST /metas - Criar meta
+app.post('/metas', async (req, res) => {
   await readDb();
   const payload = req.body || {};
   
@@ -219,8 +219,8 @@ app.post('/api/metas', async (req, res) => {
   res.status(201).json({ metas: [novaMeta] });
 });
 
-// PUT /api/metas/:id - Atualizar meta
-app.put('/api/metas/:id', async (req, res) => {
+// PUT /metas/:id - Atualizar meta
+app.put('/metas/:id', async (req, res) => {
   await readDb();
   const id = parseInt(req.params.id);
   const index = db.data.metas.findIndex(m => m.id === id);
@@ -246,8 +246,8 @@ app.put('/api/metas/:id', async (req, res) => {
   res.json({ metas: [metaAtualizada] });
 });
 
-// DELETE /api/metas/:id - Deletar meta
-app.delete('/api/metas/:id', async (req, res) => {
+// DELETE /metas/:id - Deletar meta
+app.delete('/metas/:id', async (req, res) => {
   await readDb();
   const id = parseInt(req.params.id);
   const index = db.data.metas.findIndex(m => m.id === id);

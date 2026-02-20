@@ -6,7 +6,6 @@ import {
   faList,
   faShield,
   faTag,
-  faSave,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "../../../../shared/SelectField/selectField";
@@ -18,6 +17,7 @@ import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
   ATIVOS_FONTE_RENDA_OPTIONS,
   ATIVOS_TIPO_OPTIONS,
+  BANCOS_OPTIONS,
   RISCO_BAIXO,
   RISCO_BAIXO_MEDIO,
   RISCO_BAIXO_MEDIO_ALTO,
@@ -102,7 +102,7 @@ export default function AtivosCreate() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const formData = new FormData(e.currentTarget);
     const nome = formData.get("nome") as string;
     const tipo = formData.get("tipo") as string;
@@ -114,7 +114,7 @@ export default function AtivosCreate() {
 
     try {
       setIsLoading(true);
-      
+
       const payload: any = {
         nome,
         tipo,
@@ -175,7 +175,7 @@ export default function AtivosCreate() {
       }
 
       const response = await fetch(
-        `${API_URL}/api/ativos${tipo === "investimentos" ? "/completo" : ""}`,
+        `${API_URL}/ativos${tipo === "investimentos" ? "/completo" : ""}`,
         {
           method: "POST",
           headers: {
@@ -205,14 +205,25 @@ export default function AtivosCreate() {
     <main className="m-4 p-4">
       <Loading isLoading={isLoading} message="Criando ativo..." />
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <InputField
-          id="nome"
-          name="nome"
-          label="Nome"
-          icon={faTag}
-          placeholder="Nome do ativo"
-          maxLength={30}
-        />
+        {tipoAtivo === "conta_corrente" ? (
+          <SelectField
+            id="nome"
+            name="nome"
+            label="Banco"
+            icon={faTag}
+            options={BANCOS_OPTIONS}
+            defaultValue=""
+          />
+        ) : (
+          <InputField
+            id="nome"
+            name="nome"
+            label="Nome"
+            icon={faTag}
+            placeholder="Nome do ativo"
+            maxLength={30}
+          />
+        )}
 
         <SelectField
           id="tipo"
@@ -302,14 +313,14 @@ export default function AtivosCreate() {
             </>
           )}
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
-          >
-            Salvar Ativo
-          </button>
-        </form>
-      </main>
-    );
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
+        >
+          Salvar Ativo
+        </button>
+      </form>
+    </main>
+  );
 }

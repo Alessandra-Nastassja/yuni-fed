@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 import {
   Chart as ChartJS,
@@ -48,7 +48,7 @@ export default function Patrimonio() {
   
   const fetchAtivos = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/ativos`);
+      const response = await fetch(`${API_URL}/ativos`);
       const { ativos } = await response.json();
       
       if (Array.isArray(ativos)) {
@@ -56,7 +56,6 @@ export default function Patrimonio() {
         setAtivosTotal(total);
       }
     } catch (error) {
-      console.error('Erro ao buscar ativos:', error);
       showAlert('Erro ao buscar ativos.', 'error');
     }
   };

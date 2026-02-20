@@ -16,6 +16,45 @@ export const ATIVOS_FONTE_RENDA_OPTIONS: Option[] = [
   { value: "outros", label: "Outros" },
 ];
 
+export const BANCOS_OPTIONS: Option[] = [
+  { value: "nubank", label: "Nubank" },
+  { value: "inter", label: "Inter" },
+  { value: "itau", label: "Itaú" },
+  { value: "bradesco", label: "Bradesco" },
+  { value: "banco_do_brasil", label: "Banco do Brasil" },
+  { value: "santander", label: "Santander" },
+  { value: "caixa", label: "Caixa Econômica Federal" },
+  { value: "c6_bank", label: "C6 Bank" },
+  { value: "original", label: "Banco Original" },
+  { value: "safra", label: "Banco Safra" },
+  { value: "btg_pactual", label: "BTG Pactual" },
+  { value: "picpay", label: "PicPay" },
+  { value: "neon", label: "Neon" },
+  { value: "next", label: "Next" },
+  { value: "mercado_pago", label: "Mercado Pago" },
+  { value: "outros", label: "Outros" },
+];
+
+export const CORRETORAS_OPTIONS: Option[] = [
+  { value: "xp", label: "XP Investimentos" },
+  { value: "btg_pactual", label: "BTG Pactual" },
+  { value: "rico", label: "Rico" },
+  { value: "clear", label: "Clear" },
+  { value: "inter", label: "Inter" },
+  { value: "nubank", label: "Nubank" },
+  { value: "ativa", label: "Ativa Investimentos" },
+  { value: "modal", label: "Modal" },
+  { value: "warren", label: "Warren" },
+  { value: "easynvest", label: "Easynvest" },
+  { value: "c6_bank", label: "C6 Bank" },
+  { value: "itau", label: "Itaú" },
+  { value: "bradesco", label: "Bradesco" },
+  { value: "santander", label: "Santander" },
+  { value: "banco_do_brasil", label: "Banco do Brasil" },
+  { value: "tesouro_direto", label: "Tesouro Direto" },
+  { value: "outros", label: "Outros" },
+];
+
 export const ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS: Option[] = [
   { value: "tesouro_direto", label: "Tesouro direto" },
   { value: "renda_fixa", label: "Renda fixa" },
