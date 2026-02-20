@@ -1,61 +1,44 @@
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 import './App.css'
 
 import Home from './pages/Home/home'
 import Onboarding from './pages/Onboarding/onboarding';
-import Investimentos from './pages/Investimentos/investimentos'
+import Patrimonio from './pages/Patrimonio/patrimonio'
 import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
-import Novo from './pages/Novo/novo';
+import AtivosCreate from './pages/Patrimonio/components/Ativos/ativosCreate';
+
 import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
+import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
 
 function AppContent() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { alert, hideAlert } = useAlert();
-  // const [corretoras, setCorretoras] = useState([]);
-  // const [perfil, setPerfil] = useState([]);
 
   return (
     <>
     {alert.isVisible && (
       <div className="fixed top-4 right-4 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-        <Alert variant={alert.variant} onClose={hideAlert}>{alert.message}</Alert>
+        <Alert 
+          variant={alert.variant} 
+          onClose={hideAlert}>{alert.message}
+        </Alert>
       </div>
     )}
-    
-    {['/', '/home'].includes(location.pathname) === false && (
-      <header className="mb-8">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="text-blue-600 hover:underline"
-          aria-label="Voltar"
-        >
-          <FontAwesomeIcon icon={faArrowLeft} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
-        </button>
 
-        
-      </header>
-      )}
+      {location.pathname !== '/' && <Menu />}
+      
       <Routes>
         <Route path="/" element={<Onboarding />} />
         <Route path="/home" element={<Home />} />
         <Route
-          path="/investimentos"
-          element={
-            <Investimentos
-              // corretoras={corretoras}
-              // perfil={perfil}
-            />
-          }
+          path="/patrimonio"
+          element={<Patrimonio />}
         />
-        <Route path="/novo" element={<Novo />} />
+        <Route path="/novo-ativo" element={<AtivosCreate />} />
         <Route path='/financas' element={<Financas />} />
         <Route path='/configuracoes' element={<Configuracoes />} />
       </Routes>

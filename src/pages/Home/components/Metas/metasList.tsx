@@ -15,8 +15,14 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
   return (
     <>
       {metas && metas.length > 0 ? (
-        metas.map((meta, index) => (
-          <div key={index} className="flex flex-col justify-between gap-2">
+        metas
+        .sort((a, b) => {
+          const pa = a.valorMeta ? (Number(a.valorAtual ?? 0) / Number(a.valorMeta)) * 100 : 0
+          const pb = b.valorMeta ? (Number(b.valorAtual ?? 0) / Number(b.valorMeta)) * 100 : 0
+          return pa - pb
+        })
+        .map((meta, index) => (
+          <section key={index} className="flex flex-col justify-between gap-2">
             <div className='flex justify-between gap-5'>
               <p className="text-base">{meta.nome}</p>
 
@@ -47,7 +53,7 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
                 );
               })()}
             </div>
-          </div>
+          </section>
         ))
       ) : (
         <p className="text-sm flex gap-1 text-gray-500">

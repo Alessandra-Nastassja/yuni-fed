@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTag, faDollarSign, faCalendarDays } from '@fortawesome/free-solid-svg-icons'
 
 import { formatCurrencyInput } from '../../../../utils/currency'
-import Alert from '../../../../shared/Alert/Alert'
 
 interface FormMetaProps {
   form: { nome: string; valorMeta: string; valorAtual: string; prazo: string }
