@@ -51,7 +51,7 @@ function RiskSelectField({ id, name, label, options, onChange, defaultValue = ""
   );
 }
 
-export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormProps) {
+export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
 
   return (

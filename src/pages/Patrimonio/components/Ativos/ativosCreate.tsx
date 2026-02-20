@@ -106,6 +106,11 @@ export default function AtivosCreate() {
 
   const riscoOptions = getRiscoOptions();
 
+  const formatTipoAtivo = (tipo: string): string => {
+    const option = ATIVOS_TIPO_OPTIONS.find(opt => opt.value === tipo);
+    return option ? option.label : tipo;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -249,7 +254,8 @@ export default function AtivosCreate() {
         throw new Error("Erro ao criar ativo");
       }
 
-      showAlert("Ativo criado com sucesso!", "success");
+      const tipoFormatado = formatTipoAtivo(tipo);
+      showAlert(`"${nomeRaw}" (${tipoFormatado}) criado com sucesso!`, "success");
       setTimeout(() => {
         navigate("/patrimonio");
       }, 1500);
