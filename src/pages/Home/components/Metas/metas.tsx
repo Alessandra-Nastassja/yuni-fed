@@ -13,7 +13,7 @@ import MetasList from './MetasList'
 const API_URL = import.meta.env.VITE_API_URL;
 
 const getMetas = () => fetch(`${API_URL}/metas`).then(r => r.json());
-const createMeta = (payload: { nome: string; valorMeta: number; prazo: number; valorAtual?: number }) =>
+const createMeta = (payload: { nome: string; valorObjetivo: number; prazo: number; valorAtual?: number }) =>
   fetch(`${API_URL}/metas`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -25,14 +25,14 @@ export default function Metas({ className }: { className?: string }) {
   const { showAlert } = useAlert();
   const [isOpen, setIsOpen] = useState(false);
   const [metas, setMetas] = useState<any[]>([]);
-  const [form, setForm] = useState({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
+  const [form, setForm] = useState({ nome: '', valorObjetivo: '', valorAtual: '', prazo: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ general?: string; nome?: string; valorMeta?: string; valorAtual?: string; prazo?: string }>({});
+  const [errors, setErrors] = useState<{ general?: string; nome?: string; valorObjetivo?: string; valorAtual?: string; prazo?: string }>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (name === 'valorMeta' || name === 'valorAtual') {
+    if (name === 'valorObjetivo' || name === 'valorAtual') {
       const digits = value.replace(/\D/g, '');
       setForm(prev => ({ ...prev, [name]: digits }));
       return;
@@ -55,6 +55,7 @@ export default function Metas({ className }: { className?: string }) {
       const meta = await getMetas();
       const { metas } = meta ?? {};
       setMetas(metas ?? []);
+
     } catch (error) {
       showAlert('Erro ao buscar metas.', 'error');
     } finally {
@@ -68,7 +69,7 @@ export default function Metas({ className }: { className?: string }) {
 
   const validateForm = () => {
     const nome = form.nome.trim();
-    const valorMeta = parseCurrency(form.valorMeta);
+    const valorObjetivo = parseCurrency(form.valorObjetivo);
     const valorAtual = parseCurrency(form.valorAtual || '');
     const prazo = Number(form.prazo);
     const anoAtual = new Date().getFullYear();
@@ -77,7 +78,7 @@ export default function Metas({ className }: { className?: string }) {
     let message: string | null = null;
 
     if (!nome) fieldErrors.nome = 'Informe o nome da meta';
-    if (!valorMeta) fieldErrors.valorMeta = 'Informe o valor da meta';
+    if (!valorObjetivo) fieldErrors.valorObjetivo = 'Informe o valor da meta';
     if (!prazo) fieldErrors.prazo = 'Informe o prazo da meta';
 
     if (Object.keys(fieldErrors).length > 0) {
@@ -85,13 +86,13 @@ export default function Metas({ className }: { className?: string }) {
       return { isValid: false, fieldErrors, message };
     }
 
-    if (valorMeta <= 0) {
-      fieldErrors.valorMeta = 'O valor da meta deve ser maior que R$0,00';
+    if (valorObjetivo <= 0) {
+      fieldErrors.valorObjetivo = 'O valor da meta deve ser maior que R$0,00';
       message = 'O valor da meta deve ser maior que R$0,00';
       return { isValid: false, fieldErrors, message };
     }
 
-    if (valorAtual < 0 || valorAtual > valorMeta) {
+    if (valorAtual < 0 || valorAtual > valorObjetivo) {
       fieldErrors.valorAtual = 'O valor atual deve ser entre R$0,00 e o valor da meta';
       message = 'O valor atual deve ser entre R$0,00 e o valor da meta';
       return { isValid: false, fieldErrors, message };
@@ -103,7 +104,7 @@ export default function Metas({ className }: { className?: string }) {
       return { isValid: false, fieldErrors, message };
     }
 
-    return { isValid: true, fieldErrors: {}, message: null, values: { nome, valorMeta, valorAtual, prazo } };
+    return { isValid: true, fieldErrors: {}, message: null, values: { nome, valorObjetivo, valorAtual, prazo } };
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -116,17 +117,17 @@ export default function Metas({ className }: { className?: string }) {
       return;
     }
 
-    const { nome, valorMeta, valorAtual, prazo } = validation.values;
+    const { nome, valorObjetivo, valorAtual, prazo } = validation.values;
 
     try {
       setIsSaving(true);
       await createMeta({
         nome,
-        valorMeta,
+        valorObjetivo,
         prazo,
         valorAtual,
       } as any);
-      setForm({ nome: '', valorMeta: '', valorAtual: '', prazo: '' });
+      setForm({ nome: '', valorObjetivo: '', valorAtual: '', prazo: '' });
       setIsOpen(false);
       showAlert('Meta criada com sucesso!', 'success');
       fetchData();

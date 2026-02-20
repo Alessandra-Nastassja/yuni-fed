@@ -1,192 +1,142 @@
 {
-  "corretoras": [
+  "ativos": [
     {
-      "nome": "XP",
-      "ativos": 73,
-      "rentabilidade": "13,00%",
-      "valor": 78419.11,
-      "meta": "Independência"
+      "id": 1,
+      "nome": "Conta Corrente",
+      "tipo": "conta_corrente",
+      "tipoFonteRenda": "CLT - Empresa Tech",
+      "valorAtual": 5000.00,
+      "dataCriacao": "2026-01-15T10:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "Inter",
-      "ativos": 7,
-      "rentabilidade": "9,00%",
-      "valor": 1358.54,
-      "meta": "Independência"
+      "id": 2,
+      "nome": "Reserva de Emergência",
+      "tipo": "reserva_emergencia",
+      "valorAtual": 32123.85,
+      "dataCriacao": "2025-03-10T14:30:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "Rico",
-      "ativos": 37,
-      "rentabilidade": "13,52%",
-      "valor": 84885.4,
-      "meta": "Minha casa"
+      "id": 3,
+      "nome": "Tesouro Selic 2027",
+      "tipo": "investimentos",
+      "tipoInvestimento": "tesouro_direto",
+      "valorAtual": 10500.00,
+      "risco": "baixo",
+      "tesouroDireto": {
+        "id": 3,
+        "tipoTesouro": "selic",
+        "valorInvestido": 10000.00,
+        "valorAtual": 10500.00,
+        "dataCompra": "2025-01-15",
+        "dataVencimento": "2027-12-31",
+        "corretora": "XP Investimentos",
+        "taxaRentabilidade": 5.5,
+        "risco": "baixo"
+      },
+      "dataCriacao": "2025-01-15T09:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "Caixa",
-      "ativos": 1,
-      "rentabilidade": "0,00%",
-      "valor": 0,
-      "meta": "Minha casa"
+      "id": 4,
+      "nome": "CDB 120% CDI",
+      "tipo": "investimentos",
+      "tipoInvestimento": "renda_fixa",
+      "valorAtual": 15750.00,
+      "risco": "baixo",
+      "rendaFixa": {
+        "id": 4,
+        "tipoAtivoRendaFixa": "cdb",
+        "valorInvestido": 15000.00,
+        "valorAtual": 15750.00,
+        "corretora": "XP Investimentos",
+        "dataCompra": "2025-06-01",
+        "dataVencimento": "2028-06-01",
+        "tipoTaxa": "pos_fixado_cdi",
+        "percentualCdi": 120.0,
+        "cdiAtual": 10.5,
+        "categoriaRiscoRendaFixa": "baixo",
+        "isento": false,
+        "valorFinalEstimado": 20000.00
+      },
+      "dataCriacao": "2025-06-01T11:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "NU",
-      "ativos": 23,
-      "rentabilidade": "11,95%",
-      "valor": 11367.95,
-      "meta": "Reforma da casa"
+      "id": 5,
+      "nome": "PETR4",
+      "tipo": "investimentos",
+      "tipoInvestimento": "renda_variavel",
+      "valorAtual": 3800.00,
+      "risco": "alto",
+      "rendaVariavel": {
+        "id": 5,
+        "tipoRendaVariavel": "acoes",
+        "quantidade": 100,
+        "precoMedio": 35.50,
+        "valorAtual": 3800.00,
+        "corretora": "Clear",
+        "categoriaRiscoRendaVariavel": "alto",
+        "dataCompra": "2025-01-10",
+        "dividendosRecebidos": 200.00,
+        "irEstimadoAcoes": 15
+      },
+      "dataCriacao": "2025-01-10T15:20:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "PagSeguro",
-      "ativos": 1,
-      "rentabilidade": "12,00%",
-      "valor": 1358.54,
-      "meta": "Reserva de emergência"
-    },
-    {
-      "nome": "PicPay",
-      "ativos": 1,
-      "rentabilidade": "12,00%",
-      "valor": 1358.54,
-      "meta": "Reserva de emergência"
-    },
-    {
-      "nome": "Wise",
-      "ativos": 1,
-      "rentabilidade": "12,00%",
-      "valor": 617.66,
-      "meta": "Viagens"
+      "id": 6,
+      "nome": "HGLG11",
+      "tipo": "investimentos",
+      "tipoInvestimento": "renda_variavel",
+      "valorAtual": 8500.00,
+      "risco": "medio",
+      "rendaVariavel": {
+        "id": 6,
+        "tipoRendaVariavel": "fii",
+        "quantidade": 50,
+        "precoMedio": 160.00,
+        "valorAtual": 8500.00,
+        "corretora": "Rico",
+        "categoriaRiscoRendaVariavel": "medio",
+        "dividendYield": 8.5,
+        "irEstimadoFii": "Isento em dividendos, 20% em ganho de capital"
+      },
+      "dataCriacao": "2025-02-20T10:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     }
   ],
-  "perfil": [
+  "metas": [
     {
-      "nome": "Conservador",
-      "valor": 219914.85,
-      "distribuicao": {
-        "tituloRendaFixa": 214924.3,
-        "tesouroDireto": 4990.55,
-        "fundoRendaFixaDI": 0,
-        "previdenciaPrivada": 0
-      }
+      "id": 1,
+      "descricao": "Independência Financeira",
+      "valorObjetivo": 1000000.00,
+      "valorAtual": 79777.65,
+      "prazo": "2030-12-31",
+      "percentualProgresso": 8.0,
+      "dataCriacao": "2024-01-01T00:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "Moderado",
-      "valor": 344.96,
-      "distribuicao": {
-        "etf": 344.96,
-        "fundoMultimercado": 0,
-        "fii": 0
-      }
+      "id": 2,
+      "descricao": "Comprar Apartamento",
+      "valorObjetivo": 500000.00,
+      "valorAtual": 150000.00,
+      "prazo": "2028-12-31",
+      "percentualProgresso": 30.0,
+      "dataCriacao": "2025-06-15T00:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     },
     {
-      "nome": "Agressivo",
-      "valor": 1687.71,
-      "distribuicao": {
-        "acoes": 1687.71,
-        "fundoAcoes": 0,
-        "coe": 0
-      }
-    }
-  ],
-  "metas": {
-    "metas": [
-      {
-        "nome": "Independência",
-        "valorMeta": 1000000,
-        "prazo": 2030
-      },
-      {
-        "nome": "Teste 1",
-        "valorMeta": 100,
-        "prazo": 2026,
-        "valorAtual": 5
-      },
-      {
-        "nome": "Teste 2",
-        "valorMeta": 100,
-        "prazo": 2026,
-        "valorAtual": 50
-      },
-      {
-        "nome": "Teste 3",
-        "valorMeta": 100,
-        "prazo": 2026,
-        "valorAtual": 95
-      }
-    ]
-  },
-  "patrimonio": [
-    {
-      "ativos": [
-        {
-          "ano": 2026,
-          "Conta corrente": 0,
-          "Salário": {
-            "valor": 13878.24,
-            "descricao": "Fonte de renda 1"
-          },
-          "Meu negócio": {
-            "valor": 0,
-            "descricao": "Fonte de renda 2"
-          },
-          "investimentos": 200000,
-          "contas a receber": {
-            "valor": 415.38,
-            "descricao": "Dividendos e JCP"
-          },
-          "Reserva de emergência": 32123.85,
-          "Previdência privada": 0,
-          "Outros": {
-            "valor": 0,
-            "descricao": "13 salário, férias, bônus, etc."
-          }
-        }
-      ],
-      "naoAtivos": [
-        {
-          "ano": 2026,
-          "veículos": 7335,
-          "imóveis": 0,
-          "FGTS": 55448.7,
-          "objetos de valor": {
-            "valor": 10000,
-            "descricao": "Joias, obras de arte, etc."
-          },
-          "outros": {
-            "valor": 0,
-            "descricao": "Qualquer outro ativo"
-          }
-        }
-      ],
-      "evolucao": [
-        {
-          "ano": 2026,
-          "valor": 232123.85
-        },
-        {
-          "ano": 2025,
-          "valor": 222448.47
-        },
-        {
-          "ano": 2024,
-          "valor": 199276.15
-        },
-        {
-          "ano": 2023,
-          "valor": 199276.15
-        },
-        {
-          "ano": 2022,
-          "valor": 126141.67
-        },
-        {
-          "ano": 2021,
-          "valor": 99470.32
-        },
-        {
-          "ano": 2020,
-          "valor": 64501.39
-        }
-      ]
+      "id": 3,
+      "descricao": "Viagem Europa",
+      "valorObjetivo": 30000.00,
+      "valorAtual": 28500.00,
+      "prazo": "2027-06-30",
+      "percentualProgresso": 95.0,
+      "dataCriacao": "2025-01-10T00:00:00",
+      "dataAtualizacao": "2026-02-20T10:00:00"
     }
   ]
 }

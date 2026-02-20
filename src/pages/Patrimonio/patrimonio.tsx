@@ -31,37 +31,40 @@ ChartJS.register(
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-type PatrimonioEvolucaoItem = {
-  ano: number;
-  valor: number;
-};
-
-type PatrimonioDetalhe = {
-  evolucao?: PatrimonioEvolucaoItem[];
-};
-
-const normalizePatrimonioPayload = (data: unknown): PatrimonioDetalhe => {
-  const payload = Array.isArray(data) ? data[0] : data;
-  return payload && typeof payload === 'object' ? (payload as PatrimonioDetalhe) : {};
+type Ativo = {
+  id: number;
+  nome: string;
+  tipo: string;
+  valorAtual: number;
 };
 
 export default function Patrimonio() {
 
   const { showAlert } = useAlert();
-  const [patrimonio, setPatrimonio] = useState<PatrimonioEvolucaoItem[]>([]);
+  const [ativosTotal, setAtivosTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
+
+  const naoAtivosTotal = 10000; // TODO: buscar valor total de ativos não-investimento do backend para mostrar no gráfico junto com o total de investimentos (ex: imóveis, veículos, etc) - para isso, adicionar campo "subtipo" ou similar no backend para diferenciar os tipos de investimento e permitir somar os valores separadamente
+  
+  const fetchAtivos = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/ativos`);
+      const { ativos } = await response.json();
+      
+      if (Array.isArray(ativos)) {
+        const total = ativos.reduce((acc: number, ativo: Ativo) => acc + ativo.valorAtual, 0);
+        setAtivosTotal(total);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar ativos:', error);
+      showAlert('Erro ao buscar ativos.', 'error');
+    }
+  };
   
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_URL}/patrimonio`);
-      const payload = normalizePatrimonioPayload(await response.json());
-  
-      const { evolucao } = payload;
-
-      setPatrimonio(Array.isArray(evolucao) ? evolucao : []);
-    } catch (error) {
-      showAlert('Erro ao carregar dados do patrimônio.', 'error');
+      await fetchAtivos();
     } finally {
       setIsLoading(false);
     }
@@ -71,14 +74,7 @@ export default function Patrimonio() {
     fetchData();
   }, []);
 
-  const patrimonioOrdenado = useMemo(
-    () => [...patrimonio].sort((a, b) => a.ano - b.ano),
-    [patrimonio]
-  );
-
-  const labels = patrimonioOrdenado.map((p) => {
-    return p.ano?.toString();
-  });
+  const labels = ['Ativos Atual'];
 
   const options = {
     responsive: true,
@@ -94,10 +90,17 @@ export default function Patrimonio() {
     datasets: [
       {
         fill: true,
-        label: '(R$) Ativos + Não ativos',
-        data: patrimonioOrdenado.map((p) => p.valor),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        label: `(R$) Total de Ativos: ${ativosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+        data: [ativosTotal],
+        borderColor: 'rgb(75, 192, 75)',
+        backgroundColor: 'rgba(75, 192, 75, 0.5)',
+      },
+      {
+        fill: true,
+        label: `(R$) Total de Ativos Não-Investimento: ${naoAtivosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+        data: [naoAtivosTotal],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
     ],
   };
