@@ -9,6 +9,15 @@ import {
 
 import SelectField from "../../../../shared/SelectField/selectField";
 import InputField from "../../../../shared/InputField/inputField";
+import {
+  ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
+  ATIVOS_FONTE_RENDA_OPTIONS,
+  ATIVOS_TIPO_OPTIONS,
+  RISCO_BAIXO,
+  RISCO_BAIXO_MEDIO,
+  RISCO_BAIXO_MEDIO_ALTO,
+  RISCO_MEDIO_ALTO,
+} from "../../../../const/ativos";
 
 import { TesouroDiretoForm } from "./components/TesouroDiretoForm";
 import { RendaFixaForm } from "./components/RendaFixaForm";
@@ -55,44 +64,28 @@ export default function AtivosCreate() {
 
   const getRiscoOptions = () => {
     if (tipoInvestimento === "tesouro_direto") {
-      return [{ value: "baixo", label: "Baixo" }];
+      return RISCO_BAIXO;
     }
     if (tipoInvestimento === "renda_fixa") {
       if (["lci", "lca", "cri", "cra"].includes(tipoAtivoRendaFixa)) {
-        return [{ value: "baixo", label: "Baixo" }];
+        return RISCO_BAIXO;
       }
       if (tipoAtivoRendaFixa === "cdb" || tipoAtivoRendaFixa === "lc") {
-        return [
-          { value: "baixo", label: "Baixo" },
-          { value: "medio", label: "Médio" },
-        ];
+        return RISCO_BAIXO_MEDIO;
       }
       if (tipoAtivoRendaFixa === "debenture") {
-        return [
-          { value: "medio", label: "Médio" },
-          { value: "alto", label: "Alto" },
-        ];
+        return RISCO_MEDIO_ALTO;
       }
     }
     if (tipoInvestimento === "renda_variavel") {
       if (tipoRendaVariavel === "acoes") {
-        return [
-          { value: "medio", label: "Médio" },
-          { value: "alto", label: "Alto" },
-        ];
+        return RISCO_MEDIO_ALTO;
       }
       if (tipoRendaVariavel === "fii") {
-        return [
-          { value: "baixo", label: "Baixo" },
-          { value: "medio", label: "Médio" },
-        ];
+        return RISCO_BAIXO_MEDIO;
       }
     }
-    return [
-      { value: "baixo", label: "Baixo" },
-      { value: "medio", label: "Médio" },
-      { value: "alto", label: "Alto" },
-    ];
+    return RISCO_BAIXO_MEDIO_ALTO;
   };
 
   const riscoOptions = getRiscoOptions();
@@ -114,15 +107,7 @@ export default function AtivosCreate() {
           name="tipo"
           label="Tipo"
           icon={faList}
-          options={[
-            { value: "conta_corrente", label: "Conta corrente" },
-            { value: "meu_negocio", label: "Meu negócio" },
-            { value: "investimentos", label: "Investimentos" },
-            { value: "contas_a_receber", label: "Contas a receber" },
-            { value: "reserva_emergencia", label: "Reserva de emergência" },
-            { value: "previdencia_privada", label: "Previdência privada" },
-            { value: "outros", label: "Outros" },
-          ]}
+          options={ATIVOS_TIPO_OPTIONS}
           onChange={(value) => setTipoAtivo(value)}
           defaultValue=""
         />
@@ -133,11 +118,7 @@ export default function AtivosCreate() {
             name="tipoFonteRenda"
             label="Tipo de Fonte de Renda"
             icon={faList}
-            options={[
-              { value: "fonte_renda-1", label: "Fonte de renda 1" },
-              { value: "fonte_renda-2", label: "Fonte de renda 2" },
-              { value: "outros", label: "Outros" },
-            ]}
+            options={ATIVOS_FONTE_RENDA_OPTIONS}
             onChange={(value) => setTipoFonteRenda(value)}
             defaultValue=""
           />
@@ -161,12 +142,7 @@ export default function AtivosCreate() {
             name="tipoInvestimento"
             label="Categoria de investimento"
             icon={faList}
-            options={[
-              { value: "tesouro_direto", label: "Tesouro direto" },
-              { value: "renda_fixa", label: "Renda fixa" },
-              { value: "renda_variavel", label: "Renda variável" },
-              { value: "outros", label: "Outros" },
-            ]}
+            options={ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS}
             onChange={(value) => {
               setTipoInvestimento(value);
               setTipoAtivoRendaFixa("");
@@ -198,11 +174,7 @@ export default function AtivosCreate() {
                 id="categoriaRisco"
                 name="categoriaRisco"
                 label="Nível de risco"
-                options={[
-                  { value: "baixo", label: "Baixo" },
-                  { value: "medio", label: "Médio" },
-                  { value: "alto", label: "Alto" },
-                ]}
+                options={RISCO_BAIXO_MEDIO_ALTO}
                 defaultValue=""
               />
 

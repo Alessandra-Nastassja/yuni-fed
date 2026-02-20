@@ -14,6 +14,11 @@ import {
 import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import AlertBox from "../../../../../shared/Alert/AlertBox";
+import {
+  DEBENTURE_TIPO_OPTIONS,
+  RENDA_FIXA_TIPO_ATIVO_OPTIONS,
+  TAXA_TIPO_OPTIONS,
+} from "../../../../../const/ativos";
 
 interface RendaFixaFormProps {
   riscoOptions: Array<{ value: string; label: string }>;
@@ -69,16 +74,7 @@ export function RendaFixaForm({ riscoOptions, onChange }: RendaFixaFormProps) {
         name="tipoAtivoRendaFixa"
         label="Tipo de ativo"
         icon={faTag}
-        options={[
-          { value: "cdb", label: "CDB" },
-          { value: "lci", label: "LCI" },
-          { value: "lca", label: "LCA" },
-          { value: "lc", label: "LC" },
-          { value: "cri", label: "CRI" },
-          { value: "cra", label: "CRA" },
-          { value: "debenture", label: "Debenture" },
-          { value: "outros", label: "Outros" },
-        ]}
+        options={RENDA_FIXA_TIPO_ATIVO_OPTIONS}
         onChange={(value) => {
           setTipoAtivo(value);
           setTipoTaxa("");
@@ -93,10 +89,7 @@ export function RendaFixaForm({ riscoOptions, onChange }: RendaFixaFormProps) {
           name="tipoDebenture"
           label="Tipo de debenture"
           icon={faList}
-          options={[
-            { value: "comum", label: "Comum" },
-            { value: "incentivada", label: "Incentivada" },
-          ]}
+          options={DEBENTURE_TIPO_OPTIONS}
           onChange={(value) => setTipoDebenture(value)}
           defaultValue=""
         />
@@ -151,11 +144,7 @@ export function RendaFixaForm({ riscoOptions, onChange }: RendaFixaFormProps) {
         name="tipoTaxa"
         label="Tipo de taxa"
         icon={faList}
-        options={[
-          { value: "prefixado", label: "Prefixado" },
-          { value: "pos_fixado_cdi", label: "% CDI" },
-          { value: "ipca", label: "IPCA + taxa" },
-        ]}
+        options={TAXA_TIPO_OPTIONS}
         onChange={(value) => setTipoTaxa(value)}
         defaultValue=""
       />

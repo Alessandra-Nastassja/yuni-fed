@@ -12,6 +12,7 @@ import {
 import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import AlertBox from "../../../../../shared/Alert/AlertBox";
+import { TESOURO_TIPO_OPTIONS } from "../../../../../const/ativos";
 
 interface TesouroDiretoFormProps {
   onChange?: (data: any) => void;
@@ -40,11 +41,7 @@ export function TesouroDiretoForm({ onChange }: TesouroDiretoFormProps) {
         name="tipoTesouro"
         label="Tipo de investimento"
         icon={faList}
-        options={[
-          { value: "tesouro_selic", label: "Tesouro Selic" },
-          { value: "tesouro_ipca", label: "IPCA+" },
-          { value: "tesouro_prefixado", label: "Prefixado" },
-        ]}
+        options={TESOURO_TIPO_OPTIONS}
         onChange={(value) => setTipoTesouro(value)}
         defaultValue=""
       />
