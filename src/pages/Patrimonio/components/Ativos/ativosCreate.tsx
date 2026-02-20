@@ -238,7 +238,8 @@ export default function AtivosCreate() {
             rendaVariavelPayload.dividendosRecebidos = parseFloat((formData.get("dividendosRecebidos") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
             rendaVariavelPayload.irEstimadoAcoes = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
           } else if (tipoRenda === "fii") {
-            rendaVariavelPayload.irEstimadoFii = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
+            rendaVariavelPayload.dividendYield = formData.get("dividendYield") ? parseFloat((formData.get("dividendYield") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".")) : undefined;
+            rendaVariavelPayload.irEstimadoFii = formData.get("irEstimado");
           } else if (tipoRenda === "etf") {
             rendaVariavelPayload.irEstimadoEtf = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
           }
