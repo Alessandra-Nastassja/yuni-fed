@@ -137,6 +137,14 @@ export const ATIVOS_FONTE_RENDA_OPTIONS: Option[] = [
   { value: "outros", label: "Outros" },
 ];
 
+export const CONTAS_A_RECEBER_CATEGORIA_OPTIONS: Option[] = [
+  { value: "dividendos", label: "Dividendos" },
+  { value: "jcp", label: "JCP" },
+  { value: "rendimento", label: "Rendimento" },
+  { value: "proventos", label: "Proventos" },
+  { value: "outros", label: "Outros" },
+];
+
 export const BANCOS_OPTIONS: Option[] = [
   { value: "nubank", label: "Nubank" },
   { value: "inter", label: "Inter" },

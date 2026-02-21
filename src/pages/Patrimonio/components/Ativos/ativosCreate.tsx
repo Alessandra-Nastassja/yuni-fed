@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDollarSign,
   faList,
   faTag,
+  faLink,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "@shared/SelectField/selectField";
@@ -19,6 +22,7 @@ import {
   ATIVOS_FONTE_RENDA_OPTIONS,
   ATIVOS_TIPO_OPTIONS,
   BANCOS_OPTIONS,
+  CONTAS_A_RECEBER_CATEGORIA_OPTIONS,
   RISCO_BAIXO,
   RISCO_BAIXO_MEDIO,
   RISCO_BAIXO_MEDIO_ALTO,
@@ -48,6 +52,18 @@ export default function AtivosCreate() {
   const [tipoFonteRenda, setTipoFonteRenda] = useState("");
   const [nomeBancoCustomizado, setNomeBancoCustomizado] = useState("");
   const [bancSelecionado, setBancoSelecionado] = useState("");
+  const [categoriaContasAReceber, setCategoriaContasAReceber] = useState("");
+  const [ativosExistentes, setAtivosExistentes] = useState<Array<{
+    id: number; 
+    nome: string; 
+    tipo: string; 
+    tipoInvestimento?: string;
+    rendaVariavel?: {
+      tipoRendaVariavel?: string;
+    };
+  }>>([]);
+  const [ativoVinculado, setAtivoVinculado] = useState("");
+  const [listaAberta, setListaAberta] = useState(false);
 
   const getRiscoOptions = () => {
     if (tipoInvestimento === "tesouro_direto") {
@@ -77,6 +93,36 @@ export default function AtivosCreate() {
 
   const riscoOptions = getRiscoOptions();
 
+  // Obter opções de categorias (sempre todas as opções disponíveis)
+  const categoriasDisponiveis = CONTAS_A_RECEBER_CATEGORIA_OPTIONS;
+
+  // Buscar ativos existentes para vincular
+  useEffect(() => {
+    const fetchAtivos = async () => {
+      try {
+        // Buscar ativos completos para ter acesso ao tipoInvestimento
+        const response = await fetch(`${API_URL}/ativos/completo`);
+        if (response.ok) {
+          const data = await response.json();
+          // Garantir que data é um array ou tem a propriedade ativos
+          let ativosArray = [];
+          if (Array.isArray(data)) {
+            ativosArray = data;
+          } else if (data.ativos && Array.isArray(data.ativos)) {
+            ativosArray = data.ativos;
+          } else {
+            console.warn("API retornou formato inesperado:", data);
+          }
+          setAtivosExistentes(ativosArray);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar ativos:", error);
+        setAtivosExistentes([]);
+      }
+    };
+    fetchAtivos();
+  }, []);
+
   useEffect(() => {
     // Aplicar máscara de moeda nos campos de dinheiro
     const moneyInputs = ['valorAtual', 'precoMedio', 'precoAtual', 'dividendosRecebidos', 'dividendYield'];
@@ -96,6 +142,53 @@ export default function AtivosCreate() {
     }
   }, [tipoAtivo]);
 
+  // Limpar ativo vinculado quando categoria muda
+  useEffect(() => {
+    if (categoriaContasAReceber) {
+      setAtivoVinculado("");
+      setListaAberta(false);
+    }
+  }, [categoriaContasAReceber]);
+
+  // Obter lista de ativos filtrados
+  const getAtivosFiltrados = () => {
+    if (!Array.isArray(ativosExistentes)) return [];
+    
+    return ativosExistentes.filter((ativo) => {
+      // Filtro base: apenas investimentos de renda variável
+      if (ativo.tipo !== "investimentos" || ativo.tipoInvestimento !== "renda_variavel") {
+        return false;
+      }
+      
+      // Filtrar por nome (pesquisa) - se estiver digitando (não mostrar todos)
+      if (!listaAberta && ativoVinculado.length >= 3) {
+        if (!ativo.nome.toLowerCase().includes(ativoVinculado.toLowerCase())) {
+          return false;
+        }
+      }
+      
+      const tipoRV = ativo.rendaVariavel?.tipoRendaVariavel;
+      
+      // Dividendos e JCP → apenas ações
+      if (categoriaContasAReceber === 'dividendos' || categoriaContasAReceber === 'jcp') {
+        return tipoRV === 'acoes';
+      }
+      
+      // Rendimento → apenas FII
+      if (categoriaContasAReceber === 'rendimento') {
+        return tipoRV === 'fii';
+      }
+      
+      // Proventos → apenas ETF
+      if (categoriaContasAReceber === 'proventos') {
+        return tipoRV === 'etf';
+      }
+      
+      // Outros ou sem categoria → todos os tipos
+      return true;
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -110,11 +203,30 @@ export default function AtivosCreate() {
       } else {
         nome = BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw;
       }
+    } else if (tipo === "contas_a_receber") {
+      // Para contas a receber, nome só é obrigatório se categoria for "outros"
+      if (categoriaContasAReceber === "outros") {
+        nome = nomeRaw;
+      } else {
+        // Se não for "outros", usa a categoria como nome
+        nome = CONTAS_A_RECEBER_CATEGORIA_OPTIONS.find((option) => option.value === categoriaContasAReceber)?.label || categoriaContasAReceber;
+      }
     } else {
       nome = nomeRaw;
     }
 
-    if (!nome || !tipo) {
+    // Validação de campos obrigatórios
+    if (!tipo) {
+      showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
+      return;
+    }
+
+    if (tipo === "contas_a_receber" && categoriaContasAReceber === "outros" && !nome) {
+      showAlert("Por favor, preencha o nome quando a categoria for 'outros'.", "error");
+      return;
+    }
+
+    if (tipo !== "contas_a_receber" && !nome) {
       showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
       return;
     }
@@ -130,6 +242,19 @@ export default function AtivosCreate() {
       // Adicionar tipoFonteRenda se necessário
       if (tipoFonteRenda) {
         payload.tipoFonteRenda = tipoFonteRenda;
+      }
+
+      // Adicionar categoriaContasAReceber se necessário
+      if (tipo === "contas_a_receber" && categoriaContasAReceber) {
+        payload.categoriaContasAReceber = categoriaContasAReceber;
+      }
+
+      // Adicionar ativo vinculado se selecionado
+      if (tipo === "contas_a_receber" && ativoVinculado && Array.isArray(ativosExistentes)) {
+        const ativoEncontrado = ativosExistentes.find(a => a.nome === ativoVinculado);
+        if (ativoEncontrado) {
+          payload.ativoVinculadoId = ativoEncontrado.id;
+        }
       }
 
       // Para ativos simples
@@ -327,6 +452,19 @@ export default function AtivosCreate() {
               />
             )}
           </>
+        ) : tipoAtivo === "contas_a_receber" ? (
+          <>
+            {categoriaContasAReceber === "outros" && (
+              <InputField
+                id="nome"
+                name="nome"
+                label="Nome"
+                icon={faTag}
+                placeholder="Digite o nome"
+                maxLength={30}
+              />
+            )}
+          </>
         ) : (
           <InputField
             id="nome"
@@ -387,6 +525,89 @@ export default function AtivosCreate() {
             onChange={(value) => setTipoFonteRenda(value)}
             defaultValue=""
           />
+        )}
+
+        {tipoAtivo === 'contas_a_receber' && (
+          <SelectField
+            id="categoriaContasAReceber"
+            name="categoriaContasAReceber"
+            label="Categoria"
+            icon={faList}
+            options={categoriasDisponiveis}
+            onChange={(value) => setCategoriaContasAReceber(value)}
+            defaultValue=""
+          />
+        )}
+
+        {tipoAtivo === 'contas_a_receber' && categoriaContasAReceber && (
+          <div className="space-y-1 relative">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+              <FontAwesomeIcon icon={faLink} className="text-gray-400" />
+              <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="ativoVinculado">
+                Vincular ao ativo
+              </label>
+              <input
+                type="text"
+                id="ativoVinculado"
+                name="ativoVinculado"
+                className="w-full bg-transparent outline-none text-gray-700"
+                placeholder={
+                  categoriaContasAReceber === 'dividendos' || categoriaContasAReceber === 'jcp' 
+                    ? "Digite o nome da ação..." 
+                    : categoriaContasAReceber === 'rendimento' 
+                    ? "Digite o nome do FII..." 
+                    : categoriaContasAReceber === 'proventos' 
+                    ? "Digite o nome do ETF..." 
+                    : "Digite o nome da ação, FII ou ETF..."
+                }
+                value={ativoVinculado}
+                onChange={(e) => {
+                  setAtivoVinculado(e.target.value);
+                  setListaAberta(false);
+                }}  
+              />
+              {!ativoVinculado && (
+                <button
+                  type="button"
+                  onClick={() => setListaAberta(!listaAberta)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Pesquisar todos os ativos"
+                >
+                  <FontAwesomeIcon icon={faSearch} />
+                </button>
+              )}
+            </div>
+            
+            {/* Lista dropdown de ativos */}
+            {(listaAberta || ativoVinculado.length >= 3) && (
+              <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
+                {getAtivosFiltrados().length === 0 ? (
+                  <p className="text-gray-500 text-center py-4 text-sm">Nenhum ativo encontrado</p>
+                ) : (
+                  <div className="py-2">
+                    {getAtivosFiltrados().map((ativo) => {
+                      const tipoRV = ativo.rendaVariavel?.tipoRendaVariavel;
+                      const suffix = tipoRV ? ` (${tipoRV.toUpperCase()})` : '';
+                      return (
+                        <button
+                          key={ativo.id}
+                          type="button"
+                          onClick={() => {
+                            setAtivoVinculado(ativo.nome);
+                            setListaAberta(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <span className="text-gray-800">{ativo.nome}</span>
+                          <span className="text-gray-500 text-sm ml-2">{suffix}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         )}
 
         {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
