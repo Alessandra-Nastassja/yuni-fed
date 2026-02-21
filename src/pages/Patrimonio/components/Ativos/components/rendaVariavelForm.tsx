@@ -6,6 +6,7 @@ import {
   faHashtag,
   faList,
   faPercent,
+  faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "../../../../../shared/SelectField/selectField";
@@ -25,41 +26,76 @@ const TIPOS_RENDA_VARIAVEL = [
 ] as const;
 
 /**
- * Calcula o valor atual baseado em quantidade e preço
+ * Calcula os valores baseado em quantidade, preço de compra e preço atual
  */
-const calcularValorAtual = (): string => {
+const calcularValores = (): { valorInvestido: string; valorAtual: string; resultado: string; percentual: string } => {
   const quantidadeInput = document.getElementById("quantidade") as HTMLInputElement;
+  const precoCompraInput = document.getElementById("precoCompra") as HTMLInputElement;
   const precoAtualInput = document.getElementById("precoAtual") as HTMLInputElement;
-  const precoMedioInput = document.getElementById("precoMedio") as HTMLInputElement;
 
-  if (!quantidadeInput?.value) return "";
+  if (!quantidadeInput?.value || !precoCompraInput?.value || !precoAtualInput?.value) {
+    return { valorInvestido: "", valorAtual: "", resultado: "", percentual: "" };
+  }
 
   const quantidade = parseFloat(quantidadeInput.value);
-  const precoAtual = precoAtualInput?.value
-    ? parseMoneyString(precoAtualInput.value)
-    : parseMoneyString(precoMedioInput?.value || "0");
+  const precoCompra = parseMoneyString(precoCompraInput.value);
+  const precoAtual = parseMoneyString(precoAtualInput.value);
 
-  if (!quantidade || !precoAtual) return "";
+  if (!quantidade || !precoCompra || !precoAtual) {
+    return { valorInvestido: "", valorAtual: "", resultado: "", percentual: "" };
+  }
 
-  const valorAtual = quantidade * precoAtual;
-  return formatAsMoney(valorAtual);
+  const valorInvestido = quantidade * precoCompra;
+  const valorAtualCalculado = quantidade * precoAtual;
+  const resultado = valorAtualCalculado - valorInvestido;
+  const percentual = (resultado / valorInvestido) * 100;
+
+  return {
+    valorInvestido: formatAsMoney(valorInvestido),
+    valorAtual: formatAsMoney(valorAtualCalculado),
+    resultado: formatAsMoney(resultado),
+    percentual: percentual.toFixed(2),
+  };
 };
 
 export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
+  const [precoMedio, setPrecoMedio] = useState("");
+  const [valorInvestido, setValorInvestido] = useState("");
   const [valorAtual, setValorAtual] = useState("");
+  const [resultado, setResultado] = useState("");
+  const [percentual, setPercentual] = useState("");
 
   // Aplicar máscaras de moeda
   useMoneyMask(MONEY_INPUT_IDS.rendaVariavel);
 
-  // Calcular valor atual automaticamente
+  // Calcular preço médio (precoCompra)
+  const calcularPrecoMedio = useCallback((): string => {
+    const quantidadeInput = document.getElementById("quantidade") as HTMLInputElement;
+    const precoCompraInput = document.getElementById("precoCompra") as HTMLInputElement;
+
+    if (!quantidadeInput?.value || !precoCompraInput?.value) return "";
+
+    const quantidade = parseFloat(quantidadeInput.value);
+    const precoCompra = parseMoneyString(precoCompraInput.value);
+
+    if (!quantidade || !precoCompra) return "";
+
+    return formatAsMoney(precoCompra);
+  }, []);
+
+  // Calcular valores automaticamente
   useMultiInputCalculation(
-    ["quantidade", "precoAtual", "precoMedio"],
-    "valorAtual",
+    ["quantidade", "precoCompra", "precoAtual"],
+    "valores",
     () => {
-      const novoValor = calcularValorAtual();
-      setValorAtual(novoValor);
-      return novoValor;
+      const valores = calcularValores();
+      setPrecoMedio(calcularPrecoMedio());
+      setValorInvestido(valores.valorInvestido);
+      setValorAtual(valores.valorAtual);
+      setResultado(valores.resultado);
+      setPercentual(valores.percentual);
+      return valores.valorInvestido;
     }
   );
 
@@ -91,14 +127,23 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
       />
 
       <InputField
-        id="precoMedio"
-        name="precoMedio"
-        label="Preço médio"
+        id="precoCompra"
+        name="precoCompra"
+        label="Preço de compra (unitário)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"
         placeholder="R$ 0,00"
       />
+
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Preço médio"
+        value={precoMedio}
+        isSkeleton={false}
+      />
+
+      <input type="hidden" id="precoMedio" name="precoMedio" value={precoMedio} />
 
       <InputField
         id="precoAtual"
@@ -112,8 +157,29 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor atual (calculado)"
+        label="Valor investido"
+        value={valorInvestido}
+        isSkeleton={false}
+      />
+
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Valor atual"
         value={valorAtual}
+        isSkeleton={false}
+      />
+
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Resultado (R$)"
+        value={resultado}
+        isSkeleton={false}
+      />
+
+      <ReadOnlyField
+        icon={faPercent}
+        label="Resultado (%)"
+        value={percentual ? `${percentual}%` : ""}
         isSkeleton={false}
       />
 

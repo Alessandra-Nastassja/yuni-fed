@@ -201,10 +201,10 @@ export default function AtivosCreate() {
           payload.valorAtual = valorAtualCalculado;
         } else if (tipoInvestimento === "renda_variavel") {
           const quantidade = parseFloat((formData.get("quantidade") as string) || "0");
-          const precoMedio = parseFloat((formData.get("precoMedio") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-          const precoAtual = parseFloat(((formData.get("precoAtual") as string) || (formData.get("valorAtual") as string) || "0")
-            .replace(/[^\d,.-]/g, "")
-            .replace(",", ".")) || precoMedio;
+          const precoMedio = parseMoneyString((formData.get("precoMedio") as string) || "0");
+          const precoAtual = parseMoneyString((formData.get("precoAtual") as string) || "0");
+          
+          const valorInvestido = quantidade * precoMedio;
           const valorAtualCalculado = calcularValorAtualRendaVariavel({
             quantidade,
             precoAtualMercado: precoAtual,
@@ -215,6 +215,7 @@ export default function AtivosCreate() {
             tipoRendaVariavel: tipoRenda,
             quantidade,
             precoMedio,
+            valorInvestido,
             valorAtual: valorAtualCalculado,
             corretora: formData.get("corretora"),
             categoriaRiscoRendaVariavel: formData.get("categoriaRiscoRendaVariavel"),
