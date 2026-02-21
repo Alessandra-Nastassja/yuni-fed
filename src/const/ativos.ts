@@ -79,6 +79,13 @@ export const INVESTMENT_SUBTYPES = {
   etf: "etf",
 } as const;
 
+// Labels formatados para tipos de renda variável
+export const RENDA_VARIAVEL_TIPO_LABELS: Record<string, string> = {
+  acoes: "Ações",
+  fii: "FII",
+  etf: "ETF",
+};
+
 // Condições para mostrar campos na Renda Variável
 export const RENDA_VARIAVEL_CONDITIONS = {
   acoes: {

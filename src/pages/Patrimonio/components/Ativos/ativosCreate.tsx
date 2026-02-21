@@ -7,6 +7,7 @@ import {
   faTag,
   faLink,
   faSearch,
+    faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "@shared/SelectField/selectField";
@@ -23,6 +24,7 @@ import {
   ATIVOS_TIPO_OPTIONS,
   BANCOS_OPTIONS,
   CONTAS_A_RECEBER_CATEGORIA_OPTIONS,
+  RENDA_VARIAVEL_TIPO_LABELS,
   RISCO_BAIXO,
   RISCO_BAIXO_MEDIO,
   RISCO_BAIXO_MEDIO_ALTO,
@@ -160,8 +162,8 @@ export default function AtivosCreate() {
         return false;
       }
       
-      // Filtrar por nome (pesquisa) - se estiver digitando (não mostrar todos)
-      if (!listaAberta && ativoVinculado.length >= 3) {
+      // Filtrar por nome se o usuário está digitando (3+ caracteres)
+      if (ativoVinculado.length >= 3) {
         if (!ativo.nome.toLowerCase().includes(ativoVinculado.toLowerCase())) {
           return false;
         }
@@ -539,12 +541,12 @@ export default function AtivosCreate() {
           />
         )}
 
-        {tipoAtivo === 'contas_a_receber' && categoriaContasAReceber && (
+        {tipoAtivo === 'contas_a_receber' && categoriaContasAReceber && categoriaContasAReceber !== 'outros' && (
           <div className="space-y-1 relative">
             <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
               <FontAwesomeIcon icon={faLink} className="text-gray-400" />
               <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="ativoVinculado">
-                Vincular ao ativo
+                Ativo
               </label>
               <input
                 type="text"
@@ -553,20 +555,37 @@ export default function AtivosCreate() {
                 className="w-full bg-transparent outline-none text-gray-700"
                 placeholder={
                   categoriaContasAReceber === 'dividendos' || categoriaContasAReceber === 'jcp' 
-                    ? "Digite o nome da ação..." 
+                    ? "Digite o nome da ação" 
                     : categoriaContasAReceber === 'rendimento' 
-                    ? "Digite o nome do FII..." 
+                    ? "Digite o nome do FII" 
                     : categoriaContasAReceber === 'proventos' 
-                    ? "Digite o nome do ETF..." 
-                    : "Digite o nome da ação, FII ou ETF..."
+                    ? "Digite o nome do ETF" 
+                    : "Digite o nome da ação, FII ou ETF"
                 }
                 value={ativoVinculado}
                 onChange={(e) => {
                   setAtivoVinculado(e.target.value);
-                  setListaAberta(false);
+                  // Abre o dropdown ao digitar 3+ caracteres, fecha se for menos
+                  if (e.target.value.length >= 3) {
+                    setListaAberta(true);
+                  } else {
+                    setListaAberta(false);
+                  }
                 }}  
               />
-              {!ativoVinculado && (
+              {ativoVinculado ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAtivoVinculado("");
+                    setListaAberta(false);
+                  }}
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                  title="Limpar seleção"
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              ) : (
                 <button
                   type="button"
                   onClick={() => setListaAberta(!listaAberta)}
@@ -579,7 +598,7 @@ export default function AtivosCreate() {
             </div>
             
             {/* Lista dropdown de ativos */}
-            {(listaAberta || ativoVinculado.length >= 3) && (
+            {listaAberta && (
               <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
                 {getAtivosFiltrados().length === 0 ? (
                   <p className="text-gray-500 text-center py-4 text-sm">Nenhum ativo encontrado</p>
@@ -587,7 +606,7 @@ export default function AtivosCreate() {
                   <div className="py-2">
                     {getAtivosFiltrados().map((ativo) => {
                       const tipoRV = ativo.rendaVariavel?.tipoRendaVariavel;
-                      const suffix = tipoRV ? ` (${tipoRV.toUpperCase()})` : '';
+                      const suffix = tipoRV ? `(${RENDA_VARIAVEL_TIPO_LABELS[tipoRV] || tipoRV})` : '';
                       return (
                         <button
                           key={ativo.id}
