@@ -229,3 +229,11 @@ export const TAXA_TIPO_OPTIONS: Option[] = [
   { value: "pos_fixado_cdi", label: "% CDI" },
   { value: "ipca", label: "IPCA + taxa" },
 ];
+
+export const NAO_ATIVOS_TIPO_OPTIONS: Option[] = [
+  { value: "veiculos", label: "Veículos" },
+  { value: "imoveis", label: "Imóveis" },
+  { value: "fgts", label: "FGTS" },
+  { value: "objeto_de_valor", label: "Objeto de Valor" },
+  { value: "outros", label: "Outros" },
+];
