@@ -217,7 +217,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
 
   // Cálculo de valor final estimado
   useEffect(() => {
-    const inputs = ["valorInvestido", "dataCompra", "dataVencimento", "taxaContratada", "percentualCdi", "ipcaTaxa"];
+    const inputs = ["valorInvestido", "dataCompra", "dataVencimento", "taxaContratada", "percentualCdi", "ipcaTaxa", "taxaFixaIpca"];
     
     const inputElements = inputs.map(id => document.getElementById(id));
     
@@ -239,7 +239,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
 
   // Cálculo de valor atual
   useEffect(() => {
-    const inputs = ["valorInvestido", "dataCompra", "dataVencimento", "taxaContratada", "percentualCdi", "ipcaTaxa"];
+    const inputs = ["valorInvestido", "dataCompra", "dataVencimento", "taxaContratada", "percentualCdi", "ipcaTaxa", "taxaFixaIpca"];
     
     const handleRecalculate = () => {
       const novoValorAtual = calcularValorAtualAtualizado();

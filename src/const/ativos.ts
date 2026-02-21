@@ -68,7 +68,7 @@ export const FIXED_INCOME_RATE_TYPES = {
 // Constantes de índices (esses podem ser atualizados periodicamente)
 export const INDICES = {
   cdiAtual: 10.65,
-  ipcaAproximado: 4.5,
+  ipcaAproximado: 4.80,
 } as const;
 
 // Tipos de investimento por categoria

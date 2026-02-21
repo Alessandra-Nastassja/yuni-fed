@@ -122,9 +122,9 @@ export const calcularValorAtualRendaFixa = (input: RendaFixaInput) => {
     // Ex: (10,65 × 110) / 10000 = 0,11715 (11,715%)
     taxaEfetiva = (cdiAtual * percentualCdi) / 10000;
   } else if (tipoTaxa === "ipca") {
-    const ipcaAcumulado = toNumber(input.ipcaAcumulado);
     const ipcaTaxa = toNumber(input.ipcaTaxa);
-    taxaEfetiva = (ipcaAcumulado > 0 ? ipcaAcumulado + ipcaTaxa : ipcaTaxa) / 100;
+    // ipcaTaxa já vem como taxa composta (IPCA + Taxa fixa calculado com fórmula composta)
+    taxaEfetiva = ipcaTaxa / 100;
   }
 
   const valorAtual = valorInvestido * Math.pow(1 + taxaEfetiva, anos);
@@ -258,8 +258,9 @@ export const calcularRendimentoBruto = (
 
   if (tipoTaxa === "ipca") {
     const { ipcaAtual = 4.5, ipcaTaxa = 0 } = parametrosAdicionais;
-    const taxaTotal = ipcaAtual + ipcaTaxa;
-    return valor * Math.pow(1 + taxaTotal / 100, anos);
+    // ipcaTaxa já vem como taxa composta calculada no TaxaSection
+    // Exemplo: IPCA 4.8% + Taxa fixa 5% = 10.04% (composto)
+    return valor * Math.pow(1 + ipcaTaxa / 100, anos);
   }
 
   return valor;

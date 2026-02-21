@@ -5,6 +5,7 @@ interface SelectFieldProps extends Omit<FieldProps, 'type'> {
   options: Array<{ value: string; label: string }>;
   onChange?: (value: string) => void;
   defaultValue?: string;
+  value?: string;
 }
 
 interface FieldProps {
@@ -20,7 +21,7 @@ interface FieldProps {
   disabled?: boolean;
 }
 
-export default function SelectField({ id, name, label, icon, options, onChange, defaultValue = "" }: SelectFieldProps) {
+export default function SelectField({ id, name, label, icon, options, onChange, defaultValue = "", value }: SelectFieldProps) {
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
@@ -30,7 +31,7 @@ export default function SelectField({ id, name, label, icon, options, onChange, 
           id={id}
           name={name}
           className="w-full bg-transparent outline-none"
-          defaultValue={defaultValue}
+          {...(value !== undefined ? { value } : { defaultValue })}
           onChange={(event) => onChange?.(event.target.value)}
         >
           <option value="" disabled>Selecione</option>
