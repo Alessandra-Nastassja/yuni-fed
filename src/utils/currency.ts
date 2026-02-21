@@ -5,9 +5,17 @@
  */
 export const parseMoneyString = (value: string): number => {
   if (!value) return 0;
-  return parseFloat(
-    value.replace(/[^\d,.-]/g, "").replace(",", ".")
-  );
+  
+  // Remove tudo exceto dígitos, vírgula, ponto e hífen
+  let normalized = value.replace(/[^\d,.-]/g, "");
+  
+  // Remove pontos (separador de milhar brasileiro)
+  normalized = normalized.replace(/\./g, "");
+  
+  // Substitui vírgula por ponto (decimal brasileiro -> padrão)
+  normalized = normalized.replace(",", ".");
+  
+  return parseFloat(normalized) || 0;
 };
 
 /**
@@ -25,7 +33,7 @@ export const parseCurrency = (value: string) => {
  */
 export const formatValue = (v: any): string => {
   if (typeof v === 'number') {
-    return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
   return String(v)
 };

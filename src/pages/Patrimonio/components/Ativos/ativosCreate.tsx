@@ -12,7 +12,7 @@ import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
 import { RiskSelectField } from "../../../../shared/RiskSelectField/RiskSelectField";
 import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
-import { applyMoneyMask } from "../../../../utils/currency";
+import { applyMoneyMask, parseMoneyString } from "../../../../utils/currency";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
@@ -46,6 +46,8 @@ export default function AtivosCreate() {
   const [tipoAtivoRendaFixa, setTipoAtivoRendaFixa] = useState("");
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
   const [tipoFonteRenda, setTipoFonteRenda] = useState("");
+  const [nomeBancoCustomizado, setNomeBancoCustomizado] = useState("");
+  const [bancSelecionado, setBancoSelecionado] = useState("");
 
   const getRiscoOptions = () => {
     if (tipoInvestimento === "tesouro_direto") {
@@ -101,9 +103,16 @@ export default function AtivosCreate() {
     const nomeRaw = formData.get("nome") as string;
     const tipo = formData.get("tipo") as string;
 
-    const nome = tipo === "conta_corrente"
-      ? (BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw)
-      : nomeRaw;
+    let nome = "";
+    if (tipo === "conta_corrente") {
+      if (nomeRaw === "outros" && nomeBancoCustomizado) {
+        nome = nomeBancoCustomizado;
+      } else {
+        nome = BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw;
+      }
+    } else {
+      nome = nomeRaw;
+    }
 
     if (!nome || !tipo) {
       showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
@@ -158,9 +167,9 @@ export default function AtivosCreate() {
         } else if (tipoInvestimento === "renda_fixa") {
           const tipoAtivoRendaFixa = formData.get("tipoAtivoRendaFixa") as string;
           const tipoDebenture = formData.get("tipoDebenture") as string;
-          const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+          const valorInvestido = parseMoneyString(formData.get("valorInvestido") as string);
           const valorAtualCalculado = calcularValorAtualRendaFixa({
-            valorInvestido,
+            valorInvestido: String(valorInvestido),
             tipoTaxa: (formData.get("tipoTaxa") as string) || "",
             taxaContratada: formData.get("taxaContratada") as string,
             percentualCdi: formData.get("percentualCdi") as string,
@@ -201,10 +210,10 @@ export default function AtivosCreate() {
           payload.valorAtual = valorAtualCalculado;
         } else if (tipoInvestimento === "renda_variavel") {
           const quantidade = parseFloat((formData.get("quantidade") as string) || "0");
-          const precoMedio = parseFloat((formData.get("precoMedio") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-          const precoAtual = parseFloat(((formData.get("precoAtual") as string) || (formData.get("valorAtual") as string) || "0")
-            .replace(/[^\d,.-]/g, "")
-            .replace(",", ".")) || precoMedio;
+          const precoMedio = parseMoneyString((formData.get("precoMedio") as string) || "0");
+          const precoAtual = parseMoneyString((formData.get("precoAtual") as string) || "0");
+          
+          const valorInvestido = quantidade * precoMedio;
           const valorAtualCalculado = calcularValorAtualRendaVariavel({
             quantidade,
             precoAtualMercado: precoAtual,
@@ -215,6 +224,7 @@ export default function AtivosCreate() {
             tipoRendaVariavel: tipoRenda,
             quantidade,
             precoMedio,
+            valorInvestido,
             valorAtual: valorAtualCalculado,
             corretora: formData.get("corretora"),
             categoriaRiscoRendaVariavel: formData.get("categoriaRiscoRendaVariavel"),
@@ -224,11 +234,6 @@ export default function AtivosCreate() {
             rendaVariavelPayload.dataCompra = formData.get("dataCompra");
             rendaVariavelPayload.dividendosRecebidos = parseFloat((formData.get("dividendosRecebidos") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
             rendaVariavelPayload.irEstimadoAcoes = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
-          } else if (tipoRenda === "fii") {
-            rendaVariavelPayload.dividendYield = formData.get("dividendYield") ? parseFloat((formData.get("dividendYield") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".")) : undefined;
-            rendaVariavelPayload.irEstimadoFii = formData.get("irEstimado");
-          } else if (tipoRenda === "etf") {
-            rendaVariavelPayload.irEstimadoEtf = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
           }
 
           payload.rendaVariavel = rendaVariavelPayload;
@@ -279,50 +284,6 @@ export default function AtivosCreate() {
           defaultValue=""
         />
 
-        {tipoAtivo === "conta_corrente" ? (
-          <SelectField
-            id="nome"
-            name="nome"
-            label="Banco"
-            icon={faTag}
-            options={BANCOS_OPTIONS}
-            defaultValue=""
-          />
-        ) : (
-          <InputField
-            id="nome"
-            name="nome"
-            label="Nome"
-            icon={faTag}
-            placeholder="Nome do ativo"
-            maxLength={30}
-          />
-        )}
-
-        {['conta_corrente', 'meu_negocio'].includes(tipoAtivo) && (
-          <SelectField
-            id="tipoFonteRenda"
-            name="tipoFonteRenda"
-            label="Tipo de Fonte de Renda"
-            icon={faList}
-            options={ATIVOS_FONTE_RENDA_OPTIONS}
-            onChange={(value) => setTipoFonteRenda(value)}
-            defaultValue=""
-          />
-        )}
-
-        {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
-          <InputField
-            id="valorAtual"
-            name="valorAtual"
-            label="Valor atual"
-            icon={faDollarSign}
-            type="text"
-            inputMode="decimal"
-            placeholder="R$ 0,00"
-          />
-        )}
-
         {tipoAtivo === "investimentos" && (
           <SelectField
             id="tipoInvestimento"
@@ -338,6 +299,45 @@ export default function AtivosCreate() {
             defaultValue=""
           />
         )}
+
+        {tipoAtivo === "conta_corrente" ? (
+          <>
+            <SelectField
+              id="nome"
+              name="nome"
+              label="Banco"
+              icon={faTag}
+              options={BANCOS_OPTIONS}
+              onChange={(value) => {
+                setBancoSelecionado(value);
+                setNomeBancoCustomizado("");
+              }}
+              defaultValue=""
+            />
+            {bancSelecionado === "outros" && (
+              <InputField
+                id="nomeBancoCustomizado"
+                name="nomeBancoCustomizado"
+                label="Nome do banco"
+                icon={faTag}
+                placeholder="Digite o nome do banco"
+                value={nomeBancoCustomizado}
+                onChange={(e) => setNomeBancoCustomizado(e.target.value)}
+                maxLength={30}
+              />
+            )}
+          </>
+        ) : (
+          <InputField
+            id="nome"
+            name="nome"
+            label="Nome"
+            icon={faTag}
+            placeholder="Digite o nome do ativo"
+            maxLength={30}
+          />
+        )}
+
 
         {tipoAtivo === "investimentos" && tipoInvestimento === "tesouro_direto" && (
           <TesouroDiretoForm />
@@ -368,7 +368,7 @@ export default function AtivosCreate() {
               <InputField
                 id="valorAtual"
                 name="valorAtual"
-                label="Valor atual"
+                label="Valor atual (R$)"
                 icon={faDollarSign}
                 type="text"
                 inputMode="decimal"
@@ -377,13 +377,39 @@ export default function AtivosCreate() {
             </>
           )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
-        >
-          Salvar
-        </button>
+        {['conta_corrente', 'meu_negocio'].includes(tipoAtivo) && (
+          <SelectField
+            id="tipoFonteRenda"
+            name="tipoFonteRenda"
+            label="Tipo de Fonte de Renda"
+            icon={faList}
+            options={ATIVOS_FONTE_RENDA_OPTIONS}
+            onChange={(value) => setTipoFonteRenda(value)}
+            defaultValue=""
+          />
+        )}
+
+        {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
+          <InputField
+            id="valorAtual"
+            name="valorAtual"
+            label="Valor atual (R$)"
+            icon={faDollarSign}
+            type="text"
+            inputMode="decimal"
+            placeholder="R$ 0,00"
+          />
+        )}
+
+        <footer className="flex justify-center">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
+          >
+            Salvar
+          </button>
+        </footer>
       </form>
     </main>
   );

@@ -13,13 +13,15 @@ export default function Header() {
     '/patrimonio': 'Patrimônio',
     '/configuracoes': 'Configurações',
     '/novo-ativo': 'Criar ativo',
+    '/novo-nao-ativo': 'Criar não ativo',
   }[location.pathname] || '';
 
   const bgColor = {
     '/home': 'bg-blue-400',
     '/financas': 'bg-blue-400',
     '/patrimonio': 'bg-blue-400',
-    '/novo-ativo': 'bg-green-400',
+    '/novo-ativo': 'bg-green-700',
+    '/novo-nao-ativo': 'bg-blue-400',
     '/configuracoes': 'bg-blue-400',
   }[location.pathname] || 'bg-blue-400';
 

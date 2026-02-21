@@ -65,10 +65,11 @@ export const FIXED_INCOME_RATE_TYPES = {
   ipca: "ipca",
 } as const;
 
+// TODO: integração com mercado (B3, Api de mercado ou último fechamento)
 // Constantes de índices (esses podem ser atualizados periodicamente)
 export const INDICES = {
   cdiAtual: 10.65,
-  ipcaAproximado: 4.5,
+  ipcaAproximado: 4.80,
 } as const;
 
 // Tipos de investimento por categoria
@@ -228,4 +229,12 @@ export const TAXA_TIPO_OPTIONS: Option[] = [
   { value: "prefixado", label: "Prefixado" },
   { value: "pos_fixado_cdi", label: "% CDI" },
   { value: "ipca", label: "IPCA + taxa" },
+];
+
+export const NAO_ATIVOS_TIPO_OPTIONS: Option[] = [
+  { value: "veiculos", label: "Veículos" },
+  { value: "imoveis", label: "Imóveis" },
+  { value: "fgts", label: "FGTS" },
+  { value: "objeto_de_valor", label: "Objeto de Valor" },
+  { value: "outros", label: "Outros" },
 ];

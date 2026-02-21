@@ -91,6 +91,14 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         defaultValue=""
       />
 
+      <AlertBox type="info">
+        <div className="flex items-center gap-2">
+          <FontAwesomeIcon icon={faShield} className="text-blue-400" />
+          <span className="text-sm text-blue-700">Nível de risco</span>
+          <span className="text-xs text-blue-600 font-medium ml-auto">Baixo</span>
+        </div>
+      </AlertBox>
+
       <InputField
         id="valorInvestido"
         name="valorInvestido"
@@ -101,11 +109,14 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         placeholder="R$ 0,00"
       />
 
-      <ReadOnlyField
-        icon={faDollarSign}
-        label="Valor atual"
-        value={valorAtual}
-        isSkeleton={!hasCalculatedValue && valorAtual === ""}
+      <InputField
+        id="taxaRentabilidade"
+        name="taxaRentabilidade"
+        label="Taxa de rentabilidade"
+        icon={faChartLine}
+        type="number"
+        inputMode="decimal"
+        placeholder={getTaxaPlaceholder()}
       />
 
       <InputField
@@ -124,6 +135,13 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         type="date"
       />
 
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Valor atual (R$)"
+        value={valorAtual}
+        isSkeleton={!hasCalculatedValue && valorAtual === ""}
+      />
+
       <SelectField
         id="corretora"
         name="corretora"
@@ -132,24 +150,6 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         options={CORRETORAS_OPTIONS}
         defaultValue=""
       />
-
-      <InputField
-        id="taxaRentabilidade"
-        name="taxaRentabilidade"
-        label="Taxa de rentabilidade"
-        icon={faChartLine}
-        type="number"
-        inputMode="decimal"
-        placeholder={getTaxaPlaceholder()}
-      />
-
-      <AlertBox type="info">
-        <div className="flex items-center gap-2">
-          <FontAwesomeIcon icon={faShield} className="text-blue-400" />
-          <span className="text-sm text-blue-700">Nível de risco</span>
-          <span className="text-xs text-blue-600 font-medium ml-auto">Baixo</span>
-        </div>
-      </AlertBox>
     </>
   );
 }
