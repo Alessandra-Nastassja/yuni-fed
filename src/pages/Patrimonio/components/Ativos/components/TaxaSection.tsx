@@ -55,6 +55,9 @@ export function TaxaSection({
       // Fórmula composta: (1.048 × 1.05 - 1) × 100 = 10.04%
       const taxaComposta = ((1 + INDICES.ipcaAproximado / 100) * (1 + taxaFixaNum / 100) - 1) * 100;
       setValues(prev => ({ ...prev, ipcaTaxa: String(taxaComposta.toFixed(2)) }));
+    } else if (tipoTaxa !== FIXED_INCOME_RATE_TYPES.ipca) {
+      // Se não for IPCA, garantir que ipcaTaxa está limpo
+      setValues(prev => ({ ...prev, ipcaTaxa: "" }));
     }
   }, [taxaFixaIpca, tipoTaxa]);
 
