@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
-import formatValue from "../../../../utils/formatValue";
+import { formatValue } from "../../../../utils/currency";
 import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
 
 const API_URL = import.meta.env.VITE_API_URL;

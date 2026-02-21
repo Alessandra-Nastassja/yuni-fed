@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuildingColumns,
@@ -14,68 +14,69 @@ import InputField from "../../../../../shared/InputField/inputField";
 import AlertBox from "../../../../../shared/Alert/AlertBox";
 import { TESOURO_TIPO_OPTIONS, CORRETORAS_OPTIONS } from "../../../../../const/ativos";
 import { calcularValorAtualTesouroDireto } from "../../../../../utils/investmentCalculations";
-import { formatValue } from "../../../../../utils/formatValue";
-import { applyMoneyMask } from "../../../../../utils/currencyMask";
+import { formatValue } from "../../../../../utils/currency";
+import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
+import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
+import { MONEY_INPUT_IDS } from "../../../../../const/ativos";
+import { TesouroDiretoFormProps } from "../types";
 
-interface TesouroDiretoFormProps {
-}
+const TAXA_PLACEHOLDERS = {
+  tesouro_prefixado: "Taxa fixa (%)",
+  tesouro_ipca: "IPCA + X%",
+  tesouro_selic: "Selic",
+  default: "0,00%",
+} as const;
 
 export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
   const [tipoTesouro, setTipoTesouro] = useState("");
+  const [valorAtual, setValorAtual] = useState("");
+  const [hasCalculatedValue, setHasCalculatedValue] = useState(false);
 
-  useEffect(() => {
-    // Aplicar máscara de moeda
-    applyMoneyMask("valorInvestido");
+  // Aplicar máscara de moeda
+  useMoneyMask(MONEY_INPUT_IDS.tesouro);
 
-    const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement | null;
-    const taxaRentabilidadeInput = document.getElementById("taxaRentabilidade") as HTMLInputElement | null;
-    const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement | null;
-    const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement | null;
-    const valorAtualInput = document.getElementById("valorAtual") as HTMLInputElement | null;
+  // Calcular valor atual automaticamente
+  useMultiInputCalculation(
+    ["valorInvestido", "taxaRentabilidade", "dataCompra", "dataVencimento"],
+    "valorAtual",
+    () => {
+      const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement;
+      const taxaRentabilidadeInput = document.getElementById("taxaRentabilidade") as HTMLInputElement;
+      const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement;
+      const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement;
 
-    const atualizarValorAtual = () => {
-      if (!valorAtualInput) return;
+      const hasInputs = Boolean(
+        valorInvestidoInput?.value ||
+        dataCompraInput?.value ||
+        dataVencimentoInput?.value ||
+        taxaRentabilidadeInput?.value
+      );
 
-      const hasInputs = Boolean(valorInvestidoInput?.value || dataCompraInput?.value || dataVencimentoInput?.value || taxaRentabilidadeInput?.value);
       if (!hasInputs) {
-        valorAtualInput.value = "";
-        return;
+        setHasCalculatedValue(false);
+        return "";
       }
 
-      const valorAtual = calcularValorAtualTesouroDireto({
+      setHasCalculatedValue(true);
+
+      const calculatedValue = calcularValorAtualTesouroDireto({
         valorInvestido: valorInvestidoInput?.value,
         taxaRentabilidade: taxaRentabilidadeInput?.value,
         dataCompra: dataCompraInput?.value,
         dataVencimento: dataVencimentoInput?.value,
       });
 
-      valorAtualInput.value = formatValue(valorAtual);
-    };
-
-    valorInvestidoInput?.addEventListener("input", atualizarValorAtual);
-    taxaRentabilidadeInput?.addEventListener("input", atualizarValorAtual);
-    dataCompraInput?.addEventListener("change", atualizarValorAtual);
-    dataVencimentoInput?.addEventListener("change", atualizarValorAtual);
-
-    return () => {
-      valorInvestidoInput?.removeEventListener("input", atualizarValorAtual);
-      taxaRentabilidadeInput?.removeEventListener("input", atualizarValorAtual);
-      dataCompraInput?.removeEventListener("change", atualizarValorAtual);
-      dataVencimentoInput?.removeEventListener("change", atualizarValorAtual);
-    };
-  }, []);
-
-  const getTaxaPlaceholder = () => {
-    switch (tipoTesouro) {
-      case "tesouro_prefixado":
-        return "Taxa fixa (%)";
-      case "tesouro_ipca":
-        return "IPCA + X%";
-      case "tesouro_selic":
-        return "Selic";
-      default:
-        return "0,00%";
+      const formatted = formatValue(calculatedValue);
+      setValorAtual(formatted);
+      return formatted;
     }
+  );
+
+  const getTaxaPlaceholder = (): string => {
+    return (
+      TAXA_PLACEHOLDERS[tipoTesouro as keyof typeof TAXA_PLACEHOLDERS] ||
+      TAXA_PLACEHOLDERS.default
+    );
   };
 
   return (
@@ -100,15 +101,11 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
         placeholder="R$ 0,00"
       />
 
-      <InputField
-        id="valorAtual"
-        name="valorAtual"
-        label="Valor atual"
+      <ReadOnlyField
         icon={faDollarSign}
-        type="text"
-        inputMode="decimal"
-        placeholder="R$ 0,00"
-        readOnly
+        label="Valor atual"
+        value={valorAtual}
+        isSkeleton={!hasCalculatedValue && valorAtual === ""}
       />
 
       <InputField

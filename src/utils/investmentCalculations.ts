@@ -1,3 +1,5 @@
+import { EXEMPT_IR_FIXED_INCOME } from "../const/ativos";
+
 type DateInput = string | Date | undefined | null;
 
 type TesouroDiretoInput = {
@@ -136,4 +138,126 @@ export const calcularValorFinalEstimadoRendaFixa = (params: {
   const imposto = rendimento > 0 ? rendimento * (aliquota / 100) : 0;
   const valorFinal = valorAtual - imposto;
   return round2(clampNonNegative(valorFinal));
+};
+
+/**
+ * Calcula a alíquota de IR baseada no número de dias entre duas datas
+ * @param dataInicio - Data de início em formato string (YYYY-MM-DD)
+ * @param dataFim - Data de término em formato string (YYYY-MM-DD)
+ * @returns Taxa de IR em percentual
+ */
+export const calcularAliquotaIR = (dataInicio: string, dataFim: string): number => {
+  if (!dataInicio || !dataFim) return 15; // valor padrão
+
+  const inicio = new Date(dataInicio);
+  const fim = new Date(dataFim);
+  const diffTime = Math.abs(fim.getTime() - inicio.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 180) return 22.5;
+  if (diffDays <= 360) return 20;
+  if (diffDays <= 720) return 17.5;
+  return 15;
+};
+
+/**
+ * Verifica se um tipo de renda fixa é isento de IR
+ * @param tipoAtivoRendaFixa - Tipo do ativo de renda fixa
+ * @param tipoDebenture - Tipo de debenture (se aplicável)
+ * @returns true se isento, false caso contrário
+ */
+export const isRendaFixaIsentaIR = (
+  tipoAtivoRendaFixa: string,
+  tipoDebenture?: string
+): boolean => {
+  if (EXEMPT_IR_FIXED_INCOME.includes(tipoAtivoRendaFixa)) {
+    return true;
+  }
+  if (tipoAtivoRendaFixa === "debenture" && tipoDebenture === "incentivada") {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Verifica se o IR deve ser manual (digitado pelo usuário)
+ * @param tipoAtivoRendaFixa - Tipo do ativo de renda fixa
+ * @returns true se manual, false caso contrário
+ */
+export const isIRManual = (tipoAtivoRendaFixa: string): boolean => {
+  return tipoAtivoRendaFixa === "outros";
+};
+
+/**
+ * Calcula o número de anos entre duas datas
+ * @param dataInicio - Data de início em formato string (YYYY-MM-DD)
+ * @param dataFim - Data de término em formato string (YYYY-MM-DD)
+ * @returns Número de anos
+ */
+export const calcularAnos = (dataInicio: string, dataFim: string): number => {
+  if (!dataInicio || !dataFim) return 0;
+
+  const inicio = new Date(dataInicio);
+  const fim = new Date(dataFim);
+  const diffTime = Math.abs(fim.getTime() - inicio.getTime());
+  return diffTime / (1000 * 60 * 60 * 24 * 365);
+};
+
+/**
+ * Calcula rendimento bruto com base no tipo de taxa
+ * @param valor - Valor inicial do investimento
+ * @param taxa - Taxa de rendimento (em decimal ou percentual dependendo do tipo)
+ * @param anos - Número de anos
+ * @param tipoTaxa - Tipo da taxa: 'prefixado', 'pos_fixado_cdi', 'ipca'
+ * @param parametrosAdicionais - Parâmetros adicionais (percentualCdi, ipcaTaxa, etc)
+ * @returns Rendimento bruto calculado
+ */
+export const calcularRendimentoBruto = (
+  valor: number,
+  taxa: number,
+  anos: number,
+  tipoTaxa: string,
+  parametrosAdicionais: Record<string, number> = {}
+): number => {
+  if (tipoTaxa === "prefixado") {
+    return valor * Math.pow(1 + taxa / 100, anos);
+  }
+
+  if (tipoTaxa === "pos_fixado_cdi") {
+    const { cdiAtual = 10.65, percentualCdi = 100 } = parametrosAdicionais;
+    const taxaEfetiva = (cdiAtual * percentualCdi) / 100;
+    return valor * Math.pow(1 + taxaEfetiva / 100, anos);
+  }
+
+  if (tipoTaxa === "ipca") {
+    const { ipcaAtual = 4.5, ipcaTaxa = 0 } = parametrosAdicionais;
+    const taxaTotal = ipcaAtual + ipcaTaxa;
+    return valor * Math.pow(1 + taxaTotal / 100, anos);
+  }
+
+  return valor;
+};
+
+/**
+ * Calcula valor final líquido de um investimento de renda fixa
+ * @param valorBruto - Valor bruto calculado
+ * @param valorInvestido - Valor inicialmente investido
+ * @param aliquotaIR - Alíquota de IR em percentual
+ * @param isIsentoIR - Se o investimento é isento de IR
+ * @returns Valor final líquido
+ */
+export const calcularValorLiquidoRendaFixa = (
+  valorBruto: number,
+  valorInvestido: number,
+  aliquotaIR: number,
+  isIsentoIR: boolean
+): number => {
+  const rendimento = valorBruto - valorInvestido;
+
+  let valorIR = 0;
+  if (!isIsentoIR && aliquotaIR > 0) {
+    valorIR = rendimento * (aliquotaIR / 100);
+  }
+
+  return valorBruto - valorIR;
 };

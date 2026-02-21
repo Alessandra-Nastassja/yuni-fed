@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDollarSign,
   faList,
-  faShield,
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -12,8 +10,9 @@ import SelectField from "../../../../shared/SelectField/selectField";
 import InputField from "../../../../shared/InputField/inputField";
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
+import { RiskSelectField } from "../../../../shared/RiskSelectField/RiskSelectField";
 import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
-import { applyMoneyMask } from "../../../../utils/currencyMask";
+import { applyMoneyMask } from "../../../../utils/currency";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
@@ -37,38 +36,6 @@ import { RendaFixaForm } from "./components/rendaFixaForm";
 import { RendaVariavelForm } from "./components/rendaVariavelForm";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-interface RiskFieldProps {
-  id: string;
-  name: string;
-  label: string;
-  options: Array<{ value: string; label: string }>;
-  onChange?: (value: string) => void;
-  defaultValue?: string;
-}
-
-function RiskSelectField({ id, name, label, options, onChange, defaultValue = "" }: RiskFieldProps) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-        <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
-        <select
-          id={id}
-          name={name}
-          className="w-full bg-transparent outline-none"
-          defaultValue={defaultValue}
-          onChange={(event) => onChange?.(event.target.value)}
-        >
-          <option value="" disabled>Selecione</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
-}
 
 export default function AtivosCreate() {
   const navigate = useNavigate();

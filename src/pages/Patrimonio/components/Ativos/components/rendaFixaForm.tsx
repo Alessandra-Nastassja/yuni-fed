@@ -1,64 +1,56 @@
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState, useEffect, useCallback } from "react";
 import {
   faBuildingColumns,
-  faCalendarDays,
-  faChartLine,
-  faList,
-  faDollarSign,
-  faPercent,
   faTag,
-  faShield,
+  faDollarSign,
+  faList,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
-import AlertBox from "../../../../../shared/Alert/AlertBox";
+import { RiskSelectField } from "../../../../../shared/RiskSelectField/RiskSelectField";
+import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
+import { IRSection } from "./IRSection";
+import { TaxaSection } from "./TaxaSection";
+
 import {
   CORRETORAS_OPTIONS,
   DEBENTURE_TIPO_OPTIONS,
   RENDA_FIXA_TIPO_ATIVO_OPTIONS,
-  TAXA_TIPO_OPTIONS,
-} from "../../../../../const/ativos";
-import { calcularValorAtualRendaFixa } from "../../../../../utils/investmentCalculations";
-import { formatValue } from "../../../../../utils/formatValue";
-import { applyMoneyMask } from "../../../../../utils/currencyMask";
+} from "../../../../const/ativos";
+import { calcularValorAtualRendaFixa } from "../../../../utils/investmentCalculations";
+import { formatValue } from "../../../../utils/currency";
+import { useMoneyMask, useDateInputListener } from "../hooks";
+import { MONEY_INPUT_IDS, INDICES, FIXED_INCOME_RATE_TYPES } from "../../../../const/ativos";
+import {
+  calcularAliquotaIR,
+  isRendaFixaIsentaIR,
+  isIRManual,
+  calcularAnos,
+  calcularRendimentoBruto,
+  calcularValorLiquidoRendaFixa,
+} from "../../../../utils/investmentCalculations";
+import { parseMoneyString, formatAsMoney } from "../../../../utils/currency";
+import { RendaFixaFormProps } from "../types";
 
-interface RendaFixaFormProps {
-  riscoOptions: Array<{ value: string; label: string }>;
-}
-
-interface RiskFieldProps {
-  id: string;
-  name: string;
-  label: string;
-  options: Array<{ value: string; label: string }>;
-  onChange?: (value: string) => void;
-  defaultValue?: string;
-}
-
-function RiskSelectField({ id, name, label, options, onChange, defaultValue = "" }: RiskFieldProps) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-        <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
-        <select
-          id={id}
-          name={name}
-          className="w-full bg-transparent outline-none"
-          defaultValue={defaultValue}
-          onChange={(event) => onChange?.(event.target.value)}
-        >
-          <option value="" disabled>Selecione</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-      </div>
-    </div>
+/**
+ * Valida se há inputs suficientes para cálculos
+ */
+const temInputsSuficientes = (
+  valorInvestido: string,
+  dataCompra: string,
+  dataVencimento: string,
+  taxaContratada?: string,
+  percentualCdi?: string,
+  ipcaTaxa?: string
+): boolean => {
+  return !!(
+    valorInvestido &&
+    dataCompra &&
+    dataVencimento &&
+    (taxaContratada || percentualCdi || ipcaTaxa)
   );
-}
+};
 
 export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
   const [tipoAtivo, setTipoAtivo] = useState("");
@@ -72,184 +64,154 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
   const [percentualCdi, setPercentualCdi] = useState("");
   const [ipcaTaxa, setIpcaTaxa] = useState("");
   const [valorFinalEstimado, setValorFinalEstimado] = useState("");
+  const [valorAtual, setValorAtual] = useState("");
 
-  const isIsentoIR = ["lci", "lca", "cri", "cra"].includes(tipoAtivo) ||
-    (tipoAtivo === "debenture" && tipoDebenture === "incentivada");
+  const isIsentaIR = isRendaFixaIsentaIR(tipoAtivo, tipoDebenture);
+  const isManualIR = isIRManual(tipoAtivo);
 
-  const isManualIR = tipoAtivo === "outros";
+  // Aplicar máscaras de moeda
+  useMoneyMask(MONEY_INPUT_IDS.rendaFixa);
 
-  // Calcula IR automático baseado no prazo do investimento
-  const calcularIR = (dataInicio: string, dataFim: string) => {
-    if (!dataInicio || !dataFim) return "";
-    
-    const inicio = new Date(dataInicio);
-    const fim = new Date(dataFim);
-    const diffTime = Math.abs(fim.getTime() - inicio.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  // Listener para mudanças de data
+  useDateInputListener((dataCompraValue, dataVencimentoValue) => {
+    setDataCompra(dataCompraValue);
+    setDataVencimento(dataVencimentoValue);
+  });
 
-    if (diffDays <= 180) return "22.5";
-    if (diffDays <= 360) return "20";
-    if (diffDays <= 720) return "17.5";
-    return "15";
-  };
-
-  // Calcula o valor final estimado baseado no tipo de taxa
-  const calcularValorFinal = () => {
-    const valor = parseFloat(valorInvestido.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-    
-    if (!valor || !dataCompra || !dataVencimento) {
-      setValorFinalEstimado("");
-      return;
-    }
-
-    const inicio = new Date(dataCompra);
-    const fim = new Date(dataVencimento);
-    const diffTime = Math.abs(fim.getTime() - inicio.getTime());
-    const anos = diffTime / (1000 * 60 * 60 * 24 * 365);
-
-    let valorBruto = 0;
-
-    if (tipoTaxa === "prefixado") {
-      const taxa = parseFloat(taxaContratada.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-      valorBruto = valor * Math.pow(1 + taxa / 100, anos);
-    } else if (tipoTaxa === "pos_fixado_cdi") {
-      const percCdi = parseFloat(percentualCdi.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-      const cdiAtual = 10.65; // CDI atual aproximado
-      const taxaEfetiva = (cdiAtual * percCdi) / 100;
-      valorBruto = valor * Math.pow(1 + taxaEfetiva / 100, anos);
-    } else if (tipoTaxa === "ipca") {
-      const taxaIpca = parseFloat(ipcaTaxa.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-      const ipcaAtual = 4.5; // IPCA aproximado
-      const taxaTotal = ipcaAtual + taxaIpca;
-      valorBruto = valor * Math.pow(1 + taxaTotal / 100, anos);
-    }
-
-    if (valorBruto > 0) {
-      // Calcular o rendimento
-      const rendimento = valorBruto - valor;
-      
-      // Calcular IR sobre o rendimento (se não for isento)
-      let valorIR = 0;
-      if (!isIsentoIR && irEstimado) {
-        const aliquotaIR = parseFloat(irEstimado) / 100;
-        valorIR = rendimento * aliquotaIR;
-      }
-      
-      // Valor final líquido (valor bruto - IR)
-      const valorLiquido = valorBruto - valorIR;
-      
-      setValorFinalEstimado(valorLiquido.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
-    } else {
-      setValorFinalEstimado("");
-    }
-  };
-
-  // Aplicar máscaras de moeda nos campos de dinheiro
+  // Cálculo automático de IR baseado em datas
   useEffect(() => {
-    applyMoneyMask("valorInvestido");
-    // applyMoneyMask("taxaContratada");
-    applyMoneyMask("cdiAtual");
-  }, []);
-
-  // Atualiza IR automaticamente quando o tipo de ativo ou datas mudarem
-  useEffect(() => {
-    if (isIsentoIR) {
+    if (isIsentaIR) {
       setIrEstimado("0");
       return;
     }
 
     if (isManualIR) {
-      // Para "outros", mantém o valor manual
       return;
     }
 
-    // Para CDB, LC, Debenture comum: calcular automaticamente
-    if (["cdb", "lc", "debenture"].includes(tipoAtivo) || (tipoAtivo === "debenture" && tipoDebenture === "comum")) {
+    // Para tipos que calculam automático
+    if (["cdb", "lc", "debenture"].includes(tipoAtivo)) {
       if (dataCompra && dataVencimento) {
-        const ir = calcularIR(dataCompra, dataVencimento);
-        setIrEstimado(ir);
+        const ir = calcularAliquotaIR(dataCompra, dataVencimento);
+        setIrEstimado(String(ir));
       } else {
-        // Valor padrão mais comum (acima de 720 dias)
         setIrEstimado("15");
       }
     }
-  }, [tipoAtivo, tipoDebenture, dataCompra, dataVencimento, isIsentoIR, isManualIR]);
+  }, [tipoAtivo, tipoDebenture, dataCompra, dataVencimento, isIsentaIR, isManualIR]);
 
-  // Captura mudanças nos campos de data via DOM
-  useEffect(() => {
-    const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement;
-    const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement;
-
-    const handleDataChange = () => {
-      if (dataCompraInput?.value) setDataCompra(dataCompraInput.value);
-      if (dataVencimentoInput?.value) setDataVencimento(dataVencimentoInput.value);
-    };
-
-    dataCompraInput?.addEventListener("change", handleDataChange);
-    dataVencimentoInput?.addEventListener("change", handleDataChange);
-
-    return () => {
-      dataCompraInput?.removeEventListener("change", handleDataChange);
-      dataVencimentoInput?.removeEventListener("change", handleDataChange);
-    };
-  }, []);
-
-  // Captura mudanças nos campos de valores via DOM
-  useEffect(() => {
-    const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement;
-    const taxaContratadaInput = document.getElementById("taxaContratada") as HTMLInputElement;
-    const percentualCdiInput = document.getElementById("percentualCdi") as HTMLInputElement;
-    const ipcaTaxaInput = document.getElementById("ipcaTaxa") as HTMLInputElement;
-
-    const handleValoresChange = () => {
-      if (valorInvestidoInput?.value) setValorInvestido(valorInvestidoInput.value);
-      if (taxaContratadaInput?.value) setTaxaContratada(taxaContratadaInput.value);
-      if (percentualCdiInput?.value) setPercentualCdi(percentualCdiInput.value);
-      if (ipcaTaxaInput?.value) setIpcaTaxa(ipcaTaxaInput.value);
-    };
-
-    valorInvestidoInput?.addEventListener("input", handleValoresChange);
-    taxaContratadaInput?.addEventListener("input", handleValoresChange);
-    percentualCdiInput?.addEventListener("input", handleValoresChange);
-    ipcaTaxaInput?.addEventListener("input", handleValoresChange);
-
-    return () => {
-      valorInvestidoInput?.removeEventListener("input", handleValoresChange);
-      taxaContratadaInput?.removeEventListener("input", handleValoresChange);
-      percentualCdiInput?.removeEventListener("input", handleValoresChange);
-      ipcaTaxaInput?.removeEventListener("input", handleValoresChange);
-    };
-  }, [tipoTaxa]);
-
-  // Recalcula valor final quando os valores mudarem
-  useEffect(() => {
-    calcularValorFinal();
-  }, [valorInvestido, taxaContratada, percentualCdi, ipcaTaxa, dataCompra, dataVencimento, tipoTaxa, irEstimado, isIsentoIR]);
-
-  // Atualiza o campo de valor atual com o calculo automatico
-  useEffect(() => {
-    const valorAtualInput = document.getElementById("valorAtual") as HTMLInputElement | null;
-    if (!valorAtualInput) return;
-
-    const hasInputs = Boolean(valorInvestido || dataCompra || dataVencimento || taxaContratada || percentualCdi || ipcaTaxa);
-    if (!hasInputs) {
-      valorAtualInput.value = "";
+  // Função para calcular valor final estimado
+  const calcularValorFinal = useCallback(() => {
+    if (
+      !temInputsSuficientes(
+        valorInvestido,
+        dataCompra,
+        dataVencimento,
+        taxaContratada,
+        percentualCdi,
+        ipcaTaxa
+      )
+    ) {
+      setValorFinalEstimado("");
       return;
     }
 
-    const valorAtual = calcularValorAtualRendaFixa({
+    const valor = parseMoneyString(valorInvestido);
+    const anos = calcularAnos(dataCompra, dataVencimento);
+
+    let taxa = 0;
+    let parametrosAdicionais: Record<string, number> = {};
+
+    if (tipoTaxa === FIXED_INCOME_RATE_TYPES.prefixado) {
+      taxa = parseFloat(taxaContratada || "0");
+    } else if (tipoTaxa === FIXED_INCOME_RATE_TYPES.posFiXadoCdi) {
+      parametrosAdicionais = {
+        cdiAtual: INDICES.cdiAtual,
+        percentualCdi: parseFloat(percentualCdi || "0"),
+      };
+    } else if (tipoTaxa === FIXED_INCOME_RATE_TYPES.ipca) {
+      parametrosAdicionais = {
+        ipcaAtual: INDICES.ipcaAproximado,
+        ipcaTaxa: parseFloat(ipcaTaxa || "0"),
+      };
+    }
+
+    const valorBruto = calcularRendimentoBruto(
+      valor,
+      taxa,
+      anos,
+      tipoTaxa,
+      parametrosAdicionais
+    );
+
+    const aliquotaIR = isIsentaIR ? 0 : parseFloat(irEstimado || "15");
+    const valorLiquido = calcularValorLiquidoRendaFixa(
+      valorBruto,
+      valor,
+      aliquotaIR,
+      isIsentaIR
+    );
+
+    setValorFinalEstimado(formatAsMoney(valorLiquido));
+  }, [
+    valorInvestido,
+    dataCompra,
+    dataVencimento,
+    taxaContratada,
+    percentualCdi,
+    ipcaTaxa,
+    tipoTaxa,
+    irEstimado,
+    isIsentaIR,
+  ]);
+
+  // Função para calcular valor atual
+  const calcularValorAtualAtualizado = useCallback((): string => {
+    if (
+      !temInputsSuficientes(
+        valorInvestido,
+        dataCompra,
+        dataVencimento,
+        taxaContratada,
+        percentualCdi,
+        ipcaTaxa
+      )
+    ) {
+      return "";
+    }
+
+    const valor = calcularValorAtualRendaFixa({
       valorInvestido,
       tipoTaxa,
       taxaContratada,
       percentualCdi,
-      cdiAtual: "10.65",
+      cdiAtual: String(INDICES.cdiAtual),
       ipcaTaxa,
       dataCompra,
       dataVencimento,
     });
 
-    valorAtualInput.value = formatValue(valorAtual);
-  }, [valorInvestido, taxaContratada, percentualCdi, ipcaTaxa, dataCompra, dataVencimento, tipoTaxa]);
+    return formatValue(valor);
+  }, [
+    valorInvestido,
+    taxaContratada,
+    percentualCdi,
+    ipcaTaxa,
+    dataCompra,
+    dataVencimento,
+    tipoTaxa,
+  ]);
+
+  // Cálculo de valor final estimado
+  useEffect(() => {
+    calcularValorFinal();
+  }, [calcularValorFinal]);
+
+  // Cálculo de valor atual
+  useEffect(() => {
+    const novoValorAtual = calcularValorAtualAtualizado();
+    setValorAtual(novoValorAtual);
+  }, [calcularValorAtualAtualizado]);
 
   return (
     <>
@@ -287,16 +249,24 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         type="text"
         inputMode="decimal"
         placeholder="R$ 0,00"
+        onChange={(e) => setValorInvestido(e.target.value)}
       />
 
-      <InputField
-        id="valorAtual"
-        name="valorAtual"
-        label="Valor atual"
+      <ReadOnlyField
         icon={faDollarSign}
-        type="text"
-        inputMode="decimal"
-        placeholder="R$ 0,00"
+        label="Valor atual"
+        value={valorAtual}
+        isSkeleton={
+          !valorAtual &&
+          temInputsSuficientes(
+            valorInvestido,
+            dataCompra,
+            dataVencimento,
+            taxaContratada,
+            percentualCdi,
+            ipcaTaxa
+          )
+        }
       />
 
       <SelectField
@@ -312,7 +282,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         id="dataCompra"
         name="dataCompra"
         label="Data de compra"
-        icon={faCalendarDays}
+        icon={faTag}
         type="date"
       />
 
@@ -320,104 +290,36 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         id="dataVencimento"
         name="dataVencimento"
         label="Data de vencimento"
-        icon={faCalendarDays}
+        icon={faTag}
         type="date"
       />
 
-      <SelectField
-        id="tipoTaxa"
-        name="tipoTaxa"
-        label="Tipo de taxa"
-        icon={faList}
-        options={TAXA_TIPO_OPTIONS}
-        onChange={(value) => setTipoTaxa(value)}
-        defaultValue=""
+      <TaxaSection
+        tipoTaxa={tipoTaxa}
+        onTaxaTypeChange={(value) => {
+          setTipoTaxa(value);
+          setTaxaContratada("");
+          setPercentualCdi("");
+          setIpcaTaxa("");
+        }}
+        taxaContratada={taxaContratada}
+        percentualCdi={percentualCdi}
+        ipcaTaxa={ipcaTaxa}
+        onValoresChange={(values) => {
+          if (values.taxaContratada !== undefined)
+            setTaxaContratada(values.taxaContratada);
+          if (values.percentualCdi !== undefined)
+            setPercentualCdi(values.percentualCdi);
+          if (values.ipcaTaxa !== undefined) setIpcaTaxa(values.ipcaTaxa);
+        }}
       />
 
-      {tipoTaxa === "prefixado" && (
-        <InputField
-          id="taxaContratada"
-          name="taxaContratada"
-          label="Taxa contratada"
-          icon={faChartLine}
-          type="number"
-          inputMode="decimal"
-          placeholder="Taxa anual (%)"
-          maxLength={3}
-        />
-      )}
-
-      {tipoTaxa === "pos_fixado_cdi" && (
-        <>
-          <InputField
-            id="percentualCdi"
-            name="percentualCdi"
-            label="% do CDI"
-            icon={faPercent}
-            type="text"
-            inputMode="decimal"
-            placeholder="110%"
-          />
-
-          <InputField
-            id="cdiAtualDisplay"
-            name="cdiAtualDisplay"
-            label="CDI atual"
-            icon={faPercent}
-            type="text"
-            placeholder="10,65% a.a"
-            readOnly
-          />
-          <input type="hidden" id="cdiAtual" name="cdiAtual" value="10.65" />
-        </>
-      )}
-
-      {tipoTaxa === "ipca" && (
-        <InputField
-          id="ipcaTaxa"
-          name="ipcaTaxa"
-          label="IPCA + taxa"
-          icon={faPercent}
-          type="text"
-          inputMode="decimal"
-          placeholder="IPCA + 0,00%"
-        />
-      )}
-
-      {isIsentoIR ? (
-        <>
-          <AlertBox type="success">
-            <span className="text-xs font-medium">Isento de IR</span>
-          </AlertBox>
-          <input type="hidden" id="irEstimado" name="irEstimado" value="0" />
-        </>
-      ) : isManualIR ? (
-        <InputField
-          id="irEstimado"
-          name="irEstimado"
-          label="IR estimado (%)"
-          icon={faPercent}
-          type="text"
-          inputMode="decimal"
-          placeholder="15% a 22,5%"
-        />
-      ) : (
-        <>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50">
-              <FontAwesomeIcon icon={faPercent} className="text-gray-400" />
-              <label className="text-sm text-gray-600 whitespace-nowrap">IR estimado (%)</label>
-              <input
-                type="text"
-                className="w-full bg-transparent outline-none text-right"
-                value={irEstimado ? `${irEstimado}%` : "Calculando..."}
-                readOnly
-              />
-            </div>
-          </div>
-          <input type="hidden" id="irEstimado" name="irEstimado" value={irEstimado} />
-        </>
-      )}
+      <IRSection
+        tipoAtivo={tipoAtivo}
+        tipoDebenture={tipoDebenture}
+        irEstimado={irEstimado}
+        onIRChange={(value) => setIrEstimado(value)}
+      />
 
       <RiskSelectField
         id="categoriaRiscoRendaFixa"
@@ -427,19 +329,28 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         defaultValue=""
       />
 
-      <div className="space-y-1">
-        <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50">
-          <FontAwesomeIcon icon={faDollarSign} className="text-gray-400" />
-          <label className="text-sm text-gray-600 whitespace-nowrap">Valor líquido estimado</label>
-          <input
-            type="text"
-            className="w-full bg-transparent outline-none text-right"
-            value={valorFinalEstimado || "Calculando..."}
-            readOnly
-          />
-        </div>
-      </div>
-      <input type="hidden" id="valorFinalEstimado" name="valorFinalEstimado" value={valorFinalEstimado} />
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Valor líquido estimado"
+        value={valorFinalEstimado}
+        isSkeleton={
+          !valorFinalEstimado &&
+          temInputsSuficientes(
+            valorInvestido,
+            dataCompra,
+            dataVencimento,
+            taxaContratada,
+            percentualCdi,
+            ipcaTaxa
+          )
+        }
+      />
+      <input
+        type="hidden"
+        id="valorFinalEstimado"
+        name="valorFinalEstimado"
+        value={valorFinalEstimado}
+      />
     </>
   );
 }
