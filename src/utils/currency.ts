@@ -33,7 +33,7 @@ export const parseCurrency = (value: string) => {
  */
 export const formatValue = (v: any): string => {
   if (typeof v === 'number') {
-    return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
   return String(v)
 };

@@ -31,7 +31,7 @@ import {
   calcularValorLiquidoRendaFixa,
 } from "../../../../../utils/investmentCalculations";
 import { parseMoneyString, formatAsMoney } from "../../../../../utils/currency";
-import { RendaFixaFormProps } from "../../../../../types";
+import type { RendaFixaFormProps } from "../../../../../types";
 
 /**
  * Valida se há inputs suficientes para cálculos
@@ -59,7 +59,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
   const [dataCompra, setDataCompra] = useState("");
   const [dataVencimento, setDataVencimento] = useState("");
   const [irEstimado, setIrEstimado] = useState("");
-  const [valorInvestido, setValorInvestido] = useState("");
+  const [valorInvestido] = useState("");
   const [taxaContratada, setTaxaContratada] = useState("");
   const [percentualCdi, setPercentualCdi] = useState("");
   const [ipcaTaxa, setIpcaTaxa] = useState("");
@@ -70,7 +70,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
   const isManualIR = isIRManual(tipoAtivo);
 
   // Aplicar máscaras de moeda
-  useMoneyMask(MONEY_INPUT_IDS.rendaFixa);
+  useMoneyMask([...MONEY_INPUT_IDS.rendaFixa]);
 
   // Listener para mudanças de data
   useDateInputListener((dataCompraValue, dataVencimentoValue) => {
@@ -102,37 +102,52 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
 
   // Função para calcular valor final estimado
   const calcularValorFinal = useCallback(() => {
+    // Ler valores diretamente do DOM
+    const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement;
+    const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement;
+    const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement;
+    const taxaContratadaInput = document.getElementById("taxaContratada") as HTMLInputElement;
+    const percentualCdiInput = document.getElementById("percentualCdi") as HTMLInputElement;
+    const ipcaTaxaInput = document.getElementById("ipcaTaxa") as HTMLInputElement;
+    
+    const valorInvestidoValue = valorInvestidoInput?.value || "";
+    const dataCompraValue = dataCompraInput?.value || "";
+    const dataVencimentoValue = dataVencimentoInput?.value || "";
+    const taxaContratadaValue = taxaContratadaInput?.value || "";
+    const percentualCdiValue = percentualCdiInput?.value || "";
+    const ipcaTaxaValue = ipcaTaxaInput?.value || "";
+
     if (
       !temInputsSuficientes(
-        valorInvestido,
-        dataCompra,
-        dataVencimento,
-        taxaContratada,
-        percentualCdi,
-        ipcaTaxa
+        valorInvestidoValue,
+        dataCompraValue,
+        dataVencimentoValue,
+        taxaContratadaValue,
+        percentualCdiValue,
+        ipcaTaxaValue
       )
     ) {
       setValorFinalEstimado("");
       return;
     }
 
-    const valor = parseMoneyString(valorInvestido);
-    const anos = calcularAnos(dataCompra, dataVencimento);
+    const valor = parseMoneyString(valorInvestidoValue);
+    const anos = calcularAnos(dataCompraValue, dataVencimentoValue);
 
     let taxa = 0;
     let parametrosAdicionais: Record<string, number> = {};
 
     if (tipoTaxa === FIXED_INCOME_RATE_TYPES.prefixado) {
-      taxa = parseFloat(taxaContratada || "0");
+      taxa = parseFloat(taxaContratadaValue || "0");
     } else if (tipoTaxa === FIXED_INCOME_RATE_TYPES.posFiXadoCdi) {
       parametrosAdicionais = {
         cdiAtual: INDICES.cdiAtual,
-        percentualCdi: parseFloat(percentualCdi || "0"),
+        percentualCdi: parseFloat(percentualCdiValue || "0"),
       };
     } else if (tipoTaxa === FIXED_INCOME_RATE_TYPES.ipca) {
       parametrosAdicionais = {
         ipcaAtual: INDICES.ipcaAproximado,
-        ipcaTaxa: parseFloat(ipcaTaxa || "0"),
+        ipcaTaxa: parseFloat(ipcaTaxaValue || "0"),
       };
     }
 
@@ -153,65 +168,101 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
     );
 
     setValorFinalEstimado(formatAsMoney(valorLiquido));
-  }, [
-    valorInvestido,
-    dataCompra,
-    dataVencimento,
-    taxaContratada,
-    percentualCdi,
-    ipcaTaxa,
-    tipoTaxa,
-    irEstimado,
-    isIsentaIR,
-  ]);
+  }, [tipoTaxa, irEstimado, isIsentaIR]);
 
   // Função para calcular valor atual
   const calcularValorAtualAtualizado = useCallback((): string => {
+    // Ler valores diretamente do DOM para garantir sincronização com máscaras
+    const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement;
+    const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement;
+    const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement;
+    const taxaContratadaInput = document.getElementById("taxaContratada") as HTMLInputElement;
+    const percentualCdiInput = document.getElementById("percentualCdi") as HTMLInputElement;
+    const ipcaTaxaInput = document.getElementById("ipcaTaxa") as HTMLInputElement;
+    
+    const valorInvestidoValue = valorInvestidoInput?.value || "";
+    const dataCompraValue = dataCompraInput?.value || "";
+    const dataVencimentoValue = dataVencimentoInput?.value || "";
+    const taxaContratadaValue = taxaContratadaInput?.value || "";
+    const percentualCdiValue = percentualCdiInput?.value || "";
+    const ipcaTaxaValue = ipcaTaxaInput?.value || "";
+
     if (
       !temInputsSuficientes(
-        valorInvestido,
-        dataCompra,
-        dataVencimento,
-        taxaContratada,
-        percentualCdi,
-        ipcaTaxa
+        valorInvestidoValue,
+        dataCompraValue,
+        dataVencimentoValue,
+        taxaContratadaValue,
+        percentualCdiValue,
+        ipcaTaxaValue
       )
     ) {
       return "";
     }
 
     const valor = calcularValorAtualRendaFixa({
-      valorInvestido,
+      valorInvestido: valorInvestidoValue,
       tipoTaxa,
-      taxaContratada,
-      percentualCdi,
+      taxaContratada: taxaContratadaValue,
+      percentualCdi: percentualCdiValue,
       cdiAtual: String(INDICES.cdiAtual),
-      ipcaTaxa,
-      dataCompra,
-      dataVencimento,
+      ipcaTaxa: ipcaTaxaValue,
+      ipcaAcumulado: String(INDICES.ipcaAproximado),
+      dataCompra: dataCompraValue,
+      dataVencimento: dataVencimentoValue,
     });
 
     return formatValue(valor);
-  }, [
-    valorInvestido,
-    taxaContratada,
-    percentualCdi,
-    ipcaTaxa,
-    dataCompra,
-    dataVencimento,
-    tipoTaxa,
-  ]);
+  }, [tipoTaxa]);
 
   // Cálculo de valor final estimado
   useEffect(() => {
+    const inputs = ["valorInvestido", "dataCompra", "dataVencimento", "taxaContratada", "percentualCdi", "ipcaTaxa"];
+    
+    const inputElements = inputs.map(id => document.getElementById(id));
+    
+    inputElements.forEach(input => {
+      input?.addEventListener("input", calcularValorFinal);
+      input?.addEventListener("change", calcularValorFinal);
+    });
+    
+    // Cálculo inicial
     calcularValorFinal();
-  }, [calcularValorFinal]);
+    
+    return () => {
+      inputElements.forEach(input => {
+        input?.removeEventListener("input", calcularValorFinal);
+        input?.removeEventListener("change", calcularValorFinal);
+      });
+    };
+  }, [calcularValorFinal, tipoTaxa, irEstimado]);
 
   // Cálculo de valor atual
   useEffect(() => {
-    const novoValorAtual = calcularValorAtualAtualizado();
-    setValorAtual(novoValorAtual);
-  }, [calcularValorAtualAtualizado]);
+    const inputs = ["valorInvestido", "dataCompra", "dataVencimento", "taxaContratada", "percentualCdi", "ipcaTaxa"];
+    
+    const handleRecalculate = () => {
+      const novoValorAtual = calcularValorAtualAtualizado();
+      setValorAtual(novoValorAtual);
+    };
+    
+    const inputElements = inputs.map(id => document.getElementById(id));
+    
+    inputElements.forEach(input => {
+      input?.addEventListener("input", handleRecalculate);
+      input?.addEventListener("change", handleRecalculate);
+    });
+    
+    // Cálculo inicial
+    handleRecalculate();
+    
+    return () => {
+      inputElements.forEach(input => {
+        input?.removeEventListener("input", handleRecalculate);
+        input?.removeEventListener("change", handleRecalculate);
+      });
+    };
+  }, [calcularValorAtualAtualizado, tipoTaxa]);
 
   return (
     <>
@@ -257,7 +308,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         type="text"
         inputMode="decimal"
         placeholder="R$ 0,00"
-        onChange={(e) => setValorInvestido(e.target.value)}
       />
 
       <TaxaSection
@@ -271,13 +321,29 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         taxaContratada={taxaContratada}
         percentualCdi={percentualCdi}
         ipcaTaxa={ipcaTaxa}
-        onValoresChange={(values) => {
+        onValuesChange={(values: { taxaContratada?: string; percentualCdi?: string; ipcaTaxa?: string }) => {
           if (values.taxaContratada !== undefined)
             setTaxaContratada(values.taxaContratada);
           if (values.percentualCdi !== undefined)
             setPercentualCdi(values.percentualCdi);
           if (values.ipcaTaxa !== undefined) setIpcaTaxa(values.ipcaTaxa);
         }}
+      />
+
+      <InputField
+        id="dataCompra"
+        name="dataCompra"
+        label="Data de compra"
+        icon={faTag}
+        type="date"
+      />
+
+      <InputField
+        id="dataVencimento"
+        name="dataVencimento"
+        label="Data de vencimento"
+        icon={faTag}
+        type="date"
       />
 
       <ReadOnlyField
@@ -295,22 +361,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
             ipcaTaxa
           )
         }
-      />
-
-      <InputField
-        id="dataCompra"
-        name="dataCompra"
-        label="Data de compra"
-        icon={faTag}
-        type="date"
-      />
-
-      <InputField
-        id="dataVencimento"
-        name="dataVencimento"
-        label="Data de vencimento"
-        icon={faTag}
-        type="date"
       />
 
       <IRSection

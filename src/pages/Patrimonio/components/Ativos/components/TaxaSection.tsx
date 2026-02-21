@@ -56,7 +56,7 @@ export function TaxaSection({
         <InputField
           id="taxaContratada"
           name="taxaContratada"
-          label="Taxa contratada"
+          label="Taxa contratada (%)"
           icon={faChartLine}
           type="number"
           inputMode="decimal"

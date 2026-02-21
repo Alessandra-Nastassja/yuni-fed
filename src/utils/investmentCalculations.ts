@@ -268,5 +268,7 @@ export const calcularValorLiquidoRendaFixa = (
     valorIR = rendimento * (aliquotaIR / 100);
   }
 
-  return valorBruto - valorIR;
+  const valorLiquido = valorBruto - valorIR;
+  // Arredondar para 2 casas decimais
+  return Math.round(valorLiquido * 100) / 100;
 };
