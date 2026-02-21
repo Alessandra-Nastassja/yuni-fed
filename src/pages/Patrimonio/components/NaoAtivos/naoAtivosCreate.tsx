@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { faDollarSign, faTag } from "@fortawesome/free-solid-svg-icons";
+import { faDollarSign, faList, faTag } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "@shared/SelectField/selectField";
 import InputField from "@shared/InputField/inputField";
@@ -97,7 +97,7 @@ export default function NaoAtivosCreate() {
   };
 
   return (
-    <div className="p-4">
+    <div className="m-4 p-4">
       <Loading isLoading={isLoading} />
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -107,7 +107,7 @@ export default function NaoAtivosCreate() {
           name="tipo"
           label="Tipo"
           placeholder="Selecione o tipo"
-          icon={faTag}
+          icon={faList}
           options={NAO_ATIVOS_TIPO_OPTIONS}
           onChange={(value) => setTipo(value)}
         />
@@ -127,19 +127,19 @@ export default function NaoAtivosCreate() {
         <InputField
           id="valorAtual"
           name="valorAtual"
-          label="Valor Atual"
+          label="Valor Atual (R$)"
           placeholder="R$ 0,00"
           icon={faDollarSign}
         />
 
-        <div className="flex gap-4">
+        <footer className="flex justify-center">
           <button
             type="submit"
             className="w-30 rounded-full bg-blue-400 px-4 py-2 text-sm text-white disabled:opacity-60"
           >
             Salvar
           </button>
-        </div>
+        </footer>
       </form>
     </div>
   );
