@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../../Modal/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExchange, faPlus, faMinus, faCreditCard, faTimes, faCoins } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus, faTimes, faCoins } from '@fortawesome/free-solid-svg-icons';
 
 interface NewOptionModalProps {
   isOpen: boolean;

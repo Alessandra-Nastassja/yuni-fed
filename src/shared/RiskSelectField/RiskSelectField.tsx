@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShield } from "@fortawesome/free-solid-svg-icons";
-import { RiskSelectFieldProps } from "../types";
+import type { RiskSelectFieldProps } from "../../types";
 
 /**
  * Componente RickSelectField - Select customizado para nível de risco

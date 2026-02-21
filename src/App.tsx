@@ -13,7 +13,6 @@ import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
 import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
-import NaoAtivosList from './pages/Patrimonio/components/NaoAtivos/naoAtivosList';
 import NaoAtivosCreate from './pages/Patrimonio/components/NaoAtivos/naoAtivosCreate';
 
 function AppContent() {
