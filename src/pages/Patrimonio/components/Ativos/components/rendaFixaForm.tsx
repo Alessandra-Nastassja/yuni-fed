@@ -241,6 +241,14 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         />
       )}
 
+      <RiskSelectField
+        id="categoriaRiscoRendaFixa"
+        name="categoriaRiscoRendaFixa"
+        label="Nível de risco"
+        options={riscoOptions}
+        defaultValue=""
+      />
+
       <InputField
         id="valorInvestido"
         name="valorInvestido"
@@ -250,48 +258,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         inputMode="decimal"
         placeholder="R$ 0,00"
         onChange={(e) => setValorInvestido(e.target.value)}
-      />
-
-      <ReadOnlyField
-        icon={faDollarSign}
-        label="Valor atual"
-        value={valorAtual}
-        isSkeleton={
-          !valorAtual &&
-          temInputsSuficientes(
-            valorInvestido,
-            dataCompra,
-            dataVencimento,
-            taxaContratada,
-            percentualCdi,
-            ipcaTaxa
-          )
-        }
-      />
-
-      <SelectField
-        id="corretora"
-        name="corretora"
-        label="Corretora"
-        icon={faBuildingColumns}
-        options={CORRETORAS_OPTIONS}
-        defaultValue=""
-      />
-
-      <InputField
-        id="dataCompra"
-        name="dataCompra"
-        label="Data de compra"
-        icon={faTag}
-        type="date"
-      />
-
-      <InputField
-        id="dataVencimento"
-        name="dataVencimento"
-        label="Data de vencimento"
-        icon={faTag}
-        type="date"
       />
 
       <TaxaSection
@@ -314,19 +280,44 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         }}
       />
 
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Valor atual"
+        value={valorAtual}
+        isSkeleton={
+          !valorAtual &&
+          temInputsSuficientes(
+            valorInvestido,
+            dataCompra,
+            dataVencimento,
+            taxaContratada,
+            percentualCdi,
+            ipcaTaxa
+          )
+        }
+      />
+
+      <InputField
+        id="dataCompra"
+        name="dataCompra"
+        label="Data de compra"
+        icon={faTag}
+        type="date"
+      />
+
+      <InputField
+        id="dataVencimento"
+        name="dataVencimento"
+        label="Data de vencimento"
+        icon={faTag}
+        type="date"
+      />
+
       <IRSection
         tipoAtivo={tipoAtivo}
         tipoDebenture={tipoDebenture}
         irEstimado={irEstimado}
         onIRChange={(value) => setIrEstimado(value)}
-      />
-
-      <RiskSelectField
-        id="categoriaRiscoRendaFixa"
-        name="categoriaRiscoRendaFixa"
-        label="Nível de risco"
-        options={riscoOptions}
-        defaultValue=""
       />
 
       <ReadOnlyField
@@ -350,6 +341,15 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         id="valorFinalEstimado"
         name="valorFinalEstimado"
         value={valorFinalEstimado}
+      />
+
+      <SelectField
+        id="corretora"
+        name="corretora"
+        label="Corretora"
+        icon={faBuildingColumns}
+        options={CORRETORAS_OPTIONS}
+        defaultValue=""
       />
     </>
   );
