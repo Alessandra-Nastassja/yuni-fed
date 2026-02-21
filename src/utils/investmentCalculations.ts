@@ -36,11 +36,25 @@ const toNumber = (value: number | string | null | undefined) => {
   // Remove tudo exceto dígitos, vírgula, ponto e hífen
   let normalized = String(value).replace(/[^\d,.-]/g, "");
   
-  // Remove pontos (separador de milhar brasileiro)
-  normalized = normalized.replace(/\./g, "");
-  
-  // Substitui vírgula por ponto (decimal brasileiro -> padrão)
-  normalized = normalized.replace(",", ".");
+  // Se tem vírgula, é formato brasileiro: 1.000,50
+  if (normalized.includes(",")) {
+    // Remove pontos (separador de milhar brasileiro)
+    normalized = normalized.replace(/\./g, "");
+    // Substitui vírgula por ponto (decimal brasileiro -> padrão)
+    normalized = normalized.replace(",", ".");
+  } else if (normalized.includes(".")) {
+    // Se tem ponto, verificar se é decimal ou separador de milhar
+    const lastDotIndex = normalized.lastIndexOf(".");
+    const digitsAfterDot = normalized.length - lastDotIndex - 1;
+    
+    // Se tem 1-2 dígitos após o ponto, é decimal (10.65)
+    // Se tem 3+ dígitos ou 0 dígitos, é separador de milhar (1.000)
+    if (digitsAfterDot === 3 || digitsAfterDot === 0) {
+      // É separador de milhar, remover todos os pontos
+      normalized = normalized.replace(/\./g, "");
+    }
+    // Senão, manter o ponto como decimal
+  }
   
   const parsed = Number.parseFloat(normalized);
   return Number.isNaN(parsed) ? 0 : parsed;
@@ -100,18 +114,20 @@ export const calcularValorAtualRendaFixa = (input: RendaFixaInput) => {
 
   let taxaEfetiva = 0;
   if (tipoTaxa === "prefixado") {
-    taxaEfetiva = toNumber(input.taxaContratada);
+    taxaEfetiva = toNumber(input.taxaContratada) / 100;
   } else if (tipoTaxa === "pos_fixado_cdi") {
     const cdiAtual = toNumber(input.cdiAtual);
     const percentualCdi = toNumber(input.percentualCdi);
-    taxaEfetiva = (cdiAtual * percentualCdi) / 100;
+    // Taxa efetiva = (CDI% × Percentual%) / 10000 para obter decimal
+    // Ex: (10,65 × 110) / 10000 = 0,11715 (11,715%)
+    taxaEfetiva = (cdiAtual * percentualCdi) / 10000;
   } else if (tipoTaxa === "ipca") {
     const ipcaAcumulado = toNumber(input.ipcaAcumulado);
     const ipcaTaxa = toNumber(input.ipcaTaxa);
-    taxaEfetiva = ipcaAcumulado > 0 ? ipcaAcumulado + ipcaTaxa : ipcaTaxa;
+    taxaEfetiva = (ipcaAcumulado > 0 ? ipcaAcumulado + ipcaTaxa : ipcaTaxa) / 100;
   }
 
-  const valorAtual = valorInvestido * Math.pow(1 + taxaEfetiva / 100, anos);
+  const valorAtual = valorInvestido * Math.pow(1 + taxaEfetiva, anos);
   return round2(clampNonNegative(valorAtual));
 };
 
@@ -234,8 +250,10 @@ export const calcularRendimentoBruto = (
 
   if (tipoTaxa === "pos_fixado_cdi") {
     const { cdiAtual = 10.65, percentualCdi = 100 } = parametrosAdicionais;
-    const taxaEfetiva = (cdiAtual * percentualCdi) / 100;
-    return valor * Math.pow(1 + taxaEfetiva / 100, anos);
+    // Taxa efetiva = (CDI% × Percentual%) / 10000 para obter decimal
+    // Ex: (10,65 × 110) / 10000 = 0,11715 (11,715%)
+    const taxaEfetiva = (cdiAtual * percentualCdi) / 10000;
+    return valor * Math.pow(1 + taxaEfetiva, anos);
   }
 
   if (tipoTaxa === "ipca") {

@@ -300,16 +300,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
         defaultValue=""
       />
 
-      <InputField
-        id="valorInvestido"
-        name="valorInvestido"
-        label="Valor investido"
-        icon={faDollarSign}
-        type="text"
-        inputMode="decimal"
-        placeholder="R$ 0,00"
-      />
-
       <TaxaSection
         tipoTaxa={tipoTaxa}
         onTaxaTypeChange={(value) => {
@@ -328,6 +318,16 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
             setPercentualCdi(values.percentualCdi);
           if (values.ipcaTaxa !== undefined) setIpcaTaxa(values.ipcaTaxa);
         }}
+      />
+
+      <InputField
+        id="valorInvestido"
+        name="valorInvestido"
+        label="Valor investido"
+        icon={faDollarSign}
+        type="text"
+        inputMode="decimal"
+        placeholder="R$ 0,00"
       />
 
       <InputField
