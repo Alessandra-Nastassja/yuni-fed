@@ -257,7 +257,7 @@ export const calcularRendimentoBruto = (
   }
 
   if (tipoTaxa === "ipca") {
-    const { ipcaAtual = 4.5, ipcaTaxa = 0 } = parametrosAdicionais;
+    const { ipcaTaxa = 0 } = parametrosAdicionais;
     // ipcaTaxa já vem como taxa composta calculada no TaxaSection
     // Exemplo: IPCA 4.8% + Taxa fixa 5% = 10.04% (composto)
     return valor * Math.pow(1 + ipcaTaxa / 100, anos);

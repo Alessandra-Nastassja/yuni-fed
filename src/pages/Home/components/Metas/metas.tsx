@@ -7,8 +7,8 @@ import Loading from '@shared/Loading/Loading'
 import Modal from '@shared/Modal/Modal'
 import { useAlert } from '@shared/Alert/AlertContext'
 
-import MetasCreate from './MetasCreate'
-import MetasList from './MetasList'
+import MetasCreate from './metasCreate'
+import MetasList from './metasList'
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -114,6 +114,11 @@ export default function Metas({ className }: { className?: string }) {
     const validation = validateForm();
     if (!validation.isValid) {
       setErrors({ ...validation.fieldErrors, general: validation.message ?? 'Preencha todos os campos obrigatórios' });
+      return;
+    }
+
+    if (!validation.values) {
+      setErrors({ general: 'Erro ao validar os dados' });
       return;
     }
 

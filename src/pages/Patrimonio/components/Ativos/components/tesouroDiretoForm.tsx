@@ -18,7 +18,7 @@ import { formatValue } from "@utils/currency";
 import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
 import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
 import { MONEY_INPUT_IDS } from "@const/ativos";
-import { TesouroDiretoFormProps } from "@types/index";
+import type { TesouroDiretoFormProps } from "../../../../../types";
 
 const TAXA_PLACEHOLDERS = {
   tesouro_prefixado: "Taxa fixa (%)",
@@ -33,7 +33,7 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
   const [hasCalculatedValue, setHasCalculatedValue] = useState(false);
 
   // Aplicar máscara de moeda
-  useMoneyMask(MONEY_INPUT_IDS.tesouro);
+  useMoneyMask([...MONEY_INPUT_IDS.tesouro]);
 
   // Calcular valor atual automaticamente
   useMultiInputCalculation(

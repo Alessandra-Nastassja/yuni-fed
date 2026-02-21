@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
 export type AlertVariant = 'success' | 'error' | 'warning' | 'info';
 
@@ -22,7 +22,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
     variant: 'info',
     isVisible: false,
   });
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   const showAlert = (message: string, variant: AlertVariant, duration: number = 5000) => {
     if (timeoutId) {

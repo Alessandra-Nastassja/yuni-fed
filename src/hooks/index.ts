@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { applyMoneyMask } from "../utils/currency";
-import { MONEY_INPUT_IDS, DATE_INPUT_IDS, TIMERS } from "../const/ativos";
+import { DATE_INPUT_IDS, TIMERS } from "../const/ativos";
 
 /**
  * Hook para aplicar máscaras de moeda nos inputs especificados

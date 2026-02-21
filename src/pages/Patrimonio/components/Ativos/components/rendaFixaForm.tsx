@@ -31,7 +31,7 @@ import {
   calcularValorLiquidoRendaFixa,
 } from "@utils/investmentCalculations";
 import { parseMoneyString, formatAsMoney } from "@utils/currency";
-import type { RendaFixaFormProps } from "@types/index";
+import type { RendaFixaFormProps } from "../../../../../types";
 
 /**
  * Valida se há inputs suficientes para cálculos
