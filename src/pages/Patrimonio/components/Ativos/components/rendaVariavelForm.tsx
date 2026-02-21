@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   faBuildingColumns,
   faCalendarDays,
@@ -6,52 +6,67 @@ import {
   faHashtag,
   faList,
   faPercent,
-  faShield,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { RiskSelectField } from "../../../../../shared/RiskSelectField/RiskSelectField";
+import { CORRETORAS_OPTIONS } from "../../../../../const/ativos";
+import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
+import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
+import { MONEY_INPUT_IDS, RENDA_VARIAVEL_CONDITIONS, RENDA_VARIAVEL_DESCRIPTIONS } from "../../../../../const/ativos";
+import { RendaVariavelFormProps } from "../../../../../types";
+import { parseMoneyString, formatAsMoney } from "../../../../../utils/currency";
 
-interface RendaVariavelFormProps {
-  riscoOptions: Array<{ value: string; label: string }>;
-  onChange?: (data: any) => void;
-}
+const TIPOS_RENDA_VARIAVEL = [
+  { value: "acoes", label: "Ações" },
+  { value: "fii", label: "FII" },
+  { value: "etf", label: "ETF" },
+] as const;
 
-interface RiskFieldProps {
-  id: string;
-  name: string;
-  label: string;
-  options: Array<{ value: string; label: string }>;
-  onChange?: (value: string) => void;
-  defaultValue?: string;
-}
+/**
+ * Calcula o valor atual baseado em quantidade e preço
+ */
+const calcularValorAtual = (): string => {
+  const quantidadeInput = document.getElementById("quantidade") as HTMLInputElement;
+  const precoAtualInput = document.getElementById("precoAtual") as HTMLInputElement;
+  const precoMedioInput = document.getElementById("precoMedio") as HTMLInputElement;
 
-function RiskSelectField({ id, name, label, options, onChange, defaultValue = "" }: RiskFieldProps) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-        <FontAwesomeIcon icon={faShield} className="text-gray-400" />
-        <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
-        <select
-          id={id}
-          name={name}
-          className="w-full bg-transparent outline-none"
-          defaultValue={defaultValue}
-          onChange={(event) => onChange?.(event.target.value)}
-        >
-          <option value="" disabled>Selecione</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
-}
+  if (!quantidadeInput?.value) return "";
 
-export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormProps) {
+  const quantidade = parseFloat(quantidadeInput.value);
+  const precoAtual = precoAtualInput?.value
+    ? parseMoneyString(precoAtualInput.value)
+    : parseMoneyString(precoMedioInput?.value || "0");
+
+  if (!quantidade || !precoAtual) return "";
+
+  const valorAtual = quantidade * precoAtual;
+  return formatAsMoney(valorAtual);
+};
+
+export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
+  const [valorAtual, setValorAtual] = useState("");
+
+  // Aplicar máscaras de moeda
+  useMoneyMask(MONEY_INPUT_IDS.rendaVariavel);
+
+  // Calcular valor atual automaticamente
+  useMultiInputCalculation(
+    ["quantidade", "precoAtual", "precoMedio"],
+    "valorAtual",
+    () => {
+      const novoValor = calcularValorAtual();
+      setValorAtual(novoValor);
+      return novoValor;
+    }
+  );
+
+  const shouldShowAcoes =
+    tipoRendaVariavel === "acoes" && RENDA_VARIAVEL_CONDITIONS.acoes;
+  const shouldShowFII = tipoRendaVariavel === "fii" && RENDA_VARIAVEL_CONDITIONS.fii;
+  const shouldShowETF = tipoRendaVariavel === "etf" && RENDA_VARIAVEL_CONDITIONS.etf;
 
   return (
     <>
@@ -60,11 +75,7 @@ export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormP
         name="tipoRendaVariavel"
         label="Tipo de ativo"
         icon={faList}
-        options={[
-          { value: "acoes", label: "Ações" },
-          { value: "fii", label: "FII" },
-          { value: "etf", label: "ETF" },
-        ]}
+        options={TIPOS_RENDA_VARIAVEL}
         onChange={(value) => setTipoRendaVariavel(value)}
         defaultValue=""
       />
@@ -90,21 +101,29 @@ export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormP
       />
 
       <InputField
-        id="valorAtual"
-        name="valorAtual"
-        label="Valor atual"
+        id="precoAtual"
+        name="precoAtual"
+        label="Preço atual (mercado)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"
         placeholder="R$ 0,00"
       />
 
-      <InputField
+      <ReadOnlyField
+        icon={faDollarSign}
+        label="Valor atual (calculado)"
+        value={valorAtual}
+        isSkeleton={false}
+      />
+
+      <SelectField
         id="corretora"
         name="corretora"
         label="Corretora"
         icon={faBuildingColumns}
-        placeholder="Nome da corretora"
+        options={CORRETORAS_OPTIONS}
+        defaultValue=""
       />
 
       <RiskSelectField
@@ -115,7 +134,7 @@ export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormP
         defaultValue=""
       />
 
-      {tipoRendaVariavel === "acoes" && (
+      {shouldShowAcoes && (
         <>
           <InputField
             id="dataCompra"
@@ -140,16 +159,13 @@ export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormP
             name="irEstimado"
             label="IR estimado"
             icon={faPercent}
-            options={[
-              { value: "15", label: "15% (normal)" },
-              { value: "20", label: "20% (day trade)" },
-            ]}
+            options={RENDA_VARIAVEL_DESCRIPTIONS.acoes.irOptions}
             defaultValue=""
           />
         </>
       )}
 
-      {tipoRendaVariavel === "fii" && (
+      {shouldShowFII && (
         <>
           <InputField
             id="dividendYield"
@@ -173,16 +189,13 @@ export function RendaVariavelForm({ riscoOptions, onChange }: RendaVariavelFormP
         </>
       )}
 
-      {tipoRendaVariavel === "etf" && (
+      {shouldShowETF && (
         <SelectField
           id="irEstimado"
           name="irEstimado"
           label="IR estimado"
           icon={faPercent}
-          options={[
-            { value: "15", label: "15% (normal)" },
-            { value: "20", label: "20% (day trade)" },
-          ]}
+          options={RENDA_VARIAVEL_DESCRIPTIONS.etf.irOptions}
           defaultValue=""
         />
       )}

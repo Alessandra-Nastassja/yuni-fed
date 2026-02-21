@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
-
-import formatValue from "../../../../utils/formatValue";
+import { formatValue } from "../../../../utils/currency";
+import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getAtivos = () => fetch(`${API_URL}/ativos`).then(r => r.json());
@@ -43,6 +43,24 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
   const ativosVazios = !ativos || ativos.length === 0;
   const totalAtivos = ativos.reduce((acc, ativo) => acc + ativo.valorAtual, 0);
 
+  // TODO: considerar mostrar cada tipo de investimento separadamente (ex: ações, renda fixa, fundos) ao invés de agrupar tudo em "Investimentos" - para isso, adicionar campo "subtipo" ou similar no backend para diferenciar os tipos de investimento
+  // Separar investimentos de outros ativos
+  const ativosNaoInvestimento = ativos.filter(ativo => ativo.tipo !== 'investimentos');
+  const investimentos = ativos.filter(ativo => ativo.tipo === 'investimentos');
+  const totalInvestimentos = investimentos.reduce((acc, inv) => acc + inv.valorAtual, 0);
+
+  // Lista para exibir: ativos não-investimento + linha única de investimentos (se houver)
+  const ativosParaExibir = [
+    ...ativosNaoInvestimento,
+    ...(investimentos.length > 0 ? [{
+      id: 0,
+      nome: 'Investimentos',
+      tipo: 'investimentos',
+      categoriaRisco: null,
+      valorAtual: totalInvestimentos
+    }] : [])
+  ];
+
   return (
     <>
       <Loading isLoading={isLoading} message="Carregando ativos..." />
@@ -56,7 +74,7 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {ativos.map((ativo) => (
+            {ativosParaExibir.map((ativo) => (
               <article key={ativo.id} className="flex justify-between gap-2">
                 <div className="flex gap-3 flex-1">
                   <div className={`flex items-center justify-center w-7 h-7 ${iconColor} rounded-full`}>
@@ -64,6 +82,11 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
                   </div>
                   <div className='flex flex-col'>
                     <p className="text-base">{ativo.nome}</p>
+                    {
+                      ativo.tipo !== 'investimentos' && (
+                        <small className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-xs">{formatTipoAtivo(ativo.tipo)}</small>
+                      )
+                    }
                   </div>
                 </div>
                 <p className="text-base">{formatValue(ativo.valorAtual)}</p>

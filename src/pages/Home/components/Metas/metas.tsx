@@ -55,6 +55,7 @@ export default function Metas({ className }: { className?: string }) {
       const meta = await getMetas();
       const { metas } = meta ?? {};
       setMetas(metas ?? []);
+
     } catch (error) {
       showAlert('Erro ao buscar metas.', 'error');
     } finally {

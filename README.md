@@ -1,73 +1,200 @@
-# React + TypeScript + Vite
+# 💰 Yuni - Gestão Financeira Pessoal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação web para gestão de patrimônio, investimentos e metas financeiras pessoais.
 
-Currently, two official plugins are available:
+## 📋 Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Yuni** é uma plataforma de controle financeiro que permite:
+- ✅ Gerenciar ativos (conta corrente, investimentos, reserva de emergência)
+- ✅ Cadastrar investimentos detalhados (Tesouro Direto, Renda Fixa, Renda Variável)
+- ✅ Criar e monitorar metas financeiras com progresso automático
+- ✅ Acompanhar evolução patrimonial
 
-## React Compiler
+## 🚀 Tecnologias
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### Frontend
+- **React 19** - Biblioteca UI
+- **TypeScript** - Tipagem estática
+- **Vite** - Build tool e dev server
+- **React Router DOM** - Navegação SPA
+- **TailwindCSS** - Estilização
+- **Chart.js** - Gráficos e visualizações
+- **FontAwesome** - Ícones
 
-## Expanding the ESLint configuration
+### Backend
+- **Node.js** - Runtime
+- **TinyHTTP** - Framework HTTP minimalista
+- **LowDB** - Banco de dados JSON
+- **JSON Server** - Mock API
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📁 Estrutura do Projeto
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+yuni-fed/
+├── src/
+│   ├── pages/              # Páginas da aplicação
+│   │   ├── Home/           # Dashboard principal
+│   │   ├── Patrimonio/     # Gestão de ativos
+│   │   ├── Financas/       # Análises financeiras
+│   │   ├── Configuracoes/  # Configurações
+│   │   └── Onboarding/     # Fluxo inicial
+│   ├── shared/             # Componentes reutilizáveis
+│   │   ├── Alert/          # Sistema de alertas
+│   │   ├── Footer/         # Rodapé com navegação
+│   │   ├── Menu/           # Menu lateral
+│   │   ├── Modal/          # Componente modal
+│   │   └── ...
+│   ├── utils/              # Funções auxiliares
+│   └── const/              # Constantes
+├── docs/                   # Documentação completa
+├── db.json                 # Banco de dados JSON
+├── server.mjs              # Servidor API mock
+└── vite.config.ts          # Configuração Vite
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔧 Instalação e Execução
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Pré-requisitos
+- Node.js v18+ 
+- npm v9+
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Comandos
+
+```bash
+# Instalar dependências
+npm install
+
+# Terminal 1: Iniciar API (porta 8080)
+npm run server
+
+# Terminal 2: Iniciar frontend (porta 5173)
+npm run dev
 ```
+
+Acesse: `http://localhost:5173`
+
+## 📚 Documentação
+
+A documentação completa está organizada em:
+
+- [**CONCEITOS_REACT.md**](docs/CONCEITOS_REACT.md) - Hooks, Context, Router e patterns React
+- [**API_ENDPOINTS.md**](docs/API_ENDPOINTS.md) - Endpoints, contratos e exemplos cURL
+- [**DATABASE.md**](docs/DATABASE.md) - Estrutura de dados e operações
+- [**UML_DIAGRAM.md**](docs/UML_DIAGRAM.md) - Diagramas de arquitetura e fluxo
+- [**COMO_RODAR.md**](docs/COMO_RODAR.md) - Guia completo de execução e troubleshooting
+
+## 🎯 Funcionalidades Principais
+
+### 1. Dashboard (Home)
+- Visão geral do patrimônio
+- Metas financeiras com progresso
+- Resumo de investimentos
+
+### 2. Ativos
+- **Ativos Simples**: Conta corrente, reserva de emergência, previdência
+- **Investimentos Detalhados**:
+  - **Tesouro Direto**: Selic, Prefixado, IPCA+
+  - **Renda Fixa**: CDB, LC, LCI, LCA, Debêntures, CRI, CRA
+  - **Renda Variável**: Ações, FIIs, ETFs
+- Cálculo automático de risco
+- Informações de rentabilidade e IR
+
+### 3. Metas
+- Criar metas financeiras com prazo
+- Cálculo automático de progresso percentual
+- Atualização de valores em tempo real
+
+## 🌐 API Endpoints
+
+```bash
+GET    /metas        # Listar metas
+POST   /metas        # Criar meta
+# Ativos
+GET    /api/ativos          # Listar todos
+GET    /api/ativos/:id      # Obter por ID
+POST   /api/ativos          # Criar simples
+POST   /api/ativos/lote     # Criar múltiplos
+POST   /api/ativos/completo # Criar com investimentos
+PUT    /api/ativos/:id      # Atualizar
+DELETE /api/ativos/:id      # Deletar
+
+# Metas
+GET    /api/metas           # Listar todas
+GET    /api/metas/:id       # Obter por ID
+POST   /api/metas           # Criar
+PUT    /8080 em uso | `npx kill-port 8080
+DELETE /api/metas/:id       # Deletar
+Veja exemplos detalhados em [API_ENDPOINTS.md](docs/API_ENDPOINTS.md).
+
+## 🛠️ Possíveis Erros
+
+| Erro | Solução |
+|------|---------|
+| Porta 3001 em uso | `npx kill-port 3001` |
+| nvm: prefix incompatible | `nvm use --delete-prefix v23.6.1` |
+| Module not found | `rm -rf node_modules && npm install` |
+
+Veja guia completo em [COMO_RODAR.md](docs/COMO_RODAR.md).
+
+## 📦 Scripts NPM
+
+| Script | Descrição |
+|--------|-----------|
+| `npm run dev` | Inicia dev server (Vite) |
+| `npm run server` | Inicia API mock (port 3001) |
+| `npm run build` | Build para produção |
+| `npm run preview` | Preview da build |
+| `npm run lint` | Verificar código (ESLint) |
+
+## 🎨 Design System
+
+- **Framework**: TailwindCSS 4.x
+- **Ícones**: FontAwesome
+- **Gráficos**: Chart.js + React Chart.js 2
+- **Tipografia**: System fonts
+- **Cores**: Tema customizado (ver [App.css](src/App.css))
+
+## 🔐 Conceitos React Utilizados
+
+- ✅ **Hooks**: useState, useEffect, useContext, useLocation, useNavigate
+- ✅ **Context API**: AlertContext para estado global
+- ✅ **React Router**: Navegação SPA
+- ✅ **Controlled Components**: Formulários controlados
+- ✅ **Conditional Rendering**: Renderização condicional
+- ✅ **Component Composition**: Composição de componentes
+
+Detalhes em [CONCEITOS_REACT.md](docs/CONCEITOS_REACT.md).
+
+## 🏗️ Arquitetura
+
+```
+┌─────────── Frontend (React) ───────────┐
+│  Components → Router → Context → Utils │
+└────────────────┬────────────────────────┘
+                 │ HTTP (fetch)
+┌────────────────▼────────────────────────┐
+│       Backend (TinyHTTP + LowDB)        │
+│         Routes → Database (JSON)        │
+└─────────────────────────────────────────┘
+```
+Veja diagramas em [UML_DIAGRAM.md](docs/UML_DIAGRAM.md).
+
+## 🎯 Eu faria assim:
+
+PostgreSQL local com Docker 
+Subir banco no Supabase (free)
+Deploy da API no Render
+Conectar tudo
+Colocar no seu portfólio 😏🔥
+
+## 📄 Licença
+
+Este projeto é privado e de uso pessoal.
+
+## 👥 Autor
+
+Desenvolvido para gestão financeira pessoal.
+
+---
+
+**Documentação atualizada em:** 20 de fevereiro de 2026

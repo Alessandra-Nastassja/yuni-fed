@@ -12,26 +12,71 @@ import {
 import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import AlertBox from "../../../../../shared/Alert/AlertBox";
-import { TESOURO_TIPO_OPTIONS } from "../../../../../const/ativos";
+import { TESOURO_TIPO_OPTIONS, CORRETORAS_OPTIONS } from "../../../../../const/ativos";
+import { calcularValorAtualTesouroDireto } from "../../../../../utils/investmentCalculations";
+import { formatValue } from "../../../../../utils/currency";
+import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
+import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
+import { MONEY_INPUT_IDS } from "../../../../../const/ativos";
+import { TesouroDiretoFormProps } from "../types";
 
-interface TesouroDiretoFormProps {
-  onChange?: (data: any) => void;
-}
+const TAXA_PLACEHOLDERS = {
+  tesouro_prefixado: "Taxa fixa (%)",
+  tesouro_ipca: "IPCA + X%",
+  tesouro_selic: "Selic",
+  default: "0,00%",
+} as const;
 
-export function TesouroDiretoForm({ onChange }: TesouroDiretoFormProps) {
+export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
   const [tipoTesouro, setTipoTesouro] = useState("");
+  const [valorAtual, setValorAtual] = useState("");
+  const [hasCalculatedValue, setHasCalculatedValue] = useState(false);
 
-  const getTaxaPlaceholder = () => {
-    switch (tipoTesouro) {
-      case "tesouro_prefixado":
-        return "Taxa fixa (%)";
-      case "tesouro_ipca":
-        return "IPCA + X%";
-      case "tesouro_selic":
-        return "Selic";
-      default:
-        return "0,00%";
+  // Aplicar máscara de moeda
+  useMoneyMask(MONEY_INPUT_IDS.tesouro);
+
+  // Calcular valor atual automaticamente
+  useMultiInputCalculation(
+    ["valorInvestido", "taxaRentabilidade", "dataCompra", "dataVencimento"],
+    "valorAtual",
+    () => {
+      const valorInvestidoInput = document.getElementById("valorInvestido") as HTMLInputElement;
+      const taxaRentabilidadeInput = document.getElementById("taxaRentabilidade") as HTMLInputElement;
+      const dataCompraInput = document.getElementById("dataCompra") as HTMLInputElement;
+      const dataVencimentoInput = document.getElementById("dataVencimento") as HTMLInputElement;
+
+      const hasInputs = Boolean(
+        valorInvestidoInput?.value ||
+        dataCompraInput?.value ||
+        dataVencimentoInput?.value ||
+        taxaRentabilidadeInput?.value
+      );
+
+      if (!hasInputs) {
+        setHasCalculatedValue(false);
+        return "";
+      }
+
+      setHasCalculatedValue(true);
+
+      const calculatedValue = calcularValorAtualTesouroDireto({
+        valorInvestido: valorInvestidoInput?.value,
+        taxaRentabilidade: taxaRentabilidadeInput?.value,
+        dataCompra: dataCompraInput?.value,
+        dataVencimento: dataVencimentoInput?.value,
+      });
+
+      const formatted = formatValue(calculatedValue);
+      setValorAtual(formatted);
+      return formatted;
     }
+  );
+
+  const getTaxaPlaceholder = (): string => {
+    return (
+      TAXA_PLACEHOLDERS[tipoTesouro as keyof typeof TAXA_PLACEHOLDERS] ||
+      TAXA_PLACEHOLDERS.default
+    );
   };
 
   return (
@@ -56,14 +101,11 @@ export function TesouroDiretoForm({ onChange }: TesouroDiretoFormProps) {
         placeholder="R$ 0,00"
       />
 
-      <InputField
-        id="valorAtual"
-        name="valorAtual"
-        label="Valor atual"
+      <ReadOnlyField
         icon={faDollarSign}
-        type="text"
-        inputMode="decimal"
-        placeholder="R$ 0,00"
+        label="Valor atual"
+        value={valorAtual}
+        isSkeleton={!hasCalculatedValue && valorAtual === ""}
       />
 
       <InputField
@@ -82,12 +124,13 @@ export function TesouroDiretoForm({ onChange }: TesouroDiretoFormProps) {
         type="date"
       />
 
-      <InputField
+      <SelectField
         id="corretora"
         name="corretora"
         label="Corretora"
         icon={faBuildingColumns}
-        placeholder="Nome da corretora"
+        options={CORRETORAS_OPTIONS}
+        defaultValue=""
       />
 
       <InputField
@@ -95,7 +138,7 @@ export function TesouroDiretoForm({ onChange }: TesouroDiretoFormProps) {
         name="taxaRentabilidade"
         label="Taxa de rentabilidade"
         icon={faChartLine}
-        type="text"
+        type="number"
         inputMode="decimal"
         placeholder={getTaxaPlaceholder()}
       />

@@ -1,4 +1,4 @@
-import { formatValue } from '../../../../utils/formatValue'
+import { formatValue } from '../../../../utils/currency'
 
 interface Meta {
   nome: string
@@ -15,6 +15,7 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
   return (
     <>
       {metas && metas.length > 0 ? (
+        // TODO: fazer ordenação por percentual de alcance da meta (valorAtual / valorMeta) no back
         metas
         .sort((a, b) => {
           const pa = a.valorMeta ? (Number(a.valorAtual ?? 0) / Number(a.valorMeta)) * 100 : 0
