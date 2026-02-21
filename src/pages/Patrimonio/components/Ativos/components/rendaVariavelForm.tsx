@@ -14,15 +14,15 @@ import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
 import { CORRETORAS_OPTIONS } from "@const/ativos";
 import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
 import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
-import { MONEY_INPUT_IDS, RENDA_VARIAVEL_CONDITIONS } from "@const/ativos";
+import { RENDA_VARIAVEL_CONDITIONS } from "@const/ativos";
 import type { RendaVariavelFormProps } from "../../../../../types";
 import { parseMoneyString, formatAsMoney } from "@utils/currency";
 
-const TIPOS_RENDA_VARIAVEL: { value: string; label: string }[] = [
+const TIPOS_RENDA_VARIAVEL = [
   { value: "acoes", label: "Ações" },
   { value: "fii", label: "FII" },
   { value: "etf", label: "ETF" },
-];
+] as const;
 
 /**
  * Calcula os valores baseado em quantidade, preço de compra e preço atual
@@ -66,7 +66,7 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [percentual, setPercentual] = useState("");
 
   // Aplicar máscaras de moeda
-  useMoneyMask([...MONEY_INPUT_IDS.rendaVariavel]);
+  useMoneyMask(["precoMedio", "precoAtual", "dividendosRecebidos", "dividendYield"]);
 
   // Calcular preço médio (precoCompra)
   const calcularPrecoMedio = useCallback((): string => {
@@ -108,7 +108,7 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
         name="tipoRendaVariavel"
         label="Tipo de ativo"
         icon={faList}
-        options={TIPOS_RENDA_VARIAVEL}
+        options={[...TIPOS_RENDA_VARIAVEL]}
         onChange={(value) => setTipoRendaVariavel(value)}
         defaultValue=""
       />

@@ -7,8 +7,8 @@ import Loading from '@shared/Loading/Loading'
 import Modal from '@shared/Modal/Modal'
 import { useAlert } from '@shared/Alert/AlertContext'
 
-import MetasCreate from './metasCreate'
-import MetasList from './metasList'
+import MetasCreate from './metasCreate.tsx'
+import MetasList from './metasList.tsx'
 
 const API_URL = import.meta.env.VITE_API_URL;
 

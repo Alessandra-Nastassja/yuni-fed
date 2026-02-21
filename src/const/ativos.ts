@@ -27,10 +27,10 @@ export const IR_RATES_BY_DAYS = {
 
 // IDs de inputs de moeda (necessários para aplicar máscara)
 export const MONEY_INPUT_IDS = {
-  tesouro: ["valorInvestido"],
-  rendaFixa: ["valorInvestido", "cdiAtual"],
-  rendaVariavel: ["precoMedio", "precoAtual", "dividendosRecebidos", "dividendYield"],
-} as const;
+  tesouro: ["valorInvestido"] as string[],
+  rendaFixa: ["valorInvestido", "cdiAtual"] as string[],
+  rendaVariavel: ["precoMedio", "precoAtual", "dividendosRecebidos", "dividendYield"] as string[],
+};
 
 // IDs de inputs de data (necessários para capturar mudanças)
 export const DATE_INPUT_IDS = {
