@@ -359,7 +359,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor atual"
+        label="Valor atual (R$)"
         value={valorAtual}
         isSkeleton={
           !valorAtual &&

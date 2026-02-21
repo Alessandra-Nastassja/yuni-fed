@@ -116,6 +116,14 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
         defaultValue=""
       />
 
+      <RiskSelectField
+        id="categoriaRiscoRendaVariavel"
+        name="categoriaRiscoRendaVariavel"
+        label="Nível de risco"
+        options={riscoOptions}
+        defaultValue=""
+      />
+
       <InputField
         id="quantidade"
         name="quantidade"
@@ -165,7 +173,7 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor atual"
+        label="Valor atual (R$)"
         value={valorAtual}
         isSkeleton={false}
       />
@@ -193,14 +201,6 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
         defaultValue=""
       />
 
-      <RiskSelectField
-        id="categoriaRiscoRendaVariavel"
-        name="categoriaRiscoRendaVariavel"
-        label="Nível de risco"
-        options={riscoOptions}
-        defaultValue=""
-      />
-
       {shouldShowAcoes && (
         <>
           <InputField
@@ -211,41 +211,6 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
             type="date"
           />
         </>
-      )}
-
-      {shouldShowFII && (
-        <>
-          <InputField
-            id="dividendYield"
-            name="dividendYield"
-            label="Dividend yield"
-            icon={faPercent}
-            type="text"
-            inputMode="decimal"
-            placeholder="0,00%"
-          />
-
-          <InputField
-            id="irEstimado"
-            name="irEstimado"
-            label="IR estimado"
-            icon={faPercent}
-            type="text"
-            inputMode="decimal"
-            placeholder="20%"
-          />
-        </>
-      )}
-
-      {shouldShowETF && (
-        <SelectField
-          id="irEstimado"
-          name="irEstimado"
-          label="IR estimado"
-          icon={faPercent}
-          options={RENDA_VARIAVEL_DESCRIPTIONS.etf.irOptions}
-          defaultValue=""
-        />
       )}
     </>
   );

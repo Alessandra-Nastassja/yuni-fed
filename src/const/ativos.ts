@@ -65,6 +65,7 @@ export const FIXED_INCOME_RATE_TYPES = {
   ipca: "ipca",
 } as const;
 
+// TODO: integração com mercado (B3, Api de mercado ou último fechamento)
 // Constantes de índices (esses podem ser atualizados periodicamente)
 export const INDICES = {
   cdiAtual: 10.65,

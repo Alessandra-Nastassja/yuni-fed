@@ -46,6 +46,8 @@ export default function AtivosCreate() {
   const [tipoAtivoRendaFixa, setTipoAtivoRendaFixa] = useState("");
   const [tipoRendaVariavel, setTipoRendaVariavel] = useState("");
   const [tipoFonteRenda, setTipoFonteRenda] = useState("");
+  const [nomeBancoCustomizado, setNomeBancoCustomizado] = useState("");
+  const [bancSelecionado, setBancoSelecionado] = useState("");
 
   const getRiscoOptions = () => {
     if (tipoInvestimento === "tesouro_direto") {
@@ -101,9 +103,16 @@ export default function AtivosCreate() {
     const nomeRaw = formData.get("nome") as string;
     const tipo = formData.get("tipo") as string;
 
-    const nome = tipo === "conta_corrente"
-      ? (BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw)
-      : nomeRaw;
+    let nome = "";
+    if (tipo === "conta_corrente") {
+      if (nomeRaw === "outros" && nomeBancoCustomizado) {
+        nome = nomeBancoCustomizado;
+      } else {
+        nome = BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw;
+      }
+    } else {
+      nome = nomeRaw;
+    }
 
     if (!nome || !tipo) {
       showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
@@ -225,11 +234,6 @@ export default function AtivosCreate() {
             rendaVariavelPayload.dataCompra = formData.get("dataCompra");
             rendaVariavelPayload.dividendosRecebidos = parseFloat((formData.get("dividendosRecebidos") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
             rendaVariavelPayload.irEstimadoAcoes = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
-          } else if (tipoRenda === "fii") {
-            rendaVariavelPayload.dividendYield = formData.get("dividendYield") ? parseFloat((formData.get("dividendYield") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".")) : undefined;
-            rendaVariavelPayload.irEstimadoFii = formData.get("irEstimado");
-          } else if (tipoRenda === "etf") {
-            rendaVariavelPayload.irEstimadoEtf = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
           }
 
           payload.rendaVariavel = rendaVariavelPayload;
@@ -297,14 +301,32 @@ export default function AtivosCreate() {
         )}
 
         {tipoAtivo === "conta_corrente" ? (
-          <SelectField
-            id="nome"
-            name="nome"
-            label="Banco"
-            icon={faTag}
-            options={BANCOS_OPTIONS}
-            defaultValue=""
-          />
+          <>
+            <SelectField
+              id="nome"
+              name="nome"
+              label="Banco"
+              icon={faTag}
+              options={BANCOS_OPTIONS}
+              onChange={(value) => {
+                setBancoSelecionado(value);
+                setNomeBancoCustomizado("");
+              }}
+              defaultValue=""
+            />
+            {bancSelecionado === "outros" && (
+              <InputField
+                id="nomeBancoCustomizado"
+                name="nomeBancoCustomizado"
+                label="Nome do banco"
+                icon={faTag}
+                placeholder="Digite o nome do banco"
+                value={nomeBancoCustomizado}
+                onChange={(e) => setNomeBancoCustomizado(e.target.value)}
+                maxLength={30}
+              />
+            )}
+          </>
         ) : (
           <InputField
             id="nome"
@@ -346,7 +368,7 @@ export default function AtivosCreate() {
               <InputField
                 id="valorAtual"
                 name="valorAtual"
-                label="Valor atual"
+                label="Valor atual (R$)"
                 icon={faDollarSign}
                 type="text"
                 inputMode="decimal"
@@ -371,7 +393,7 @@ export default function AtivosCreate() {
           <InputField
             id="valorAtual"
             name="valorAtual"
-            label="Valor atual"
+            label="Valor atual (R$)"
             icon={faDollarSign}
             type="text"
             inputMode="decimal"
@@ -379,13 +401,15 @@ export default function AtivosCreate() {
           />
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
-        >
-          Salvar
-        </button>
+        <footer className="flex justify-center">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
+          >
+            Salvar
+          </button>
+        </footer>
       </form>
     </main>
   );

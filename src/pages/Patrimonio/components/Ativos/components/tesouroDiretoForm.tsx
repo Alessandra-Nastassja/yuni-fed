@@ -137,7 +137,7 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor atual"
+        label="Valor atual (R$)"
         value={valorAtual}
         isSkeleton={!hasCalculatedValue && valorAtual === ""}
       />
