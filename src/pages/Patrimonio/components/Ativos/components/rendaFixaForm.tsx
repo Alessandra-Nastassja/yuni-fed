@@ -6,10 +6,10 @@ import {
   faList,
 } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../../shared/SelectField/selectField";
-import InputField from "../../../../../shared/InputField/inputField";
-import { RiskSelectField } from "../../../../../shared/RiskSelectField/RiskSelectField";
-import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
+import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
 import { IRSection } from "./IRSection";
 import { TaxaSection } from "./TaxaSection";
 
@@ -17,11 +17,11 @@ import {
   CORRETORAS_OPTIONS,
   DEBENTURE_TIPO_OPTIONS,
   RENDA_FIXA_TIPO_ATIVO_OPTIONS,
-} from "../../../../../const/ativos";
-import { calcularValorAtualRendaFixa } from "../../../../../utils/investmentCalculations";
-import { formatValue } from "../../../../../utils/currency";
+} from "@const/ativos";
+import { calcularValorAtualRendaFixa } from "@utils/investmentCalculations";
+import { formatValue } from "@utils/currency";
 import { useMoneyMask, useDateInputListener } from "../../../../../hooks";
-import { MONEY_INPUT_IDS, INDICES, FIXED_INCOME_RATE_TYPES } from "../../../../../const/ativos";
+import { MONEY_INPUT_IDS, INDICES, FIXED_INCOME_RATE_TYPES } from "@const/ativos";
 import {
   calcularAliquotaIR,
   isRendaFixaIsentaIR,
@@ -29,9 +29,9 @@ import {
   calcularAnos,
   calcularRendimentoBruto,
   calcularValorLiquidoRendaFixa,
-} from "../../../../../utils/investmentCalculations";
-import { parseMoneyString, formatAsMoney } from "../../../../../utils/currency";
-import type { RendaFixaFormProps } from "../../../../../types";
+} from "@utils/investmentCalculations";
+import { parseMoneyString, formatAsMoney } from "@utils/currency";
+import type { RendaFixaFormProps } from "@types/index";
 
 /**
  * Valida se há inputs suficientes para cálculos
@@ -276,7 +276,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
           setTipoAtivo(value);
           setTipoTaxa("");
           setTipoDebenture("");
-          // Resetar todos os valores de taxa e cálculos
           setTaxaContratada("");
           setPercentualCdi("");
           setIpcaTaxa("");
@@ -315,7 +314,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
           setTaxaContratada("");
           setPercentualCdi("");
           setIpcaTaxa("");
-          // Resetar valores calculados ao mudar tipo de taxa
           setValorAtual("");
           setValorFinalEstimado("");
         }}
@@ -334,7 +332,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
       <InputField
         id="valorInvestido"
         name="valorInvestido"
-        label="Valor investido"
+        label="Valor investido (R$)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"
@@ -383,7 +381,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor líquido estimado"
+        label="Valor líquido estimado (R$)"
         value={valorFinalEstimado}
         isSkeleton={
           !valorFinalEstimado &&

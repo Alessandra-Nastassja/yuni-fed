@@ -4,10 +4,10 @@ import {
   faList,
   faPercent,
 } from "@fortawesome/free-solid-svg-icons";
-import SelectField from "../../../../../shared/SelectField/selectField";
-import InputField from "../../../../../shared/InputField/inputField";
-import { TAXA_TIPO_OPTIONS, INDICES } from "../../../../../const/ativos";
-import { FIXED_INCOME_RATE_TYPES } from "../../../../../const/ativos";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { TAXA_TIPO_OPTIONS, INDICES } from "@const/ativos";
+import { FIXED_INCOME_RATE_TYPES } from "@const/ativos";
 
 interface TaxaSectionProps {
   tipoTaxa: string;

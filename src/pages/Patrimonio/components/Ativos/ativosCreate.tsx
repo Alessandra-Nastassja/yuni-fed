@@ -6,13 +6,13 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../shared/SelectField/selectField";
-import InputField from "../../../../shared/InputField/inputField";
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import Loading from "../../../../shared/Loading/Loading";
-import { RiskSelectField } from "../../../../shared/RiskSelectField/RiskSelectField";
-import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
-import { applyMoneyMask, parseMoneyString } from "../../../../utils/currency";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { useAlert } from "@shared/Alert/AlertContext";
+import Loading from "@shared/Loading/Loading";
+import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
+import { formatTipoAtivo } from "@utils/formatAtivoTipo";
+import { applyMoneyMask, parseMoneyString } from "@utils/currency";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
@@ -23,13 +23,13 @@ import {
   RISCO_BAIXO_MEDIO,
   RISCO_BAIXO_MEDIO_ALTO,
   RISCO_MEDIO_ALTO,
-} from "../../../../const/ativos";
+} from "@const/ativos";
 import {
   calcularValorAtualRendaFixa,
   calcularValorAtualRendaVariavel,
   calcularValorAtualTesouroDireto,
   calcularValorFinalEstimadoRendaFixa,
-} from "../../../../utils/investmentCalculations";
+} from "@utils/investmentCalculations";
 
 import { TesouroDiretoForm } from "./components/tesouroDiretoForm";
 import { RendaFixaForm } from "./components/rendaFixaForm";

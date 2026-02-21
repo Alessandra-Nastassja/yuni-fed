@@ -1,4 +1,4 @@
-import { formatValue } from '../../../../utils/currency'
+import { formatValue } from '@utils/currency'
 
 interface Meta {
   nome: string

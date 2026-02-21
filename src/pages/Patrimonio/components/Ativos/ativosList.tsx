@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import Loading from "../../../../shared/Loading/Loading";
-import { formatValue } from "../../../../utils/currency";
-import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
+import { useAlert } from "@shared/Alert/AlertContext";
+import Loading from "@shared/Loading/Loading";
+import Badge from "@shared/Badge/Badge";
+import { formatValue } from "@utils/currency";
+import { formatTipoAtivo } from "@utils/formatAtivoTipo";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getAtivos = () => fetch(`${API_URL}/ativos`).then(r => r.json());
@@ -82,11 +83,7 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
                   </div>
                   <div className='flex flex-col'>
                     <p className="text-base">{ativo.nome}</p>
-                    {
-                      ativo.tipo !== 'investimentos' && (
-                        <small className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-xs">{formatTipoAtivo(ativo.tipo)}</small>
-                      )
-                    }
+                    <Badge tipo={ativo.tipo} formatLabel={formatTipoAtivo} />
                   </div>
                 </div>
                 <p className="text-base">{formatValue(ativo.valorAtual)}</p>

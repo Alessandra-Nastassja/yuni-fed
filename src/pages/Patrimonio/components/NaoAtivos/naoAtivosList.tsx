@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import Loading from "../../../../shared/Loading/Loading";
-import { formatValue } from "../../../../utils/currency";
-import { NAO_ATIVOS_TIPO_OPTIONS } from "../../../../const/ativos";
+import { useAlert } from "@shared/Alert/AlertContext";
+import Loading from "@shared/Loading/Loading";
+import Badge from "@shared/Badge/Badge";
+import { formatValue } from "@utils/currency";
+import { NAO_ATIVOS_TIPO_OPTIONS } from "@const/ativos";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getNaoAtivos = () => fetch(`${API_URL}/nao-ativos`).then(r => r.json());
@@ -68,13 +69,11 @@ export default function NaoAtivosList({ title, className, iconColor = "bg-red-50
                   </div>
                   <div className='flex flex-col'>
                     <p className="text-base">{naoAtivo.nome || formatTipoNaoAtivo(naoAtivo.tipo)}</p>
-                    {
-                      naoAtivo.tipo !== "fgts" && (
-                        <small className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-xs">
-                          {formatTipoNaoAtivo(naoAtivo.tipo)}
-                        </small>
-                      )
-                    }
+                    <Badge 
+                      tipo={naoAtivo.tipo} 
+                      formatLabel={formatTipoNaoAtivo}
+                      excludeTypes={['fgts']}
+                    />
                   </div>
                 </div>
                 <p className="text-base">{formatValue(naoAtivo.valorAtual)}</p>
