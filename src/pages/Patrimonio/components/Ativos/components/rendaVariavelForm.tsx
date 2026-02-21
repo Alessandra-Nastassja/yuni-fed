@@ -12,10 +12,10 @@ import SelectField from "../../../../../shared/SelectField/selectField";
 import InputField from "../../../../../shared/InputField/inputField";
 import { RiskSelectField } from "../../../../../shared/RiskSelectField/RiskSelectField";
 import { CORRETORAS_OPTIONS } from "../../../../../const/ativos";
-import { useMoneyMask, useMultiInputCalculation } from "../hooks";
+import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
 import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
 import { MONEY_INPUT_IDS, RENDA_VARIAVEL_CONDITIONS, RENDA_VARIAVEL_DESCRIPTIONS } from "../../../../../const/ativos";
-import { RendaVariavelFormProps } from "../types";
+import { RendaVariavelFormProps } from "../../../../../types";
 import { parseMoneyString, formatAsMoney } from "../../../../../utils/currency";
 
 const TIPOS_RENDA_VARIAVEL = [
