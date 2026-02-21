@@ -15,13 +15,7 @@ export default function MetasList({ metas, onAddClick }: MetasListProps) {
   return (
     <>
       {metas && metas.length > 0 ? (
-        // TODO: fazer ordenação por percentual de alcance da meta (valorAtual / valorMeta) no back
         metas
-        .sort((a, b) => {
-          const pa = a.valorMeta ? (Number(a.valorAtual ?? 0) / Number(a.valorMeta)) * 100 : 0
-          const pb = b.valorMeta ? (Number(b.valorAtual ?? 0) / Number(b.valorMeta)) * 100 : 0
-          return pa - pb
-        })
         .map((meta, index) => (
           <section key={index} className="flex flex-col justify-between gap-2">
             <div className='flex justify-between gap-5'>
