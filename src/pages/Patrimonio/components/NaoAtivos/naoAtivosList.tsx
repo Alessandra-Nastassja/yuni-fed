@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faDollarSign,
+  faCar,
+  faHome,
+  faLandmark,
+  faGem,
+  faEllipsisH
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAlert } from "@shared/Alert/AlertContext";
@@ -10,6 +17,18 @@ import { NAO_ATIVOS_TIPO_OPTIONS } from "@const/ativos";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getNaoAtivos = () => fetch(`${API_URL}/nao-ativos`).then(r => r.json());
+
+// Mapear tipo de não ativo para ícone correspondente
+const getIconeParaTipo = (tipo: string) => {
+  const iconeMap: Record<string, any> = {
+    veiculos: faCar,
+    imoveis: faHome,
+    fgts: faLandmark,
+    objeto_de_valor: faGem,
+    outros: faEllipsisH,
+  };
+  return iconeMap[tipo] || faDollarSign;
+};
 
 interface NaoAtivo {
   id: number;
@@ -23,7 +42,7 @@ const formatTipoNaoAtivo = (tipo: string) => {
   return option?.label || tipo;
 };
 
-export default function NaoAtivosList({ title, className, iconColor = "bg-blue-500" }: { title: string; className?: string; iconColor?: string }) {
+export default function NaoAtivosList({ title, className, iconColor = "bg-yellow-500" }: { title: string; className?: string; iconColor?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [naoAtivos, setNaoAtivos] = useState<NaoAtivo[]>([]);
   const { showAlert } = useAlert();
@@ -48,6 +67,26 @@ export default function NaoAtivosList({ title, className, iconColor = "bg-blue-5
   const naoAtivosVazios = !naoAtivos || naoAtivos.length === 0;
   const totalNaoAtivos = naoAtivos.reduce((acc, naoAtivo) => acc + naoAtivo.valorAtual, 0);
 
+  // Agrupar não ativos por tipo e somar valores
+  const naoAtivosAgrupados = naoAtivos.reduce((acc, naoAtivo) => {
+    const tipoExistente = acc.find(item => item.tipo === naoAtivo.tipo);
+    
+    if (tipoExistente) {
+      // Se já existe um não ativo desse tipo, soma o valor
+      tipoExistente.valorAtual += naoAtivo.valorAtual;
+    } else {
+      // Se não existe, adiciona novo item agrupado
+      acc.push({
+        id: naoAtivo.id,
+        nome: formatTipoNaoAtivo(naoAtivo.tipo),
+        tipo: naoAtivo.tipo,
+        valorAtual: naoAtivo.valorAtual
+      });
+    }
+    
+    return acc;
+  }, [] as NaoAtivo[]);
+
   return (
     <>
       <Loading isLoading={isLoading} message="Carregando não ativos..." />
@@ -61,14 +100,14 @@ export default function NaoAtivosList({ title, className, iconColor = "bg-blue-5
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {naoAtivos.map((naoAtivo) => (
+            {naoAtivosAgrupados.map((naoAtivo) => (
               <article key={naoAtivo.id} className="flex justify-between gap-2">
                 <div className="flex gap-3 flex-1">
                   <div className={`flex items-center justify-center w-7 h-7 ${iconColor} rounded-full`}>
-                    <FontAwesomeIcon size='sm' icon={faDollarSign} className="text-white" />
+                    <FontAwesomeIcon size='sm' icon={getIconeParaTipo(naoAtivo.tipo)} className="text-white" />
                   </div>
                   <div className='flex flex-col'>
-                    <p className="text-base">{naoAtivo.nome || formatTipoNaoAtivo(naoAtivo.tipo)}</p>
+                    <p className="text-base">{naoAtivo.nome}</p>
                     <Badge 
                       tipo={naoAtivo.tipo} 
                       formatLabel={formatTipoNaoAtivo}

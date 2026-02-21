@@ -207,8 +207,8 @@ export default function Patrimonio() {
         fill: true,
         label: `Total de Não Ativos: ${naoAtivosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
         data: naoAtivosData,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgb(255, 205, 86)',
+        backgroundColor: 'rgba(255, 205, 86, 0.5)',
       },
     ],
   };
@@ -218,7 +218,7 @@ export default function Patrimonio() {
       <Loading isLoading={isLoading} message="Carregando patrimônio..." />
       
       <AtivosList title="Ativos" iconColor="bg-green-500" />
-      <NaoAtivosList title="Não Ativos" iconColor="bg-blue-500" />
+      <NaoAtivosList title="Não Ativos" iconColor="bg-yellow-500" />
 
       <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
         <p className="text-lg">Evolução do patrimônio</p>

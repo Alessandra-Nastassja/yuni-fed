@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
-import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faDollarSign,
+  faWallet,
+  faBriefcase,
+  faChartLine,
+  faFileInvoiceDollar,
+  faPiggyBank,
+  faUmbrella,
+  faEllipsisH
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAlert } from "@shared/Alert/AlertContext";
@@ -10,6 +19,20 @@ import { formatTipoAtivo } from "@utils/formatAtivoTipo";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getAtivos = () => fetch(`${API_URL}/ativos`).then(r => r.json());
+
+// Mapear tipo de ativo para ícone correspondente
+const getIconeParaTipo = (tipo: string) => {
+  const iconeMap: Record<string, any> = {
+    conta_corrente: faWallet,
+    meu_negocio: faBriefcase,
+    investimentos: faChartLine,
+    contas_a_receber: faFileInvoiceDollar,
+    reserva_emergencia: faPiggyBank,
+    previdencia_privada: faUmbrella,
+    outros: faEllipsisH,
+  };
+  return iconeMap[tipo] || faDollarSign;
+};
 
 interface Ativo {
   id: number;
@@ -84,7 +107,7 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
               <article key={ativo.id} className="flex justify-between gap-2">
                 <div className="flex gap-3 flex-1">
                   <div className={`flex items-center justify-center w-7 h-7 ${iconColor} rounded-full`}>
-                    <FontAwesomeIcon size='sm' icon={faDollarSign} className="text-white" />
+                    <FontAwesomeIcon size='sm' icon={getIconeParaTipo(ativo.tipo)} className="text-white" />
                   </div>
                   <div className='flex flex-col'>
                     <p className="text-base">{ativo.nome}</p>
