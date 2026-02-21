@@ -102,7 +102,7 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
       <InputField
         id="valorInvestido"
         name="valorInvestido"
-        label="Valor investido"
+        label="Valor investido (R$)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"
@@ -112,7 +112,7 @@ export function TesouroDiretoForm({}: TesouroDiretoFormProps) {
       <InputField
         id="taxaRentabilidade"
         name="taxaRentabilidade"
-        label="Taxa de rentabilidade"
+        label="Taxa de rentabilidade (%)"
         icon={faChartLine}
         type="number"
         inputMode="decimal"

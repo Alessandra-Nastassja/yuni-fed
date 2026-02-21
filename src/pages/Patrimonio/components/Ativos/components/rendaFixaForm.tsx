@@ -332,7 +332,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
       <InputField
         id="valorInvestido"
         name="valorInvestido"
-        label="Valor investido"
+        label="Valor investido (R$)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"
@@ -381,7 +381,7 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor líquido estimado"
+        label="Valor líquido estimado (R$)"
         value={valorFinalEstimado}
         isSkeleton={
           !valorFinalEstimado &&

@@ -166,7 +166,7 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
 
       <ReadOnlyField
         icon={faDollarSign}
-        label="Valor investido"
+        label="Valor investido (R$)"
         value={valorInvestido}
         isSkeleton={false}
       />
