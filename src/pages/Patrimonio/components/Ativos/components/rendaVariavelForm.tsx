@@ -145,10 +145,11 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
 
       <input type="hidden" id="precoMedio" name="precoMedio" value={precoMedio} />
 
+      {/* TODO: integração com mercado (B3, Api de mercado ou último fechamento) */}
       <InputField
         id="precoAtual"
         name="precoAtual"
-        label="Preço atual (mercado)"
+        label="Preço de referência (mercado)"
         icon={faDollarSign}
         type="text"
         inputMode="decimal"
@@ -208,25 +209,6 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
             label="Data de compra"
             icon={faCalendarDays}
             type="date"
-          />
-
-          <InputField
-            id="dividendosRecebidos"
-            name="dividendosRecebidos"
-            label="Dividendos recebidos"
-            icon={faDollarSign}
-            type="text"
-            inputMode="decimal"
-            placeholder="R$ 0,00"
-          />
-
-          <SelectField
-            id="irEstimado"
-            name="irEstimado"
-            label="IR estimado"
-            icon={faPercent}
-            options={RENDA_VARIAVEL_DESCRIPTIONS.acoes.irOptions}
-            defaultValue=""
           />
         </>
       )}
