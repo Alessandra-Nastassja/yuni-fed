@@ -23,7 +23,7 @@ const formatTipoNaoAtivo = (tipo: string) => {
   return option?.label || tipo;
 };
 
-export default function NaoAtivosList({ title, className, iconColor = "bg-red-500" }: { title: string; className?: string; iconColor?: string }) {
+export default function NaoAtivosList({ title, className, iconColor = "bg-blue-500" }: { title: string; className?: string; iconColor?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [naoAtivos, setNaoAtivos] = useState<NaoAtivo[]>([]);
   const { showAlert } = useAlert();

@@ -218,7 +218,7 @@ export default function Patrimonio() {
       <Loading isLoading={isLoading} message="Carregando patrimônio..." />
       
       <AtivosList title="Ativos" iconColor="bg-green-500" />
-      <NaoAtivosList title="Não Ativos" iconColor="bg-red-500" />
+      <NaoAtivosList title="Não Ativos" iconColor="bg-blue-500" />
 
       <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
         <p className="text-lg">Evolução do patrimônio</p>

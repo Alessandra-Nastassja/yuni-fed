@@ -44,23 +44,28 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
   const ativosVazios = !ativos || ativos.length === 0;
   const totalAtivos = ativos.reduce((acc, ativo) => acc + ativo.valorAtual, 0);
 
-  // TODO: considerar mostrar cada tipo de investimento separadamente (ex: ações, renda fixa, fundos) ao invés de agrupar tudo em "Investimentos" - para isso, adicionar campo "subtipo" ou similar no backend para diferenciar os tipos de investimento
-  // Separar investimentos de outros ativos
-  const ativosNaoInvestimento = ativos.filter(ativo => ativo.tipo !== 'investimentos');
-  const investimentos = ativos.filter(ativo => ativo.tipo === 'investimentos');
-  const totalInvestimentos = investimentos.reduce((acc, inv) => acc + inv.valorAtual, 0);
+  // Agrupar ativos por tipo e somar valores
+  const ativosAgrupados = ativos.reduce((acc, ativo) => {
+    const tipoExistente = acc.find(item => item.tipo === ativo.tipo);
+    
+    if (tipoExistente) {
+      // Se já existe um ativo desse tipo, soma o valor
+      tipoExistente.valorAtual += ativo.valorAtual;
+    } else {
+      // Se não existe, adiciona novo item agrupado
+      acc.push({
+        id: ativo.id,
+        nome: formatTipoAtivo(ativo.tipo),
+        tipo: ativo.tipo,
+        categoriaRisco: ativo.categoriaRisco,
+        valorAtual: ativo.valorAtual
+      });
+    }
+    
+    return acc;
+  }, [] as Ativo[]);
 
-  // Lista para exibir: ativos não-investimento + linha única de investimentos (se houver)
-  const ativosParaExibir = [
-    ...ativosNaoInvestimento,
-    ...(investimentos.length > 0 ? [{
-      id: 0,
-      nome: 'Investimentos',
-      tipo: 'investimentos',
-      categoriaRisco: null,
-      valorAtual: totalInvestimentos
-    }] : [])
-  ];
+  const ativosParaExibir = ativosAgrupados;
 
   return (
     <>
