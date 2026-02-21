@@ -276,7 +276,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
           setTipoAtivo(value);
           setTipoTaxa("");
           setTipoDebenture("");
-          // Resetar todos os valores de taxa e cálculos
           setTaxaContratada("");
           setPercentualCdi("");
           setIpcaTaxa("");
@@ -315,7 +314,6 @@ export function RendaFixaForm({ riscoOptions }: RendaFixaFormProps) {
           setTaxaContratada("");
           setPercentualCdi("");
           setIpcaTaxa("");
-          // Resetar valores calculados ao mudar tipo de taxa
           setValorAtual("");
           setValorFinalEstimado("");
         }}

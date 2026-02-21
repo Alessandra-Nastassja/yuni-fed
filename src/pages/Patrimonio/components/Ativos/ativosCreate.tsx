@@ -6,13 +6,13 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../shared/SelectField/selectField";
-import InputField from "../../../../shared/InputField/inputField";
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import Loading from "../../../../shared/Loading/Loading";
-import { RiskSelectField } from "../../../../shared/RiskSelectField/RiskSelectField";
-import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
-import { applyMoneyMask, parseMoneyString } from "../../../../utils/currency";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { useAlert } from "@shared/Alert/AlertContext";
+import Loading from "@shared/Loading/Loading";
+import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
+import { formatTipoAtivo } from "@utils/formatAtivoTipo";
+import { applyMoneyMask, parseMoneyString } from "@utils/currency";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
