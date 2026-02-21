@@ -32,7 +32,16 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 const toNumber = (value: number | string | null | undefined) => {
   if (typeof value === "number") return value;
   if (!value) return 0;
-  const normalized = String(value).replace(/[^\d,.-]/g, "").replace(",", ".");
+  
+  // Remove tudo exceto dígitos, vírgula, ponto e hífen
+  let normalized = String(value).replace(/[^\d,.-]/g, "");
+  
+  // Remove pontos (separador de milhar brasileiro)
+  normalized = normalized.replace(/\./g, "");
+  
+  // Substitui vírgula por ponto (decimal brasileiro -> padrão)
+  normalized = normalized.replace(",", ".");
+  
   const parsed = Number.parseFloat(normalized);
   return Number.isNaN(parsed) ? 0 : parsed;
 };
