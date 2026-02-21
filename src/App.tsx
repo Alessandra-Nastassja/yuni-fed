@@ -13,6 +13,8 @@ import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
 import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
+import NaoAtivosList from './pages/Patrimonio/components/NaoAtivos/naoAtivosList';
+import NaoAtivosCreate from './pages/Patrimonio/components/NaoAtivos/naoAtivosCreate';
 
 function AppContent() {
   const location = useLocation();
@@ -39,6 +41,7 @@ function AppContent() {
           element={<Patrimonio />}
         />
         <Route path="/novo-ativo" element={<AtivosCreate />} />
+        <Route path="/novo-nao-ativo" element={<NaoAtivosCreate />} />
         <Route path='/financas' element={<Financas />} />
         <Route path='/configuracoes' element={<Configuracoes />} />
       </Routes>

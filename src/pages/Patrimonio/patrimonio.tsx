@@ -17,6 +17,7 @@ import { Line } from 'react-chartjs-2';
 import { useAlert } from "../../shared/Alert/AlertContext";
 import Loading from "../../shared/Loading/Loading";
 import AtivosList from "./components/Ativos/ativosList";
+import NaoAtivosList from "./components/NaoAtivos/naoAtivosList";
 
 ChartJS.register(
   CategoryScale,
@@ -109,6 +110,7 @@ export default function Patrimonio() {
       <Loading isLoading={isLoading} message="Carregando patrimônio..." />
       
       <AtivosList title="Ativos" iconColor="bg-green-500" />
+      <NaoAtivosList />
 
       <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
         <p className="text-lg">Evolução do patrimônio</p>
