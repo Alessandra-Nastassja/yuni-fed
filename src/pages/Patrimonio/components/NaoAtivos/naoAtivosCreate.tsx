@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { faDollarSign, faTag } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../shared/SelectField/selectField";
-import InputField from "../../../../shared/InputField/inputField";
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import Loading from "../../../../shared/Loading/Loading";
-import { applyMoneyMask, parseCurrency } from "../../../../utils/currency";
-import { NAO_ATIVOS_TIPO_OPTIONS } from "../../../../const/ativos";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { useAlert } from "@shared/Alert/AlertContext";
+import Loading from "@shared/Loading/Loading";
+import { applyMoneyMask, parseCurrency } from "@utils/currency";
+import { NAO_ATIVOS_TIPO_OPTIONS } from "@const/ativos";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

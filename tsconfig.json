@@ -10,7 +10,7 @@
       "@/*": ["*"],
       "@shared/*": ["shared/*"],
       "@utils/*": ["utils/*"],
-      "@const/*": ["const/*"],
+      "@const/*": ["const/*"]
     }
   }
 }

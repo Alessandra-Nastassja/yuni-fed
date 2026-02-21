@@ -9,16 +9,16 @@ import {
   faShield,
 } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../../shared/SelectField/selectField";
-import InputField from "../../../../../shared/InputField/inputField";
-import AlertBox from "../../../../../shared/Alert/AlertBox";
-import { TESOURO_TIPO_OPTIONS, CORRETORAS_OPTIONS } from "../../../../../const/ativos";
-import { calcularValorAtualTesouroDireto } from "../../../../../utils/investmentCalculations";
-import { formatValue } from "../../../../../utils/currency";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import AlertBox from "@shared/Alert/AlertBox";
+import { TESOURO_TIPO_OPTIONS, CORRETORAS_OPTIONS } from "@const/ativos";
+import { calcularValorAtualTesouroDireto } from "@utils/investmentCalculations";
+import { formatValue } from "@utils/currency";
 import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
-import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
-import { MONEY_INPUT_IDS } from "../../../../../const/ativos";
-import { TesouroDiretoFormProps } from "../types";
+import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
+import { MONEY_INPUT_IDS } from "@const/ativos";
+import { TesouroDiretoFormProps } from "@types/index";
 
 const TAXA_PLACEHOLDERS = {
   tesouro_prefixado: "Taxa fixa (%)",

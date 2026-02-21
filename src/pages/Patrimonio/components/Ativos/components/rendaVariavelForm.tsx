@@ -9,15 +9,15 @@ import {
   faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../../shared/SelectField/selectField";
-import InputField from "../../../../../shared/InputField/inputField";
-import { RiskSelectField } from "../../../../../shared/RiskSelectField/RiskSelectField";
-import { CORRETORAS_OPTIONS } from "../../../../../const/ativos";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
+import { CORRETORAS_OPTIONS } from "@const/ativos";
 import { useMoneyMask, useMultiInputCalculation } from "../../../../../hooks";
-import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
-import { MONEY_INPUT_IDS, RENDA_VARIAVEL_CONDITIONS, RENDA_VARIAVEL_DESCRIPTIONS } from "../../../../../const/ativos";
-import { RendaVariavelFormProps } from "../../../../../types";
-import { parseMoneyString, formatAsMoney } from "../../../../../utils/currency";
+import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
+import { MONEY_INPUT_IDS, RENDA_VARIAVEL_CONDITIONS, RENDA_VARIAVEL_DESCRIPTIONS } from "@const/ativos";
+import { RendaVariavelFormProps } from "@types/index";
+import { parseMoneyString, formatAsMoney } from "@utils/currency";
 
 const TIPOS_RENDA_VARIAVEL = [
   { value: "acoes", label: "Ações" },

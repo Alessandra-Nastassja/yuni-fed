@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useAlert } from "../../../../shared/Alert/AlertContext";
-import Loading from "../../../../shared/Loading/Loading";
-import { formatValue } from "../../../../utils/currency";
-import { NAO_ATIVOS_TIPO_OPTIONS } from "../../../../const/ativos";
+import { useAlert } from "@shared/Alert/AlertContext";
+import Loading from "@shared/Loading/Loading";
+import { formatValue } from "@utils/currency";
+import { NAO_ATIVOS_TIPO_OPTIONS } from "@const/ativos";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const getNaoAtivos = () => fetch(`${API_URL}/nao-ativos`).then(r => r.json());

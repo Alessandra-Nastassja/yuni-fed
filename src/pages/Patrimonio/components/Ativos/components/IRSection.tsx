@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPercent } from "@fortawesome/free-solid-svg-icons";
-import InputField from "../../../../../shared/InputField/inputField";
-import AlertBox from "../../../../../shared/Alert/AlertBox";
-import { DISABLED_INPUT_CLASS } from "../../../../../const/ativos";
-import { isRendaFixaIsentaIR, isIRManual } from "../../../../../utils/investmentCalculations";
+import InputField from "@shared/InputField/inputField";
+import AlertBox from "@shared/Alert/AlertBox";
+import { DISABLED_INPUT_CLASS } from "@const/ativos";
+import { isRendaFixaIsentaIR, isIRManual } from "@utils/investmentCalculations";
 
 interface IRSectionProps {
   tipoAtivo: string;

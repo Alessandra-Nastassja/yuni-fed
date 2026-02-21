@@ -23,13 +23,13 @@ import {
   RISCO_BAIXO_MEDIO,
   RISCO_BAIXO_MEDIO_ALTO,
   RISCO_MEDIO_ALTO,
-} from "../../../../const/ativos";
+} from "@const/ativos";
 import {
   calcularValorAtualRendaFixa,
   calcularValorAtualRendaVariavel,
   calcularValorAtualTesouroDireto,
   calcularValorFinalEstimadoRendaFixa,
-} from "../../../../utils/investmentCalculations";
+} from "@utils/investmentCalculations";
 
 import { TesouroDiretoForm } from "./components/tesouroDiretoForm";
 import { RendaFixaForm } from "./components/rendaFixaForm";

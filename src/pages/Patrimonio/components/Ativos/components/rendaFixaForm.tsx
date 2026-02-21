@@ -6,10 +6,10 @@ import {
   faList,
 } from "@fortawesome/free-solid-svg-icons";
 
-import SelectField from "../../../../../shared/SelectField/selectField";
-import InputField from "../../../../../shared/InputField/inputField";
-import { RiskSelectField } from "../../../../../shared/RiskSelectField/RiskSelectField";
-import { ReadOnlyField } from "../../../../../shared/ReadOnlyField/ReadOnlyField";
+import SelectField from "@shared/SelectField/selectField";
+import InputField from "@shared/InputField/inputField";
+import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
+import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
 import { IRSection } from "./IRSection";
 import { TaxaSection } from "./TaxaSection";
 
@@ -17,11 +17,11 @@ import {
   CORRETORAS_OPTIONS,
   DEBENTURE_TIPO_OPTIONS,
   RENDA_FIXA_TIPO_ATIVO_OPTIONS,
-} from "../../../../../const/ativos";
-import { calcularValorAtualRendaFixa } from "../../../../../utils/investmentCalculations";
-import { formatValue } from "../../../../../utils/currency";
+} from "@const/ativos";
+import { calcularValorAtualRendaFixa } from "@utils/investmentCalculations";
+import { formatValue } from "@utils/currency";
 import { useMoneyMask, useDateInputListener } from "../../../../../hooks";
-import { MONEY_INPUT_IDS, INDICES, FIXED_INCOME_RATE_TYPES } from "../../../../../const/ativos";
+import { MONEY_INPUT_IDS, INDICES, FIXED_INCOME_RATE_TYPES } from "@const/ativos";
 import {
   calcularAliquotaIR,
   isRendaFixaIsentaIR,
@@ -29,9 +29,9 @@ import {
   calcularAnos,
   calcularRendimentoBruto,
   calcularValorLiquidoRendaFixa,
-} from "../../../../../utils/investmentCalculations";
-import { parseMoneyString, formatAsMoney } from "../../../../../utils/currency";
-import type { RendaFixaFormProps } from "../../../../../types";
+} from "@utils/investmentCalculations";
+import { parseMoneyString, formatAsMoney } from "@utils/currency";
+import type { RendaFixaFormProps } from "@types/index";
 
 /**
  * Valida se há inputs suficientes para cálculos
