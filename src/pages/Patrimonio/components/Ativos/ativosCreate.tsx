@@ -12,7 +12,7 @@ import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
 import { RiskSelectField } from "../../../../shared/RiskSelectField/RiskSelectField";
 import { formatTipoAtivo } from "../../../../utils/formatAtivoTipo";
-import { applyMoneyMask } from "../../../../utils/currency";
+import { applyMoneyMask, parseMoneyString } from "../../../../utils/currency";
 
 import {
   ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS,
@@ -158,9 +158,9 @@ export default function AtivosCreate() {
         } else if (tipoInvestimento === "renda_fixa") {
           const tipoAtivoRendaFixa = formData.get("tipoAtivoRendaFixa") as string;
           const tipoDebenture = formData.get("tipoDebenture") as string;
-          const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+          const valorInvestido = parseMoneyString(formData.get("valorInvestido") as string);
           const valorAtualCalculado = calcularValorAtualRendaFixa({
-            valorInvestido,
+            valorInvestido: String(valorInvestido),
             tipoTaxa: (formData.get("tipoTaxa") as string) || "",
             taxaContratada: formData.get("taxaContratada") as string,
             percentualCdi: formData.get("percentualCdi") as string,
