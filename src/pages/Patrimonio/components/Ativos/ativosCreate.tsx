@@ -294,7 +294,7 @@ export default function AtivosCreate() {
             name="nome"
             label="Nome"
             icon={faTag}
-            placeholder="Nome do ativo"
+            placeholder="Digite o nome do ativo"
             maxLength={30}
           />
         )}

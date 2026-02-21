@@ -6,7 +6,7 @@ import SelectField from "../../../../shared/SelectField/selectField";
 import InputField from "../../../../shared/InputField/inputField";
 import { useAlert } from "../../../../shared/Alert/AlertContext";
 import Loading from "../../../../shared/Loading/Loading";
-import { applyMoneyMask } from "../../../../utils/currency";
+import { applyMoneyMask, parseCurrency } from "../../../../utils/currency";
 import { NAO_ATIVOS_TIPO_OPTIONS } from "../../../../const/ativos";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -39,8 +39,8 @@ export default function NaoAtivosCreate() {
       return;
     }
 
-    // Validação: se tipo for "outros", nome é obrigatório
-    if (tipoValue === "outros" && !nomeValue) {
+    // Validação: nome é obrigatório para todos os tipos exceto FGTS
+    if (tipoValue !== "fgts" && !nomeValue) {
       showAlert("Por favor, preencha o nome do não ativo.", "error");
       return;
     }
@@ -51,11 +51,7 @@ export default function NaoAtivosCreate() {
       return;
     }
 
-    const valorAtual = parseFloat(
-      valorAtualRaw
-        .replace(/[^\d,.-]/g, "")
-        .replace(",", ".") || "0"
-    );
+    const valorAtual = parseCurrency(valorAtualRaw);
 
     try {
       setIsLoading(true);
@@ -65,8 +61,8 @@ export default function NaoAtivosCreate() {
         valorAtual,
       };
 
-      // Adicionar nome apenas se tipo for "outros"
-      if (tipoValue === "outros") {
+      // Adicionar nome quando fornecido (tipos diferentes de FGTS)
+      if (nomeValue) {
         payload.nome = nomeValue;
       }
 
@@ -83,7 +79,7 @@ export default function NaoAtivosCreate() {
       }
 
       showAlert(
-        `Não ativo "${tipoValue === "outros" ? nomeValue : NAO_ATIVOS_TIPO_OPTIONS.find(opt => opt.value === tipoValue)?.label || tipoValue}" criado com sucesso!`,
+        `Não ativo "${nomeValue || NAO_ATIVOS_TIPO_OPTIONS.find(opt => opt.value === tipoValue)?.label || tipoValue}" criado com sucesso!`,
         "success"
       );
 
@@ -116,8 +112,8 @@ export default function NaoAtivosCreate() {
           onChange={(value) => setTipo(value)}
         />
 
-        {/* Campo Nome - exibido apenas quando tipo === "outros" */}
-        {['outros', 'objeto_de_valor', 'veiculos', 'imoveis'].includes(tipo) && (
+        {/* Campo Nome - obrigatório para todos os tipos exceto FGTS */}
+        {tipo && tipo !== "fgts" && (
           <InputField
             id="nome"
             name="nome"
