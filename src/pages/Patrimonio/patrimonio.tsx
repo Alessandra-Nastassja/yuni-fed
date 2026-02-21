@@ -37,7 +37,7 @@ type Ativo = {
   nome: string;
   tipo: string;
   valorAtual: number;
-  createdAt: string;
+  dataCriacao: string;
 };
 
 type NaoAtivo = {
@@ -45,7 +45,7 @@ type NaoAtivo = {
   nome?: string;
   tipo: string;
   valorAtual: number;
-  createdAt: string;
+  dataCompra: string;
 };
 
 type PatrimonioData = {
@@ -73,29 +73,61 @@ export default function Patrimonio() {
       const { ativos } = await ativosResponse.json();
       const { naoAtivos } = await naoAtivosResponse.json();
       
-      // Se não há dados com createdAt válidos, usar ano atual como snapshot
-      const anoAtual = new Date().getFullYear();
+      // Agrupar por ano
+      const anoMap = new Map<number, { ativos: number; naoAtivos: number }>();
       
-      // Calcular totais
-      let totalAtivos = 0;
-      let totalNaoAtivos = 0;
-      
+      // Processar ativos
       if (Array.isArray(ativos)) {
-        totalAtivos = ativos.reduce((acc: number, ativo: Ativo) => acc + ativo.valorAtual, 0);
+        ativos.forEach((ativo: Ativo) => {
+          const ano = new Date(ativo.dataCriacao).getFullYear();
+          if (!isNaN(ano)) {
+            if (!anoMap.has(ano)) {
+              anoMap.set(ano, { ativos: 0, naoAtivos: 0 });
+            }
+            anoMap.get(ano)!.ativos += ativo.valorAtual;
+          }
+        });
       }
       
+      // Processar não ativos
       if (Array.isArray(naoAtivos)) {
-        totalNaoAtivos = naoAtivos.reduce((acc: number, naoAtivo: NaoAtivo) => acc + naoAtivo.valorAtual, 0);
+        naoAtivos.forEach((naoAtivo: NaoAtivo) => {
+          const ano = new Date(naoAtivo.dataCompra).getFullYear();
+          if (!isNaN(ano)) {
+            if (!anoMap.has(ano)) {
+              anoMap.set(ano, { ativos: 0, naoAtivos: 0 });
+            }
+            anoMap.get(ano)!.naoAtivos += naoAtivo.valorAtual;
+          }
+        });
       }
       
-      // Criar snapshot do ano atual
-      const dadosSnapshot: PatrimonioData[] = [{
-        ano: anoAtual,
-        ativos: totalAtivos,
-        naoAtivos: totalNaoAtivos,
-      }];
+      // Se não há dados, usar ano atual
+      if (anoMap.size === 0) {
+        const anoAtual = new Date().getFullYear();
+        anoMap.set(anoAtual, { ativos: 0, naoAtivos: 0 });
+      }
       
-      setPatrimonioData(dadosSnapshot);
+      // Converter para array e ordenar por ano
+      const anosOrdenados = Array.from(anoMap.entries())
+        .sort(([anoA], [anoB]) => anoA - anoB);
+      
+      // Calcular valores acumulados
+      let ativosAcumulado = 0;
+      let naoAtivosAcumulado = 0;
+      
+      const dadosAcumulados: PatrimonioData[] = anosOrdenados.map(([ano, valores]) => {
+        ativosAcumulado += valores.ativos;
+        naoAtivosAcumulado += valores.naoAtivos;
+        
+        return {
+          ano,
+          ativos: ativosAcumulado,
+          naoAtivos: naoAtivosAcumulado,
+        };
+      });
+      
+      setPatrimonioData(dadosAcumulados);
       
     } catch (error) {
       showAlert('Erro ao buscar dados do patrimônio.', 'error');

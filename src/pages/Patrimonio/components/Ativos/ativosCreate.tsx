@@ -279,6 +279,22 @@ export default function AtivosCreate() {
           defaultValue=""
         />
 
+        {tipoAtivo === "investimentos" && (
+          <SelectField
+            id="tipoInvestimento"
+            name="tipoInvestimento"
+            label="Categoria de investimento"
+            icon={faList}
+            options={ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS}
+            onChange={(value) => {
+              setTipoInvestimento(value);
+              setTipoAtivoRendaFixa("");
+              setTipoRendaVariavel("");
+            }}
+            defaultValue=""
+          />
+        )}
+
         {tipoAtivo === "conta_corrente" ? (
           <SelectField
             id="nome"
@@ -299,45 +315,6 @@ export default function AtivosCreate() {
           />
         )}
 
-        {['conta_corrente', 'meu_negocio'].includes(tipoAtivo) && (
-          <SelectField
-            id="tipoFonteRenda"
-            name="tipoFonteRenda"
-            label="Tipo de Fonte de Renda"
-            icon={faList}
-            options={ATIVOS_FONTE_RENDA_OPTIONS}
-            onChange={(value) => setTipoFonteRenda(value)}
-            defaultValue=""
-          />
-        )}
-
-        {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
-          <InputField
-            id="valorAtual"
-            name="valorAtual"
-            label="Valor atual"
-            icon={faDollarSign}
-            type="text"
-            inputMode="decimal"
-            placeholder="R$ 0,00"
-          />
-        )}
-
-        {tipoAtivo === "investimentos" && (
-          <SelectField
-            id="tipoInvestimento"
-            name="tipoInvestimento"
-            label="Categoria de investimento"
-            icon={faList}
-            options={ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS}
-            onChange={(value) => {
-              setTipoInvestimento(value);
-              setTipoAtivoRendaFixa("");
-              setTipoRendaVariavel("");
-            }}
-            defaultValue=""
-          />
-        )}
 
         {tipoAtivo === "investimentos" && tipoInvestimento === "tesouro_direto" && (
           <TesouroDiretoForm />
@@ -376,6 +353,30 @@ export default function AtivosCreate() {
               />
             </>
           )}
+
+        {['conta_corrente', 'meu_negocio'].includes(tipoAtivo) && (
+          <SelectField
+            id="tipoFonteRenda"
+            name="tipoFonteRenda"
+            label="Tipo de Fonte de Renda"
+            icon={faList}
+            options={ATIVOS_FONTE_RENDA_OPTIONS}
+            onChange={(value) => setTipoFonteRenda(value)}
+            defaultValue=""
+          />
+        )}
+
+        {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
+          <InputField
+            id="valorAtual"
+            name="valorAtual"
+            label="Valor atual"
+            icon={faDollarSign}
+            type="text"
+            inputMode="decimal"
+            placeholder="R$ 0,00"
+          />
+        )}
 
         <button
           type="submit"
