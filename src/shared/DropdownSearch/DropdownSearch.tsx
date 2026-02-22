@@ -34,6 +34,7 @@ export default function DropdownSearch({
   renderItemSuffix,
 }: DropdownSearchProps) {
   const [listaAberta, setListaAberta] = useState(false);
+  const [suppressAutoOpen, setSuppressAutoOpen] = useState(false);
 
   // Filtrar itens baseado no valor de busca
   const itensFiltrados = items.filter((item) => {
@@ -44,20 +45,23 @@ export default function DropdownSearch({
   });
 
   // Mostrar lista quando clica na lupa (sem valor) ou quando digita 3+ caracteres
-  const mostrarLista = listaAberta || value.length >= minSearchChars;
+  const mostrarLista = listaAberta || (value.length >= minSearchChars && !suppressAutoOpen);
 
   const handleClear = () => {
     onChange("");
     setListaAberta(false);
+    setSuppressAutoOpen(false);
   };
 
   const handleSelectItem = (itemNome: string) => {
     onChange(itemNome);
     setListaAberta(false);
+    setSuppressAutoOpen(true);
   };
 
   const handleSearchClick = () => {
     setListaAberta(!listaAberta);
+    setSuppressAutoOpen(false);
   };
 
   return (
@@ -75,6 +79,7 @@ export default function DropdownSearch({
           placeholder={placeholder}
           value={value}
           onChange={(e) => {
+            setSuppressAutoOpen(false);
             onChange(e.target.value);
             if (e.target.value.length >= minSearchChars) {
               setListaAberta(true);
