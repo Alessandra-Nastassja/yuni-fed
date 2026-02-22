@@ -20,7 +20,7 @@ export default function Header() {
     '/home': 'bg-blue-400',
     '/financas': 'bg-blue-400',
     '/patrimonio': 'bg-blue-400',
-    '/novo-ativo': 'bg-blue-700',
+    '/novo-ativo': 'bg-blue-400',
     '/novo-nao-ativo': 'bg-blue-400',
     '/configuracoes': 'bg-blue-400',
   }[location.pathname] || 'bg-blue-400';

@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDollarSign,
   faList,
   faTag,
   faLink,
-  faSearch,
-    faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "@shared/SelectField/selectField";
 import InputField from "@shared/InputField/inputField";
+import DropdownSearch from "@shared/DropdownSearch/DropdownSearch";
 import { useAlert } from "@shared/Alert/AlertContext";
 import Loading from "@shared/Loading/Loading";
 import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
@@ -65,7 +63,6 @@ export default function AtivosCreate() {
     };
   }>>([]);
   const [ativoVinculado, setAtivoVinculado] = useState("");
-  const [listaAberta, setListaAberta] = useState(false);
 
   const getRiscoOptions = () => {
     if (tipoInvestimento === "tesouro_direto") {
@@ -148,7 +145,6 @@ export default function AtivosCreate() {
   useEffect(() => {
     if (categoriaContasAReceber) {
       setAtivoVinculado("");
-      setListaAberta(false);
     }
   }, [categoriaContasAReceber]);
 
@@ -542,91 +538,34 @@ export default function AtivosCreate() {
         )}
 
         {tipoAtivo === 'contas_a_receber' && categoriaContasAReceber && categoriaContasAReceber !== 'outros' && (
-          <div className="space-y-1 relative">
-            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-              <FontAwesomeIcon icon={faLink} className="text-gray-400" />
-              <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="ativoVinculado">
-                Ativo
-              </label>
-              <input
-                type="text"
-                id="ativoVinculado"
-                name="ativoVinculado"
-                className="w-full bg-transparent outline-none text-gray-700"
-                placeholder={
-                  categoriaContasAReceber === 'dividendos' || categoriaContasAReceber === 'jcp' 
-                    ? "Digite o nome da ação" 
-                    : categoriaContasAReceber === 'rendimento' 
-                    ? "Digite o nome do FII" 
-                    : categoriaContasAReceber === 'proventos' 
-                    ? "Digite o nome do ETF" 
-                    : "Digite o nome da ação, FII ou ETF"
-                }
-                value={ativoVinculado}
-                onChange={(e) => {
-                  setAtivoVinculado(e.target.value);
-                  // Abre o dropdown ao digitar 3+ caracteres, fecha se for menos
-                  if (e.target.value.length >= 3) {
-                    setListaAberta(true);
-                  } else {
-                    setListaAberta(false);
-                  }
-                }}  
-              />
-              {ativoVinculado ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAtivoVinculado("");
-                    setListaAberta(false);
-                  }}
-                  className="text-gray-400 hover:text-red-500 transition-colors"
-                  title="Limpar seleção"
-                >
-                  <FontAwesomeIcon icon={faTimes} />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setListaAberta(!listaAberta)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                  title="Pesquisar todos os ativos"
-                >
-                  <FontAwesomeIcon icon={faSearch} />
-                </button>
-              )}
-            </div>
-            
-            {/* Lista dropdown de ativos */}
-            {listaAberta && (
-              <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
-                {getAtivosFiltrados().length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 text-sm">Nenhum ativo encontrado</p>
-                ) : (
-                  <div className="py-2">
-                    {getAtivosFiltrados().map((ativo) => {
-                      const tipoRV = ativo.rendaVariavel?.tipoRendaVariavel;
-                      const suffix = tipoRV ? `(${RENDA_VARIAVEL_TIPO_LABELS[tipoRV] || tipoRV})` : '';
-                      return (
-                        <button
-                          key={ativo.id}
-                          type="button"
-                          onClick={() => {
-                            setAtivoVinculado(ativo.nome);
-                            setListaAberta(false);
-                          }}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          <span className="text-gray-800">{ativo.nome}</span>
-                          <span className="text-gray-500 text-sm ml-2">{suffix}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          <DropdownSearch
+            id="ativoVinculado"
+            label="Ativo"
+            icon={faLink}
+            placeholder={
+              categoriaContasAReceber === 'dividendos' || categoriaContasAReceber === 'jcp' 
+                ? "Digite o nome da ação" 
+                : categoriaContasAReceber === 'rendimento' 
+                ? "Digite o nome do FII" 
+                : categoriaContasAReceber === 'proventos' 
+                ? "Digite o nome do ETF" 
+                : "Digite o nome da ação, FII ou ETF"
+            }
+            items={getAtivosFiltrados().map(ativo => ({
+              id: ativo.id,
+              nome: ativo.nome,
+              suffix: ativo.rendaVariavel?.tipoRendaVariavel || undefined
+            }))}
+            value={ativoVinculado}
+            onChange={(value) => setAtivoVinculado(value)}
+            renderItemSuffix={(item) => {
+              if (item.suffix) {
+                return `(${RENDA_VARIAVEL_TIPO_LABELS[item.suffix] || item.suffix})`;
+              }
+              return "";
+            }}
+            emptyMessage="Nenhum ativo encontrado"
+          />
         )}
 
         {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
@@ -645,7 +584,7 @@ export default function AtivosCreate() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
+            className="w-30 rounded-full bg-blue-400 px-4 py-2 text-sm text-white disabled:opacity-60"
           >
             Salvar
           </button>
