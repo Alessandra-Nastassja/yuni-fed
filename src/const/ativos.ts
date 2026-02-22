@@ -198,6 +198,7 @@ export const ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS: Option[] = [
   { value: "outros", label: "Outros" },
 ];
 
+// TODO: implementar regra que verifica o risco do tipo de ativo de acordo com tamanho do banco, media de juros oferecidos, etc
 export const RISCO_BAIXO: Option[] = [
   { value: "conservador", label: "Conservador" },
 ];

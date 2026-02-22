@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuildingColumns,
   faCalendarDays,
@@ -17,6 +18,7 @@ import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
 import { RENDA_VARIAVEL_CONDITIONS } from "@const/ativos";
 import type { RendaVariavelFormProps } from "../../../../../types";
 import { parseMoneyString, formatAsMoney } from "@utils/currency";
+import { clampNonNegativeInt } from "@utils/number";
 
 const TIPOS_RENDA_VARIAVEL = [
   { value: "acoes", label: "Ações" },
@@ -66,7 +68,7 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const [percentual, setPercentual] = useState("");
 
   // Aplicar máscaras de moeda
-  useMoneyMask(["precoMedio", "precoAtual", "dividendosRecebidos", "dividendYield"]);
+  useMoneyMask(["precoCompra", "precoMedio", "precoAtual", "dividendosRecebidos", "dividendYield"]);
 
   // Calcular preço médio (precoCompra)
   const calcularPrecoMedio = useCallback((): string => {
@@ -101,6 +103,36 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
   const shouldShowAcoes =
     tipoRendaVariavel === "acoes" && RENDA_VARIAVEL_CONDITIONS.acoes;
 
+  const updateQuantidade = (nextValue: number) => {
+    const input = document.getElementById("quantidade") as HTMLInputElement | null;
+    if (!input) return;
+    const safeValue = clampNonNegativeInt(nextValue || 0);
+    input.value = String(safeValue);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  };
+
+  const handleQuantidadeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nextValue = Number(event.target.value);
+    if (Number.isNaN(nextValue) || nextValue < 0) {
+      updateQuantidade(0);
+      return;
+    }
+    updateQuantidade(nextValue);
+  };
+
+  const handleIncreaseQuantidade = () => {
+    const input = document.getElementById("quantidade") as HTMLInputElement | null;
+    const currentValue = input ? Number(input.value) || 0 : 0;
+    updateQuantidade(currentValue + 1);
+  };
+
+  const handleDecreaseQuantidade = () => {
+    const input = document.getElementById("quantidade") as HTMLInputElement | null;
+    const currentValue = input ? Number(input.value) || 0 : 0;
+    updateQuantidade(currentValue - 1);
+  };
+
   return (
     <>
       <SelectField
@@ -121,15 +153,40 @@ export function RendaVariavelForm({ riscoOptions }: RendaVariavelFormProps) {
         defaultValue=""
       />
 
-      <InputField
-        id="quantidade"
-        name="quantidade"
-        label="Quantidade"
-        icon={faHashtag}
-        type="number"
-        inputMode="numeric"
-        placeholder="0"
-      />
+      <div className="space-y-1">
+        <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <FontAwesomeIcon icon={faHashtag} className="text-gray-400" />
+          <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor="quantidade">Quantidade</label>
+          <input
+            id="quantidade"
+            name="quantidade"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            className="w-full bg-transparent outline-none text-right"
+            placeholder="0"
+            onChange={handleQuantidadeChange}
+          />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="h-7 w-7 rounded-full border border-gray-300 text-gray-600"
+              onClick={handleDecreaseQuantidade}
+              aria-label="Diminuir quantidade"
+            >
+              -
+            </button>
+            <button
+              type="button"
+              className="h-7 w-7 rounded-full border border-gray-300 text-gray-600"
+              onClick={handleIncreaseQuantidade}
+              aria-label="Aumentar quantidade"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
 
       <InputField
         id="precoCompra"
