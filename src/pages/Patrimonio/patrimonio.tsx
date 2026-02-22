@@ -223,7 +223,13 @@ export default function Patrimonio() {
       <section className={`flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg`}>
         <p className="text-lg">Evolução do patrimônio</p>
 
-        <Line data={data} options={options} />
+        {patrimonioData.length > 1 ? (
+          <Line data={data} options={options} />
+        ) : (
+          <div className="flex items-center justify-center text-gray-500">
+            <p className="text-sm">Nenhum dado para exibir</p>
+          </div>
+        )}
       </section>
     </main>
   )

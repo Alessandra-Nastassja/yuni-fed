@@ -289,7 +289,7 @@ export default function DistribuicaoDeCarteira({
             </footer>
           </>
         ) : (
-          <div className="flex items-center justify-center text-gray-500 py-8">
+          <div className="flex items-center justify-center text-gray-500">
             <p className="text-sm">Nenhum item para exibir</p>
           </div>
         )}

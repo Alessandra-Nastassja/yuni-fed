@@ -32,18 +32,20 @@ function AppContent() {
 
       {location.pathname !== '/' && <Menu />}
       
-      <Routes>
-        <Route path="/" element={<Onboarding />} />
-        <Route path="/home" element={<Home />} />
-        <Route
-          path="/patrimonio"
-          element={<Patrimonio />}
-        />
-        <Route path="/novo-ativo" element={<AtivosCreate />} />
-        <Route path="/novo-nao-ativo" element={<NaoAtivosCreate />} />
-        <Route path='/financas' element={<Financas />} />
-        <Route path='/configuracoes' element={<Configuracoes />} />
-      </Routes>
+      <div className={location.pathname !== '/' ? 'pb-24' : ''}>
+        <Routes>
+          <Route path="/" element={<Onboarding />} />
+          <Route path="/home" element={<Home />} />
+          <Route
+            path="/patrimonio"
+            element={<Patrimonio />}
+          />
+          <Route path="/novo-ativo" element={<AtivosCreate />} />
+          <Route path="/novo-nao-ativo" element={<NaoAtivosCreate />} />
+          <Route path='/financas' element={<Financas />} />
+          <Route path='/configuracoes' element={<Configuracoes />} />
+        </Routes>
+      </div>
       
       {location.pathname !== '/' && <Footer />}
     </>

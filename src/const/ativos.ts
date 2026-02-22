@@ -199,23 +199,23 @@ export const ATIVOS_CATEGORIA_INVESTIMENTO_OPTIONS: Option[] = [
 ];
 
 export const RISCO_BAIXO: Option[] = [
-  { value: "baixo", label: "Baixo" },
+  { value: "conservador", label: "Conservador" },
 ];
 
 export const RISCO_BAIXO_MEDIO: Option[] = [
-  { value: "baixo", label: "Baixo" },
-  { value: "medio", label: "Médio" },
+  { value: "conservador", label: "Conservador" },
+  { value: "moderado", label: "Moderado" },
 ];
 
 export const RISCO_MEDIO_ALTO: Option[] = [
-  { value: "medio", label: "Médio" },
-  { value: "alto", label: "Alto" },
+  { value: "moderado", label: "Moderado" },
+  { value: "agressivo", label: "Agressivo" },
 ];
 
 export const RISCO_BAIXO_MEDIO_ALTO: Option[] = [
-  { value: "baixo", label: "Baixo" },
-  { value: "medio", label: "Médio" },
-  { value: "alto", label: "Alto" },
+  { value: "conservador", label: "Conservador" },
+  { value: "moderado", label: "Moderado" },
+  { value: "agressivo", label: "Agressivo" },
 ];
 
 export const TESOURO_TIPO_OPTIONS: Option[] = [

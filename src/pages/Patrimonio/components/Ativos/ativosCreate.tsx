@@ -394,7 +394,7 @@ export default function AtivosCreate() {
   };
 
   return (
-    <main className="m-4 p-4">
+    <main className="m-4 p-4 pb-24">
       <Loading isLoading={isLoading} message="Criando ativo..." />
       <form className="space-y-4" onSubmit={handleSubmit}>
         <SelectField
@@ -446,7 +446,7 @@ export default function AtivosCreate() {
                 placeholder="Digite o nome do banco"
                 value={nomeBancoCustomizado}
                 onChange={(e) => setNomeBancoCustomizado(e.target.value)}
-                maxLength={30}
+                maxLength={50}
               />
             )}
           </>
