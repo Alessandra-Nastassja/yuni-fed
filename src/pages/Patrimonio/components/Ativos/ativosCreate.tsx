@@ -4,12 +4,10 @@ import {
   faDollarSign,
   faList,
   faTag,
-  faLink,
 } from "@fortawesome/free-solid-svg-icons";
 
 import SelectField from "@shared/SelectField/selectField";
 import InputField from "@shared/InputField/inputField";
-import DropdownSearch from "@shared/DropdownSearch/DropdownSearch";
 import { useAlert } from "@shared/Alert/AlertContext";
 import Loading from "@shared/Loading/Loading";
 import { RiskSelectField } from "@shared/RiskSelectField/RiskSelectField";
@@ -22,7 +20,6 @@ import {
   ATIVOS_TIPO_OPTIONS,
   BANCOS_OPTIONS,
   CONTAS_A_RECEBER_CATEGORIA_OPTIONS,
-  RENDA_VARIAVEL_TIPO_LABELS,
   RISCO_BAIXO,
   RISCO_BAIXO_MEDIO,
   RISCO_BAIXO_MEDIO_ALTO,
@@ -38,6 +35,7 @@ import {
 import { TesouroDiretoForm } from "./components/tesouroDiretoForm";
 import { RendaFixaForm } from "./components/rendaFixaForm";
 import { RendaVariavelForm } from "./components/rendaVariavelForm";
+import { ContasAReceberForm } from "./components/contasAReceberForm";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -526,45 +524,13 @@ export default function AtivosCreate() {
         )}
 
         {tipoAtivo === 'contas_a_receber' && (
-          <SelectField
-            id="categoriaContasAReceber"
-            name="categoriaContasAReceber"
-            label="Categoria"
-            icon={faList}
-            options={categoriasDisponiveis}
-            onChange={(value) => setCategoriaContasAReceber(value)}
-            defaultValue=""
-          />
-        )}
-
-        {tipoAtivo === 'contas_a_receber' && categoriaContasAReceber && categoriaContasAReceber !== 'outros' && (
-          <DropdownSearch
-            id="ativoVinculado"
-            label="Ativo"
-            icon={faLink}
-            placeholder={
-              categoriaContasAReceber === 'dividendos' || categoriaContasAReceber === 'jcp' 
-                ? "Digite o nome da ação" 
-                : categoriaContasAReceber === 'rendimento' 
-                ? "Digite o nome do FII" 
-                : categoriaContasAReceber === 'proventos' 
-                ? "Digite o nome do ETF" 
-                : "Digite o nome da ação, FII ou ETF"
-            }
-            items={getAtivosFiltrados().map(ativo => ({
-              id: ativo.id,
-              nome: ativo.nome,
-              suffix: ativo.rendaVariavel?.tipoRendaVariavel || undefined
-            }))}
-            value={ativoVinculado}
-            onChange={(value) => setAtivoVinculado(value)}
-            renderItemSuffix={(item) => {
-              if (item.suffix) {
-                return `(${RENDA_VARIAVEL_TIPO_LABELS[item.suffix] || item.suffix})`;
-              }
-              return "";
-            }}
-            emptyMessage="Nenhum ativo encontrado"
+          <ContasAReceberForm
+            categoriaContasAReceber={categoriaContasAReceber}
+            categoriasDisponiveis={categoriasDisponiveis}
+            ativosFiltrados={getAtivosFiltrados()}
+            ativoVinculado={ativoVinculado}
+            onCategoriaChange={(value) => setCategoriaContasAReceber(value)}
+            onAtivoVinculadoChange={(value) => setAtivoVinculado(value)}
           />
         )}
 

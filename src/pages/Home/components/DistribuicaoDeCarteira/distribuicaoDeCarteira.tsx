@@ -81,7 +81,7 @@ const getChartColorByType = (tipo: string, classificacao: string, opacity: numbe
   // Fallback
   return {
     bgColor: `rgba(107, 114, 128, ${opacity})`,
-    borderColor: `rgba(107, 114, 128, 1)`,
+    borderColor: `rgba(34, 197, 94, 1)`,
   };
 };
 
