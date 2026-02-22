@@ -168,6 +168,7 @@ export const BANCOS_OPTIONS: Option[] = [
   { value: "neon", label: "Neon" },
   { value: "next", label: "Next" },
   { value: "mercado_pago", label: "Mercado Pago" },
+  { value: "pag_seguro", label: "PagSeguro" },
   { value: "outros", label: "Outros" },
 ];
 

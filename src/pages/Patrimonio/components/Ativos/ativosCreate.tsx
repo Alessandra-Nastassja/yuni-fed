@@ -36,6 +36,7 @@ import { TesouroDiretoForm } from "./components/tesouroDiretoForm";
 import { RendaFixaForm } from "./components/rendaFixaForm";
 import { RendaVariavelForm } from "./components/rendaVariavelForm";
 import { ContasAReceberForm } from "./components/contasAReceberForm";
+import { ReservaDeEmergenciaForm } from "./components/reservaDeEmergenciaForm";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -122,7 +123,7 @@ export default function AtivosCreate() {
 
   useEffect(() => {
     // Aplicar máscara de moeda nos campos de dinheiro
-    const moneyInputs = ['valorAtual', 'precoMedio', 'precoAtual', 'dividendosRecebidos', 'dividendYield'];
+    const moneyInputs = ['valorAtual', 'valorInvestido', 'precoMedio', 'precoAtual', 'dividendosRecebidos', 'dividendYield'];
     moneyInputs.forEach(inputId => {
       const input = document.getElementById(inputId);
       if (input) applyMoneyMask(inputId);
@@ -207,6 +208,8 @@ export default function AtivosCreate() {
         // Se não for "outros", usa a categoria como nome
         nome = CONTAS_A_RECEBER_CATEGORIA_OPTIONS.find((option) => option.value === categoriaContasAReceber)?.label || categoriaContasAReceber;
       }
+    } else if (tipo === "reserva_emergencia") {
+      nome = nomeRaw;
     } else {
       nome = nomeRaw;
     }
@@ -253,8 +256,31 @@ export default function AtivosCreate() {
         }
       }
 
+      // Para reserva de emergência
+      if (tipo === "reserva_emergencia") {
+        const bancoRaw = (formData.get("banco") as string) || "";
+        const bancoCustomizado = (formData.get("bancoCustomizado") as string) || "";
+        const banco = bancoRaw === "outros" && bancoCustomizado
+          ? bancoCustomizado
+          : BANCOS_OPTIONS.find((option) => option.value === bancoRaw)?.label || bancoRaw;
+
+        if (banco) {
+          payload.banco = banco;
+        }
+
+        const valorInvestido = parseMoneyString((formData.get("valorInvestido") as string) || "0");
+        payload.valorInvestido = valorInvestido;
+        payload.valorAtual = valorInvestido;
+
+        const cdiRaw = (formData.get("cdi") as string) || "";
+        const cdi = parseFloat(cdiRaw.replace(",", "."));
+        if (!Number.isNaN(cdi) && cdi > 0) {
+          payload.cdi = cdi;
+        }
+      }
+
       // Para ativos simples
-      if (tipo !== "investimentos") {
+      if (tipo !== "investimentos" && tipo !== "reserva_emergencia") {
         const valorAtual = parseFloat((formData.get("valorAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
         payload.valorAtual = valorAtual;
       }
@@ -461,6 +487,8 @@ export default function AtivosCreate() {
               />
             )}
           </>
+        ) : tipoAtivo === "reserva_emergencia" ? (
+          <ReservaDeEmergenciaForm />
         ) : (
           <InputField
             id="nome"
@@ -534,7 +562,7 @@ export default function AtivosCreate() {
           />
         )}
 
-        {tipoAtivo !== "" && tipoAtivo !== "investimentos" && (
+        {tipoAtivo !== "" && tipoAtivo !== "investimentos" && tipoAtivo !== "reserva_emergencia" && (
           <InputField
             id="valorAtual"
             name="valorAtual"
