@@ -122,21 +122,56 @@ const categorizeInvestimento = (nome: string): CategoriaInvestimento => {
   const upperNome = nome.toUpperCase();
 
   for (const pattern of INVESTMENT_PATTERNS) {
-    // Verifica keywords
     if (pattern.keywords) {
       if (pattern.keywords.some(keyword => upperNome.includes(keyword))) {
         return pattern.categoria;
       }
     }
 
-    // Verifica regex
     if (pattern.regex && pattern.regex.test(upperNome)) {
       return pattern.categoria;
     }
   }
 
-  // Default: Renda Variável (Agressivo)
   return { tipo: 'Renda Variável', classificacao: 'Agressivo' };
+};
+
+const AGGRESSIVENESS_ORDER: { [key: string]: number } = {
+  'Agressivo': 3,
+  'Moderado': 2,
+  'Conservador': 1,
+};
+
+const getMoreAggressiveClassification = (current: string, newOne: string): string => {
+  const currentLevel = AGGRESSIVENESS_ORDER[current] || 0;
+  const newLevel = AGGRESSIVENESS_ORDER[newOne] || 0;
+  return newLevel > currentLevel ? newOne : current;
+};
+
+const groupInvestmentsByType = (investimentos: any[]): ItemDistribuicao[] => {
+  const tipoMap: { [key: string]: { nome: string; valor: number; classificacao: string; tipo: string } } = {};
+
+  investimentos.forEach((ativo: any) => {
+    const categoria = categorizeInvestimento(ativo.nome);
+    
+    if (!tipoMap[categoria.tipo]) {
+      tipoMap[categoria.tipo] = {
+        nome: categoria.tipo,
+        valor: 0,
+        classificacao: categoria.classificacao,
+        tipo: categoria.tipo,
+      };
+    } else {
+      // Se já existe, usa a classificação mais agressiva
+      tipoMap[categoria.tipo].classificacao = getMoreAggressiveClassification(
+        tipoMap[categoria.tipo].classificacao,
+        categoria.classificacao
+      );
+    }
+    tipoMap[categoria.tipo].valor += ativo.valorAtual || 0;
+  });
+
+  return Object.values(tipoMap).filter(item => item.valor > 0);
 };
 
 export default function DistribuicaoDeCarteira({ 
@@ -155,46 +190,9 @@ export default function DistribuicaoDeCarteira({
         if (!response.ok) throw new Error(`Erro: ${response.status}`);
         const ativos = await response.json();
         
-        // Filtrar apenas ativos de tipo "investimentos"
         const investimentos = ativos.filter((ativo: any) => ativo.tipo === 'investimentos');
+        const processedItems = groupInvestmentsByType(investimentos);
         
-        // Função para comparar classificações e retornar a mais agressiva
-        const getMoreAggressiveClassification = (current: string, newOne: string): string => {
-          const aggressivenessOrder: { [key: string]: number } = {
-            'Agressivo': 3,
-            'Moderado': 2,
-            'Conservador': 1,
-          };
-          const currentLevel = aggressivenessOrder[current] || 0;
-          const newLevel = aggressivenessOrder[newOne] || 0;
-          return newLevel > currentLevel ? newOne : current;
-        };
-        
-        // Agrupar por tipo de investimento
-        const tipoMap: { [key: string]: { nome: string; valor: number; classificacao: string; tipo: string } } = {};
-
-        investimentos.forEach((ativo: any) => {
-          const categoria = categorizeInvestimento(ativo.nome);
-          
-          if (!tipoMap[categoria.tipo]) {
-            tipoMap[categoria.tipo] = {
-              nome: categoria.tipo,
-              valor: 0,
-              classificacao: categoria.classificacao,
-              tipo: categoria.tipo,
-            };
-          } else {
-            // Se já existe, usa a classificação mais agressiva
-            tipoMap[categoria.tipo].classificacao = getMoreAggressiveClassification(
-              tipoMap[categoria.tipo].classificacao,
-              categoria.classificacao
-            );
-          }
-          tipoMap[categoria.tipo].valor += ativo.valorAtual || 0;
-        });
-
-        // Converter para array e filtrar apenas os com valor > 0
-        const processedItems = Object.values(tipoMap).filter(item => item.valor > 0);
         setInvestimentosData(processedItems);
       } catch (error) {
         console.error('Erro ao buscar investimentos:', error);
