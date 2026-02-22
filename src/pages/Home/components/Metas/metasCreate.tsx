@@ -106,7 +106,7 @@ export default function MetasCreate({ form, errors, isSaving, nomeMaxLength, onS
         <button
           type="submit"
           disabled={isSaving}
-          className="w-30 rounded-full bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-60"
+          className="w-30 rounded-full bg-green-500 px-4 py-2 text-sm text-white disabled:opacity-60"
         >
           {isSaving ? 'Salvando...' : 'Salvar'}
         </button>
