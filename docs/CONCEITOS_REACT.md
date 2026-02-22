@@ -8,11 +8,13 @@ Gerenciamento de estado local nos componentes:
 const [alert, setAlert] = useState({ isVisible: false, message: '', variant: 'success' });
 ```
 
-### useContext ❌
-Compartilhamento de estado global (AlertContext) entre componentes sem prop drilling:
+### useContext ⚠️
+Compartilhamento de estado (infos) global (AlertContext) entre componentes sem passar props nenhuma:
 ```tsx
-const { alert, showAlert, hideAlert } = useAlert();
+const { showAlert } = useAlert();
+return <button onClick={() => showAlert("Olá")}></button>
 ```
+| useContext é um atalho para acessar dados globais definidos por um Provider acima na árvore.
 
 ### useEffect ✅
 Execução de efeitos colaterais (fetching de dados, subscriptions):
@@ -29,6 +31,9 @@ const calcularValores = useCallback((values) => {
   // lógica de cálculo
 }, [dependencies]);
 ```
+| Use useCallback somente se:
+| A função é passada como prop
+| A função vai para um custom hook
 
 ### Custom Hooks
 
