@@ -202,13 +202,67 @@ interface Meta {
 
 ---
 
+## Melhorias Recentes de UI/UX
+
+### 1. Validação de Dados Vazios
+- **Patrimônio**: Mensagem "Nenhum dado para exibir" quando não há ativos
+- Aplicado globalmente em todas as telas
+
+### 2. Prevenção de Sobreposição do Footer
+- Adicionado `pb-24` globalmente em `/src/App.tsx`
+- Footer não sobrepõe mais botões de ação em formulários
+
+### 3. Formatação de Moeda
+- **precoCompra** em `rendaVariavelForm`: Máscaras monetárias automáticas
+- Campos de investimento utilizam `useMoneyMask` hook
+
+### 4. Controles de Quantidade
+- Botões **+/−** em `rendaVariavelForm` para incrementar/decrementar quantidade
+- Validação com `clampNonNegativeInt` utility
+
+### 5. Novos Componentes Extraídos
+
+#### ContasAReceberForm
+- Localização: `/src/pages/Patrimonio/components/Ativos/components/contasAReceberForm.tsx`
+- Funcionalidade: Seleção de categoria com dropdown de ativos relacionados
+- Integrado em `ativosCreate.tsx`
+
+#### ReservaDeEmergenciaForm
+- Localização: `/src/pages/Patrimonio/components/Ativos/components/reservaDeEmergenciaForm.tsx`
+- Campos: nome, banco, valorInvestido, percentualCdi, dataCompra, dataVencimento
+- Cálculos automáticos: valor atual, IR estimado, valor líquido
+- Lógica reutilizada de `rendaFixaForm`
+
+### 6. Correção de Dropdown
+- **DropdownSearch**: Corrigido comportamento de reabrir após seleção
+- Adicionado `suppressAutoOpen` state
+
+### 7. Padronização de Campos de Leitura
+- Convertidos todos os `InputField` readOnly para `ReadOnlyField` component
+- Localidades:
+  - `reservaDeEmergenciaForm.tsx`: CDI atual
+  - `TaxaSection.tsx`: CDI atual, IPCA atual, Taxa total
+- Consistência visual melhorada
+
+### 8. Correção de Cores do Gráfico
+- **DistribuicaoDeCarteira**: Adicionadas cores explícitas para:
+  - Renda Variável Moderado → Amarelo
+  - Renda Fixa Conservador → Verde
+
+### 9. Utilities Extraídas
+- **`clampNonNegativeInt`**: Validação de inteiros não-negativos
+- Localização: `/src/utils/number.ts`
+
+---
+
 ## Próximos Passos
 
 1. ✅ Servidor atualizado
 2. ✅ Banco de dados migrado
 3. ✅ Documentação atualizada
-4. ⏳ **Próximo**: Atualizar componentes frontend para usar nova API
-5. ⏳ Testar integração completa
+4. ✅ Componentes UI/UX melhorados
+5. ⏳ **Próximo**: Testar integração completa com todos os tipos de ativos
+6. ⏳ Integrar hidden inputs de reservaDeEmergenciaForm em payload
 
 ---
 

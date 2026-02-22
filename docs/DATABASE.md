@@ -162,3 +162,89 @@ cp db.backup.20260220_143000.json db.json
 - ✅ **Rápido**: Para desenvolvimento e protótipos
 - ❌ **Limitações**: Não suporta concorrência, transações ou queries complexas
 - ❌ **Produção**: Para produção, migrar para PostgreSQL, MySQL ou MongoDB
+
+## Estrutura de Ativos Complexos
+
+### Ativo com Renda Variável
+```json
+{
+  "id": 1,
+  "nome": "VALE3",
+  "tipo": "investimentos",
+  "tipoInvestimento": "renda_variavel",
+  "valorAtual": 3200.00,
+  "risco": "alto",
+  "dataCriacao": "2026-02-20T10:00:00",
+  "dataAtualizacao": "2026-02-20T10:00:00",
+  "rendaVariavel": {
+    "tipoRendaVariavel": "acoes",
+    "quantidade": 50,
+    "precoCompra": 60.00,
+    "precoAtual": 64.00,
+    "corretora": "XP Investimentos",
+    "categoriaRiscoRendaVariavel": "alto",
+    "dataCompra": "2025-01-15"
+  }
+}
+```
+
+### Ativo com Renda Fixa
+```json
+{
+  "id": 2,
+  "nome": "CDB 110% CDI",
+  "tipo": "investimentos",
+  "tipoInvestimento": "renda_fixa",
+  "valorAtual": 10500.00,
+  "risco": "médio",
+  "taxaSection": {
+    "tipoTaxa": "pos_fixado_cdi",
+    "percentualCdi": "110",
+    "cdiAtual": "10.65",
+    "ipcaTaxa": null
+  },
+  "rendaFixa": {
+    "banco": "Itaú",
+    "valorInvestido": 10000.00,
+    "dataCompra": "2025-06-15",
+    "dataVencimento": "2027-06-15",
+    "irEstimado": 245.00,
+    "valorAtual": 10500.00,
+    "valorLiquidoEstimado": 10255.00
+  }
+}
+```
+
+### Ativo Reserva de Emergência
+```json
+{
+  "id": 3,
+  "nome": "Reserva de Emergência",
+  "tipo": "reserva_emergencia",
+  "valorAtual": 15000.00,
+  "risco": "baixo",
+  "banco": "Nubank",
+  "reservaDeEmergencia": {
+    "valorInvestido": 15000.00,
+    "percentualCdi": "100",
+    "cdiAtual": "10.65",
+    "dataCompra": "2024-01-01",
+    "dataVencimento": "2027-01-01",
+    "irEstimado": 380.50,
+    "valorAtual": 15437.25,
+    "valorLiquidoEstimado": 15056.75
+  }
+}
+```
+
+### Ativo Simples (Conta)
+```json
+{
+  "id": 4,
+  "nome": "Conta Corrente",
+  "tipo": "conta_corrente",
+  "valorAtual": 5000.00,
+  "dataCriacao": "2026-02-20T10:00:00",
+  "dataAtualizacao": "2026-02-20T10:00:00"
+}
+```

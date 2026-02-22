@@ -25,16 +25,6 @@ export default function Footer() {
         </NavLink>
 
         <NavLink
-          to="/financas"
-          className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
-        >
-          <div className="h-6 w-6" aria-hidden="true">
-            <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faWallet} />
-          </div>
-          <p className="text-xs">Finanças</p>
-        </NavLink>
-
-        <NavLink
           to="/patrimonio"
           className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
         >
@@ -42,6 +32,16 @@ export default function Footer() {
             <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faChartLine} />
           </div>
           <p className="text-xs">Patrimônio</p>
+        </NavLink>
+
+        <NavLink
+          to="/financas"
+          className={({ isActive }) => `flex flex-col items-center justify-center gap-2 text-[0.7rem] px-1 py-1 no-underline ${isActive ? 'text-gray-900 font-medium' : 'text-gray-500'}`}
+        >
+          <div className="h-6 w-6" aria-hidden="true">
+            <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faWallet} />
+          </div>
+          <p className="text-xs">Finanças</p>
         </NavLink>
 
         <NavLink

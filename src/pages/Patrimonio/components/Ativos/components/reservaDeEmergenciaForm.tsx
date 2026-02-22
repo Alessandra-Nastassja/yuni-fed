@@ -81,6 +81,7 @@ export function ReservaDeEmergenciaForm() {
         defaultValue=""
       />
 
+{/* Todo: mostrar campos de CDI e demais SOMENTE para bancos que tenha essa modalidade (pag seguro, nubank, pic pay)  */}
       {bancoSelecionado === "outros" && (
         <InputField
           id="bancoCustomizado"
@@ -112,15 +113,11 @@ export function ReservaDeEmergenciaForm() {
         placeholder="110"
       />
 
-      <InputField
-        id="cdiDisplay"
-        name="cdiDisplay"
-        label="CDI atual"
+      <ReadOnlyField
         icon={faPercent}
-        type="text"
-        placeholder="0,00% a.a"
+        label="CDI atual"
         value={`${INDICES.cdiAtual.toFixed(2)}% a.a`}
-        readOnly
+        isSkeleton={false}
       />
       <input type="hidden" id="cdi" name="cdi" value={INDICES.cdiAtual.toFixed(2)} />
 

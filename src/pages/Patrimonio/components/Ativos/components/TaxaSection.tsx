@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import SelectField from "@shared/SelectField/selectField";
 import InputField from "@shared/InputField/inputField";
+import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
 import { TAXA_TIPO_OPTIONS, INDICES } from "@const/ativos";
 import { FIXED_INCOME_RATE_TYPES } from "@const/ativos";
 
@@ -110,14 +111,11 @@ export function TaxaSection({
             }
           />
 
-          <InputField
-            id="cdiAtualDisplay"
-            name="cdiAtualDisplay"
-            label="CDI atual"
+          <ReadOnlyField
             icon={faPercent}
-            type="text"
-            placeholder="10,65% a.a"
-            readOnly
+            label="CDI atual"
+            value="10,65% a.a"
+            isSkeleton={false}
           />
           <input type="hidden" id="cdiAtual" name="cdiAtual" value="10.65" />
         </>
@@ -125,15 +123,11 @@ export function TaxaSection({
 
       {tipoTaxa === FIXED_INCOME_RATE_TYPES.ipca && (
         <>
-          <InputField
-            id="ipcaAtualDisplay"
-            name="ipcaAtualDisplay"
-            label="IPCA atual"
+          <ReadOnlyField
             icon={faPercent}
-            type="text"
-            placeholder="4,80% a.a"
+            label="IPCA atual"
             value={`${INDICES.ipcaAproximado.toFixed(2)}% a.a`}
-            readOnly
+            isSkeleton={false}
           />
           
           <InputField
@@ -148,14 +142,11 @@ export function TaxaSection({
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTaxaFixaIpca(e.target.value)}
           />
           
-          <InputField
-            id="taxaTotalDisplay" 
-            name="taxaTotalDisplay"
-            label={taxaFixaIpca ? `Taxa total (IPCA atual + Taxa fixa)` : "Taxa total"}
+          <ReadOnlyField
             icon={faPercent}
-            type="text"
+            label={taxaFixaIpca ? `Taxa total (IPCA atual + Taxa fixa)` : "Taxa total"}
             value={taxaFixaIpca ? `${values.ipcaTaxa}% a.a` : '-'}
-            readOnly
+            isSkeleton={false}
           />
           
           <input type="hidden" id="ipcaTaxa" name="ipcaTaxa" value={values.ipcaTaxa} />
