@@ -62,15 +62,6 @@ export function ReservaDeEmergenciaForm() {
 
   return (
     <>
-      <InputField
-        id="nome"
-        name="nome"
-        label="Nome"
-        icon={faTag}
-        placeholder="Digite o nome"
-        maxLength={50}
-      />
-
       <SelectField
         id="banco"
         name="banco"
@@ -81,7 +72,6 @@ export function ReservaDeEmergenciaForm() {
         defaultValue=""
       />
 
-{/* Todo: mostrar campos de CDI e demais SOMENTE para bancos que tenha essa modalidade (pag seguro, nubank, pic pay)  */}
       {bancoSelecionado === "outros" && (
         <InputField
           id="bancoCustomizado"
@@ -93,70 +83,86 @@ export function ReservaDeEmergenciaForm() {
         />
       )}
 
-      <InputField
-        id="valorInvestido"
-        name="valorInvestido"
-        label="Valor investido (R$)"
-        icon={faDollarSign}
-        type="text"
-        inputMode="decimal"
-        placeholder="R$ 0,00"
-      />
+      {['nubank', 'picpay', 'pag_seguro'].includes(bancoSelecionado) && (
+        <>
+          <InputField
+            id="valorInvestido"
+            name="valorInvestido"
+            label="Valor investido (R$)"
+            icon={faDollarSign}
+            type="text"
+            inputMode="decimal"
+            placeholder="R$ 0,00"
+          />
 
-      <InputField
-        id="percentualCdi"
-        name="percentualCdi"
-        label="% do CDI"
-        icon={faPercent}
-        type="text"
-        inputMode="decimal"
-        placeholder="110"
-      />
+          <InputField
+            id="percentualCdi"
+            name="percentualCdi"
+            label="% do CDI"
+            icon={faPercent}
+            type="text"
+            inputMode="decimal"
+            placeholder="110"
+          />
 
-      <ReadOnlyField
-        icon={faPercent}
-        label="CDI atual"
-        value={`${INDICES.cdiAtual.toFixed(2)}% a.a`}
-        isSkeleton={false}
-      />
-      <input type="hidden" id="cdi" name="cdi" value={INDICES.cdiAtual.toFixed(2)} />
+          <ReadOnlyField
+            icon={faPercent}
+            label="CDI atual"
+            value={`${INDICES.cdiAtual.toFixed(2)}% a.a`}
+            isSkeleton={false}
+          />
+          <input type="hidden" id="cdi" name="cdi" value={INDICES.cdiAtual.toFixed(2)} />
+        
+          <InputField
+            id="dataCompra"
+            name="dataCompra"
+            label="Data de compra"
+            icon={faTag}
+            type="date"
+          />
 
-      <InputField
-        id="dataCompra"
-        name="dataCompra"
-        label="Data de compra"
-        icon={faTag}
-        type="date"
-      />
+          <InputField
+            id="dataVencimento"
+            name="dataVencimento"
+            label="Data de vencimento"
+            icon={faTag}
+            type="date"
+          />
 
-      <InputField
-        id="dataVencimento"
-        name="dataVencimento"
-        label="Data de vencimento"
-        icon={faTag}
-        type="date"
-      />
+          <ReadOnlyField
+            icon={faDollarSign}
+            label="Valor atual (R$)"
+            value={valorAtual}
+            isSkeleton={false}
+          />
 
-      <ReadOnlyField
-        icon={faDollarSign}
-        label="Valor atual (R$)"
-        value={valorAtual}
-        isSkeleton={false}
-      />
+          <ReadOnlyField
+            icon={faPercent}
+            label="IR estimado (%)"
+            value={irEstimado ? `${irEstimado}%` : ""}
+            isSkeleton={false}
+          />
 
-      <ReadOnlyField
-        icon={faPercent}
-        label="IR estimado (%)"
-        value={irEstimado ? `${irEstimado}%` : ""}
-        isSkeleton={false}
-      />
+          <ReadOnlyField
+            icon={faDollarSign}
+            label="Valor líquido estimado (R$)"
+            value={valorLiquidoEstimado}
+            isSkeleton={false}
+          />
+        </>
+      )}
 
-      <ReadOnlyField
-        icon={faDollarSign}
-        label="Valor líquido estimado (R$)"
-        value={valorLiquidoEstimado}
-        isSkeleton={false}
-      />
+      {['nubank', 'picpay', 'pag_seguro'].includes(bancoSelecionado) === false && (
+        <InputField
+            id="valorInvestido"
+            name="valorInvestido"
+            label="Valor atual (R$)"
+            icon={faDollarSign}
+            type="text"
+            inputMode="decimal"
+            placeholder="R$ 0,00"
+          />
+      )}
     </>
   );
 }
