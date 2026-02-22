@@ -7,6 +7,7 @@ import {
 import { Pie } from 'react-chartjs-2';
 import { formatValue } from '@utils/currency';
 import { useEffect, useState } from 'react';
+import Badge from '@shared/Badge/Badge';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -271,9 +272,10 @@ export default function DistribuicaoDeCarteira({
                 <article key={item.nome} className="flex justify-between items-center">
                   <div className="flex flex-col gap-1">
                     <p>{item.nome}</p>
-                    <span className={`text-xs px-2 py-1 rounded w-fit ${getColorByType(item.tipo, item.classificacao)}`}>
-                      {item.classificacao}
-                    </span>
+                    <Badge 
+                      label={item.classificacao}
+                      className={getColorByType(item.tipo, item.classificacao)}
+                    />
                   </div>
                   <div className='flex flex-col items-end'>
                     <p className="font-medium">{formatValue(item.valor)}</p>

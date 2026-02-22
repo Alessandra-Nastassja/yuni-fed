@@ -1,22 +1,28 @@
 interface BadgeProps {
-  tipo: string;
+  tipo?: string;
+  label?: string;
   formatLabel?: (tipo: string) => string;
   excludeTypes?: string[];
+  className?: string;
 }
 
 export default function Badge({ 
   tipo, 
+  label,
   formatLabel,
-  excludeTypes = ['investimentos']
+  excludeTypes = ['investimentos'],
+  className = 'bg-gray-100 text-gray-600'
 }: BadgeProps) {
-  if (excludeTypes.includes(tipo)) {
+  if (tipo && excludeTypes.includes(tipo)) {
     return null;
   }
 
+  const displayText = label || (tipo && formatLabel ? formatLabel(tipo) : tipo) || '';
+
   return (
     <article>
-      <small className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded text-xs">
-        {formatLabel ? formatLabel(tipo) : tipo}
+      <small className={`${className} px-2 py-1 rounded text-xs w-fit`}>
+        {displayText}
       </small>
     </article>
   );
