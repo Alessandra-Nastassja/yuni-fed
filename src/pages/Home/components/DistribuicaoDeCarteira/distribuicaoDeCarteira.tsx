@@ -54,6 +54,22 @@ const getColorByType = (tipo: string, classificacao: string): string => {
 };
 
 const getChartColorByType = (tipo: string, classificacao: string, opacity: number = 0.8): { bgColor: string; borderColor: string } => {
+  // Renda Variável Moderado → Amarelo
+  if (tipo === 'Renda Variável' && classificacao === 'Moderado') {
+    return {
+      bgColor: `rgba(250, 204, 21, ${opacity})`,
+      borderColor: `rgba(250, 204, 21, 1)`,
+    };
+  }
+
+  // Renda Fixa Conservador → Verde
+  if (tipo === 'Renda Fixa' && classificacao === 'Conservador') {
+    return {
+      bgColor: `rgba(34, 197, 94, ${opacity})`,
+      borderColor: `rgba(34, 197, 94, 1)`,
+    };
+  }
+
   // Renda Variável Agressivo → Vermelho
   if (tipo === 'Renda Variável' && classificacao === 'Agressivo') {
     return {
