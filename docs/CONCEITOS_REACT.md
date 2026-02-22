@@ -66,7 +66,7 @@ const location = useLocation();
 
 ## 2. Context API
 
-### AlertContext
+### AlertContext ⚠️
 Context personalizado para gerenciar alertas globais da aplicação:
 - `showAlert(message, variant)`: Exibe alerta
 - `hideAlert()`: Oculta alerta
@@ -79,9 +79,11 @@ Context personalizado para gerenciar alertas globais da aplicação:
 </AlertProvider>
 ```
 
+
+
 ## 3. React Router DOM
 
-### Navegação Declarativa
+### Navegação Declarativa ✅
 ```tsx
 <Routes>
   <Route path="/" element={<Onboarding />} />
@@ -93,14 +95,16 @@ Context personalizado para gerenciar alertas globais da aplicação:
 </Routes>
 ```
 
-### useNavigate
+### useNavigate (router.navigate()) ✅
 Navegação programática:
 ```tsx
 const navigate = useNavigate();
 navigate('/home');
 ```
 
-## 4. Componentes Funcionais
+
+
+## 4. Componentes Funcionais ❌
 
 Todos os componentes são funcionais (sem classes):
 ```tsx
@@ -110,16 +114,16 @@ function AppContent() {
 }
 ```
 
-## 5. Props e Composição
+## 5. Props e Composição ✅
 
-Componentes reutilizáveis recebem props:
+Componentes reutilizáveis recebem props: 
 ```tsx
 <Alert variant={alert.variant} onClose={hideAlert}>
   {alert.message}
 </Alert>
 ```
 
-## 6. Conditional Rendering
+## 6. Conditional Rendering ✅
 
 Renderização condicional baseada em estado ou localização:
 ```tsx
@@ -127,7 +131,7 @@ Renderização condicional baseada em estado ou localização:
 {location.pathname !== '/' && <Menu />}
 ```
 
-## 7. Forms e Controlled Components
+## 7. Forms e Controlled Components ✅
 
 Inputs controlados pelo estado do React:
 ```tsx
@@ -137,7 +141,7 @@ Inputs controlados pelo estado do React:
 />
 ```
 
-## 8. TypeScript
+## 8. TypeScript (interface) ✅
 
 Tipagem estática para maior segurança:
 ```tsx
@@ -149,18 +153,18 @@ interface Meta {
 }
 ```
 
-## 9. SPA (Single Page Application)
+## 9. SPA (Single Page Application) ❌
 
 Aplicação de página única com carregamento dinâmico de rotas sem recarregar a página.
 
-## 10. Component Lifecycle
+## 10. Component Lifecycle (ciclo de vida do app) ⚠️
 
 Gerenciado através de hooks:
 - **Montagem**: `useEffect(() => {}, [])`
 - **Atualização**: `useEffect(() => {}, [dependency])`
 - **Desmontagem**: `useEffect(() => { return () => cleanup() }, [])`
 
-## 11. Componentes Compartilhados (Shared)
+## 11. Componentes Compartilhados (Shared) ✅
 
 ### ReadOnlyField
 Campo de leitura apenas com ícone:
@@ -212,7 +216,7 @@ Busca com dropdown inteligente:
 />
 ```
 
-## 12. Componentes de Formulários (Form Components)
+## 12. Componentes de Formulários (Form Components) ✅
 
 ### RendaVariavelForm
 Formulário para investimentos em ações, FIIs, ETFs:
