@@ -27,6 +27,7 @@ import {
 } from "@const/ativos";
 import {
   calcularAliquotaIR,
+  calcularReservaEmergencia,
   calcularValorAtualRendaFixa,
   calcularValorAtualRendaVariavel,
   calcularValorAtualTesouroDireto,
@@ -264,11 +265,10 @@ export default function AtivosCreate() {
     const valorInvestido = parseMoneyString((formData.get("valorInvestido") as string) || "0");
     const percentualCdiRaw = (formData.get("percentualCdi") as string) || "";
     const cdiAtualRaw = (formData.get("cdi") as string) || "";
-    const dataCompra = formData.get("dataCompra") as string;
-    const dataVencimento = formData.get("dataVencimento") as string;
+    const dataAporte = formData.get("dataCompra") as string;
 
     // Se não houver dados de cálculo (bancos sem CDI), retornar apenas o básico
-    if (!percentualCdiRaw || !cdiAtualRaw || !dataCompra || !dataVencimento) {
+    if (!percentualCdiRaw || !cdiAtualRaw || !dataAporte) {
       return {
         banco,
         valorInvestido,
@@ -280,35 +280,22 @@ export default function AtivosCreate() {
     const percentualCdi = parseFloat(percentualCdiRaw.replace(",", "."));
     const cdiAtual = parseFloat(cdiAtualRaw.replace(",", "."));
 
-    const valorAtualCalculado = calcularValorAtualRendaFixa({
-      valorInvestido: String(valorInvestido),
-      tipoTaxa: "pos_fixado_cdi",
-      percentualCdi: String(percentualCdi),
-      cdiAtual: String(cdiAtual),
-      dataCompra,
-      dataVencimento,
-    });
-
-    const aliquotaIR = calcularAliquotaIR(dataCompra, dataVencimento);
-    
-    const valorLiquidoEstimado = calcularValorFinalEstimadoRendaFixa({
-      valorAtual: valorAtualCalculado,
+    const resultados = calcularReservaEmergencia(
       valorInvestido,
-      dataCompra,
-      dataVencimento,
-      isento: false, // Reserva de emergência não é isenta
-    });
+      percentualCdi,
+      cdiAtual,
+      dataAporte
+    );
 
     return {
       banco,
       valorInvestido,
-      valorAtual: valorAtualCalculado,
+      valorAtual: resultados.valorAtual,
       percentualCdi,
       cdi: cdiAtual,
-      dataCompra,
-      dataVencimento,
-      irEstimado: aliquotaIR,
-      valorLiquidoEstimado,
+      dataCompra: dataAporte, // mantém como dataCompra no payload para compatibilidade
+      irEstimado: resultados.aliquotaIR,
+      valorLiquidoEstimado: resultados.valorLiquido,
     };
   };
 
