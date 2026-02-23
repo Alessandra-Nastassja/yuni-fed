@@ -35,7 +35,7 @@ const getIconeParaTipo = (tipo: string) => {
 };
 
 interface Ativo {
-  id: number;
+  id: number | string;
   nome: string;
   tipo: string;
   categoriaRisco: string | null;
@@ -69,7 +69,9 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
 
   // Agrupar ativos por tipo e somar valores
   const ativosAgrupados = ativos.reduce((acc, ativo) => {
-    const tipoExistente = acc.find(item => item.tipo === ativo.tipo);
+    // Normalizar o tipo (trim e lowercase) para garantir agrupamento correto
+    const tipoNormalizado = (ativo.tipo || '').trim().toLowerCase();
+    const tipoExistente = acc.find(item => (item.tipo || '').trim().toLowerCase() === tipoNormalizado);
     
     if (tipoExistente) {
       // Se já existe um ativo desse tipo, soma o valor
@@ -77,7 +79,7 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
     } else {
       // Se não existe, adiciona novo item agrupado
       acc.push({
-        id: ativo.id,
+        id: `${ativo.tipo}-${ativo.id}`, // Usar tipo + id para garantir chave única
         nome: formatTipoAtivo(ativo.tipo),
         tipo: ativo.tipo,
         categoriaRisco: ativo.categoriaRisco,
