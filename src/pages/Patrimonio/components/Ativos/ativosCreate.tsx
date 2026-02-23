@@ -26,6 +26,7 @@ import {
   RISCO_MEDIO_ALTO,
 } from "@const/ativos";
 import {
+  calcularAliquotaIR,
   calcularValorAtualRendaFixa,
   calcularValorAtualRendaVariavel,
   calcularValorAtualTesouroDireto,
@@ -186,215 +187,293 @@ export default function AtivosCreate() {
     });
   };
 
+  // ==================== Funções Auxiliares ====================
+
+  const resolverNomeAtivo = (tipo: string, nomeRaw: string, formData?: FormData): string => {
+    const resolvers: Record<string, () => string> = {
+      conta_corrente: () => 
+        nomeRaw === "outros" && nomeBancoCustomizado
+          ? nomeBancoCustomizado
+          : BANCOS_OPTIONS.find(opt => opt.value === nomeRaw)?.label || nomeRaw,
+      
+      contas_a_receber: () => 
+        categoriaContasAReceber === "outros"
+          ? nomeRaw
+          : CONTAS_A_RECEBER_CATEGORIA_OPTIONS.find(opt => opt.value === categoriaContasAReceber)?.label || categoriaContasAReceber,
+      
+      reserva_emergencia: () => {
+        if (!formData) return nomeRaw;
+        const bancoRaw = (formData.get("banco") as string) || "";
+        const bancoCustomizado = (formData.get("bancoCustomizado") as string) || "";
+        return bancoRaw === "outros" && bancoCustomizado
+          ? bancoCustomizado
+          : BANCOS_OPTIONS.find(opt => opt.value === bancoRaw)?.label || bancoRaw;
+      },
+    };
+
+    return resolvers[tipo]?.() || nomeRaw;
+  };
+
+  const validarCamposObrigatorios = (tipo: string, nome: string): string | null => {
+    if (!tipo) {
+      return "Por favor, preencha todos os campos obrigatórios.";
+    }
+
+    if (tipo === "contas_a_receber" && categoriaContasAReceber === "outros" && !nome) {
+      return "Por favor, preencha o nome quando a categoria for 'outros'.";
+    }
+
+    // Nome não é obrigatório para contas_a_receber e reserva_emergencia (gerado automaticamente)
+    if (tipo !== "contas_a_receber" && tipo !== "reserva_emergencia" && !nome) {
+      return "Por favor, preencha todos os campos obrigatórios.";
+    }
+
+    return null;
+  };
+
+  const construirPayloadBase = (nome: string, tipo: string) => {
+    const payload: any = { nome, tipo };
+
+    if (tipoFonteRenda) {
+      payload.tipoFonteRenda = tipoFonteRenda;
+    }
+
+    if (tipo === "contas_a_receber") {
+      if (categoriaContasAReceber) {
+        payload.categoriaContasAReceber = categoriaContasAReceber;
+      }
+
+      if (ativoVinculado && Array.isArray(ativosExistentes)) {
+        const ativoEncontrado = ativosExistentes.find(a => a.nome === ativoVinculado);
+        if (ativoEncontrado) {
+          payload.ativoVinculadoId = ativoEncontrado.id;
+        }
+      }
+    }
+
+    return payload;
+  };
+
+  const construirPayloadReservaEmergencia = (formData: FormData) => {
+    const bancoRaw = (formData.get("banco") as string) || "";
+    const bancoCustomizado = (formData.get("bancoCustomizado") as string) || "";
+    const banco = bancoRaw === "outros" && bancoCustomizado
+      ? bancoCustomizado
+      : BANCOS_OPTIONS.find(opt => opt.value === bancoRaw)?.label || bancoRaw;
+
+    const valorInvestido = parseMoneyString((formData.get("valorInvestido") as string) || "0");
+    const percentualCdiRaw = (formData.get("percentualCdi") as string) || "";
+    const cdiAtualRaw = (formData.get("cdi") as string) || "";
+    const dataCompra = formData.get("dataCompra") as string;
+    const dataVencimento = formData.get("dataVencimento") as string;
+
+    // Se não houver dados de cálculo (bancos sem CDI), retornar apenas o básico
+    if (!percentualCdiRaw || !cdiAtualRaw || !dataCompra || !dataVencimento) {
+      return {
+        banco,
+        valorInvestido,
+        valorAtual: valorInvestido,
+      };
+    }
+
+    // Cálculos para bancos com CDI (nubank, picpay, pag_seguro)
+    const percentualCdi = parseFloat(percentualCdiRaw.replace(",", "."));
+    const cdiAtual = parseFloat(cdiAtualRaw.replace(",", "."));
+
+    const valorAtualCalculado = calcularValorAtualRendaFixa({
+      valorInvestido: String(valorInvestido),
+      tipoTaxa: "pos_fixado_cdi",
+      percentualCdi: String(percentualCdi),
+      cdiAtual: String(cdiAtual),
+      dataCompra,
+      dataVencimento,
+    });
+
+    const aliquotaIR = calcularAliquotaIR(dataCompra, dataVencimento);
+    
+    const valorLiquidoEstimado = calcularValorFinalEstimadoRendaFixa({
+      valorAtual: valorAtualCalculado,
+      valorInvestido,
+      dataCompra,
+      dataVencimento,
+      isento: false, // Reserva de emergência não é isenta
+    });
+
+    return {
+      banco,
+      valorInvestido,
+      valorAtual: valorAtualCalculado,
+      percentualCdi,
+      cdi: cdiAtual,
+      dataCompra,
+      dataVencimento,
+      irEstimado: aliquotaIR,
+      valorLiquidoEstimado,
+    };
+  };
+
+  const construirPayloadTesouroDireto = (formData: FormData) => {
+    const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+    const taxaRentabilidade = parseFloat((formData.get("taxaRentabilidade") as string) || "0");
+    const dataCompra = formData.get("dataCompra") as string;
+    const dataVencimento = formData.get("dataVencimento") as string;
+    
+    const valorAtualCalculado = calcularValorAtualTesouroDireto({
+      valorInvestido,
+      taxaRentabilidade,
+      dataCompra,
+      dataVencimento,
+    });
+
+    return {
+      tesouroDireto: {
+        tipoTesouro: formData.get("tipoTesouro"),
+        valorInvestido,
+        valorAtual: valorAtualCalculado,
+        dataCompra,
+        dataVencimento,
+        corretora: formData.get("corretora"),
+        taxaRentabilidade,
+      },
+      valorAtual: valorAtualCalculado,
+    };
+  };
+
+  const construirPayloadRendaFixa = (formData: FormData) => {
+    const tipoAtivoRendaFixa = formData.get("tipoAtivoRendaFixa") as string;
+    const tipoDebenture = formData.get("tipoDebenture") as string;
+    const valorInvestido = parseMoneyString(formData.get("valorInvestido") as string);
+    
+    const valorAtualCalculado = calcularValorAtualRendaFixa({
+      valorInvestido: String(valorInvestido),
+      tipoTaxa: (formData.get("tipoTaxa") as string) || "",
+      taxaContratada: formData.get("taxaContratada") as string,
+      percentualCdi: formData.get("percentualCdi") as string,
+      cdiAtual: formData.get("cdiAtual") as string,
+      ipcaTaxa: formData.get("ipcaTaxa") as string,
+      dataCompra: formData.get("dataCompra") as string,
+      dataVencimento: formData.get("dataVencimento") as string,
+    });
+
+    const isIsentoIR = ["lci", "lca", "cri", "cra"].includes(tipoAtivoRendaFixa) ||
+      (tipoAtivoRendaFixa === "debenture" && tipoDebenture === "incentivada");
+
+    const valorFinalEstimado = calcularValorFinalEstimadoRendaFixa({
+      valorAtual: valorAtualCalculado,
+      valorInvestido,
+      dataCompra: formData.get("dataCompra") as string,
+      dataVencimento: formData.get("dataVencimento") as string,
+      isento: isIsentoIR,
+    });
+
+    return {
+      rendaFixa: {
+        tipoAtivoRendaFixa,
+        tipoDebenture: tipoDebenture || undefined,
+        valorInvestido,
+        valorAtual: valorAtualCalculado,
+        corretora: formData.get("corretora"),
+        dataCompra: formData.get("dataCompra"),
+        dataVencimento: formData.get("dataVencimento"),
+        tipoTaxa: formData.get("tipoTaxa"),
+        taxaContratada: formData.get("taxaContratada") ? parseFloat(formData.get("taxaContratada") as string) : undefined,
+        percentualCdi: formData.get("percentualCdi") ? parseFloat(formData.get("percentualCdi") as string) : undefined,
+        cdiAtual: formData.get("cdiAtual") ? parseFloat((formData.get("cdiAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0") : undefined,
+        ipcaTaxa: formData.get("ipcaTaxa") ? parseFloat(formData.get("ipcaTaxa") as string) : undefined,
+        categoriaRiscoRendaFixa: formData.get("categoriaRiscoRendaFixa"),
+        irEstimado: formData.get("irEstimado") ? parseFloat(formData.get("irEstimado") as string) : undefined,
+        valorFinalEstimado,
+      },
+      valorAtual: valorAtualCalculado,
+    };
+  };
+
+  const construirPayloadRendaVariavel = (formData: FormData) => {
+    const quantidade = parseFloat((formData.get("quantidade") as string) || "0");
+    const precoMedio = parseMoneyString((formData.get("precoMedio") as string) || "0");
+    const precoAtual = parseMoneyString((formData.get("precoAtual") as string) || "0");
+    
+    const valorInvestido = quantidade * precoMedio;
+    const valorAtualCalculado = calcularValorAtualRendaVariavel({
+      quantidade,
+      precoAtualMercado: precoAtual,
+    });
+
+    const tipoRenda = formData.get("tipoRendaVariavel") as string;
+    const rendaVariavelPayload: any = {
+      tipoRendaVariavel: tipoRenda,
+      quantidade,
+      precoMedio,
+      valorInvestido,
+      valorAtual: valorAtualCalculado,
+      corretora: formData.get("corretora"),
+      categoriaRiscoRendaVariavel: formData.get("categoriaRiscoRendaVariavel"),
+    };
+
+    if (tipoRenda === "acoes") {
+      rendaVariavelPayload.dataCompra = formData.get("dataCompra");
+      rendaVariavelPayload.dividendosRecebidos = parseFloat((formData.get("dividendosRecebidos") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+      rendaVariavelPayload.irEstimadoAcoes = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
+    }
+
+    return {
+      rendaVariavel: rendaVariavelPayload,
+      valorAtual: valorAtualCalculado,
+    };
+  };
+
+  const construirPayloadInvestimentos = (formData: FormData) => {
+    const payloadBuilders: Record<string, (fd: FormData) => any> = {
+      tesouro_direto: construirPayloadTesouroDireto,
+      renda_fixa: construirPayloadRendaFixa,
+      renda_variavel: construirPayloadRendaVariavel,
+    };
+
+    const builder = payloadBuilders[tipoInvestimento];
+    return builder ? builder(formData) : {};
+  };
+
+  // ==================== Handler Principal ====================
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
     const nomeRaw = formData.get("nome") as string;
     const tipo = formData.get("tipo") as string;
+    const nome = resolverNomeAtivo(tipo, nomeRaw, formData);
 
-    let nome = "";
-    if (tipo === "conta_corrente") {
-      if (nomeRaw === "outros" && nomeBancoCustomizado) {
-        nome = nomeBancoCustomizado;
-      } else {
-        nome = BANCOS_OPTIONS.find((option) => option.value === nomeRaw)?.label || nomeRaw;
-      }
-    } else if (tipo === "contas_a_receber") {
-      // Para contas a receber, nome só é obrigatório se categoria for "outros"
-      if (categoriaContasAReceber === "outros") {
-        nome = nomeRaw;
-      } else {
-        // Se não for "outros", usa a categoria como nome
-        nome = CONTAS_A_RECEBER_CATEGORIA_OPTIONS.find((option) => option.value === categoriaContasAReceber)?.label || categoriaContasAReceber;
-      }
-    } else if (tipo === "reserva_emergencia") {
-      nome = nomeRaw;
-    } else {
-      nome = nomeRaw;
-    }
-
-    // Validação de campos obrigatórios
-    if (!tipo) {
-      showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
-      return;
-    }
-
-    if (tipo === "contas_a_receber" && categoriaContasAReceber === "outros" && !nome) {
-      showAlert("Por favor, preencha o nome quando a categoria for 'outros'.", "error");
-      return;
-    }
-
-    if (tipo !== "contas_a_receber" && !nome) {
-      showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
+    // Validação
+    const erroValidacao = validarCamposObrigatorios(tipo, nome);
+    if (erroValidacao) {
+      showAlert(erroValidacao, "error");
       return;
     }
 
     try {
       setIsLoading(true);
 
-      const payload: any = {
-        nome,
-        tipo,
-      };
+      // Construir payload base
+      const payload = construirPayloadBase(nome, tipo);
 
-      // Adicionar tipoFonteRenda se necessário
-      if (tipoFonteRenda) {
-        payload.tipoFonteRenda = tipoFonteRenda;
-      }
-
-      // Adicionar categoriaContasAReceber se necessário
-      if (tipo === "contas_a_receber" && categoriaContasAReceber) {
-        payload.categoriaContasAReceber = categoriaContasAReceber;
-      }
-
-      // Adicionar ativo vinculado se selecionado
-      if (tipo === "contas_a_receber" && ativoVinculado && Array.isArray(ativosExistentes)) {
-        const ativoEncontrado = ativosExistentes.find(a => a.nome === ativoVinculado);
-        if (ativoEncontrado) {
-          payload.ativoVinculadoId = ativoEncontrado.id;
-        }
-      }
-
-      // Para reserva de emergência
+      // Adicionar dados específicos por tipo
       if (tipo === "reserva_emergencia") {
-        const bancoRaw = (formData.get("banco") as string) || "";
-        const bancoCustomizado = (formData.get("bancoCustomizado") as string) || "";
-        const banco = bancoRaw === "outros" && bancoCustomizado
-          ? bancoCustomizado
-          : BANCOS_OPTIONS.find((option) => option.value === bancoRaw)?.label || bancoRaw;
-
-        if (banco) {
-          payload.banco = banco;
-        }
-
-        const valorInvestido = parseMoneyString((formData.get("valorInvestido") as string) || "0");
-        payload.valorInvestido = valorInvestido;
-        payload.valorAtual = valorInvestido;
-
-        const cdiRaw = (formData.get("cdi") as string) || "";
-        const cdi = parseFloat(cdiRaw.replace(",", "."));
-        if (!Number.isNaN(cdi) && cdi > 0) {
-          payload.cdi = cdi;
-        }
-      }
-
-      // Para ativos simples
-      if (tipo !== "investimentos" && tipo !== "reserva_emergencia") {
+        Object.assign(payload, construirPayloadReservaEmergencia(formData));
+      } else if (tipo === "investimentos") {
+        payload.tipoInvestimento = tipoInvestimento;
+        Object.assign(payload, construirPayloadInvestimentos(formData));
+      } else {
+        // Ativos simples
         const valorAtual = parseFloat((formData.get("valorAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
         payload.valorAtual = valorAtual;
       }
 
-      // Para investimentos
-      if (tipo === "investimentos") {
-        payload.tipoInvestimento = tipoInvestimento;
-
-        if (tipoInvestimento === "tesouro_direto") {
-          const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-          const taxaRentabilidade = parseFloat((formData.get("taxaRentabilidade") as string) || "0");
-          const dataCompra = formData.get("dataCompra") as string;
-          const dataVencimento = formData.get("dataVencimento") as string;
-          const valorAtualCalculado = calcularValorAtualTesouroDireto({
-            valorInvestido,
-            taxaRentabilidade,
-            dataCompra,
-            dataVencimento,
-          });
-
-          payload.tesouroDireto = {
-            tipoTesouro: formData.get("tipoTesouro"),
-            valorInvestido,
-            valorAtual: valorAtualCalculado,
-            dataCompra,
-            dataVencimento,
-            corretora: formData.get("corretora"),
-            taxaRentabilidade,
-          };
-          payload.valorAtual = valorAtualCalculado;
-        } else if (tipoInvestimento === "renda_fixa") {
-          const tipoAtivoRendaFixa = formData.get("tipoAtivoRendaFixa") as string;
-          const tipoDebenture = formData.get("tipoDebenture") as string;
-          const valorInvestido = parseMoneyString(formData.get("valorInvestido") as string);
-          const valorAtualCalculado = calcularValorAtualRendaFixa({
-            valorInvestido: String(valorInvestido),
-            tipoTaxa: (formData.get("tipoTaxa") as string) || "",
-            taxaContratada: formData.get("taxaContratada") as string,
-            percentualCdi: formData.get("percentualCdi") as string,
-            cdiAtual: formData.get("cdiAtual") as string,
-            ipcaTaxa: formData.get("ipcaTaxa") as string,
-            dataCompra: formData.get("dataCompra") as string,
-            dataVencimento: formData.get("dataVencimento") as string,
-          });
-
-          const isIsentoIR = ["lci", "lca", "cri", "cra"].includes(tipoAtivoRendaFixa) ||
-            (tipoAtivoRendaFixa === "debenture" && tipoDebenture === "incentivada");
-
-          const valorFinalEstimado = calcularValorFinalEstimadoRendaFixa({
-            valorAtual: valorAtualCalculado,
-            valorInvestido,
-            dataCompra: formData.get("dataCompra") as string,
-            dataVencimento: formData.get("dataVencimento") as string,
-            isento: isIsentoIR,
-          });
-
-          payload.rendaFixa = {
-            tipoAtivoRendaFixa,
-            tipoDebenture: tipoDebenture || undefined,
-            valorInvestido,
-            valorAtual: valorAtualCalculado,
-            corretora: formData.get("corretora"),
-            dataCompra: formData.get("dataCompra"),
-            dataVencimento: formData.get("dataVencimento"),
-            tipoTaxa: formData.get("tipoTaxa"),
-            taxaContratada: formData.get("taxaContratada") ? parseFloat(formData.get("taxaContratada") as string) : undefined,
-            percentualCdi: formData.get("percentualCdi") ? parseFloat(formData.get("percentualCdi") as string) : undefined,
-            cdiAtual: formData.get("cdiAtual") ? parseFloat((formData.get("cdiAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0") : undefined,
-            ipcaTaxa: formData.get("ipcaTaxa") ? parseFloat(formData.get("ipcaTaxa") as string) : undefined,
-            categoriaRiscoRendaFixa: formData.get("categoriaRiscoRendaFixa"),
-            irEstimado: formData.get("irEstimado") ? parseFloat(formData.get("irEstimado") as string) : undefined,
-            valorFinalEstimado,
-          };
-          payload.valorAtual = valorAtualCalculado;
-        } else if (tipoInvestimento === "renda_variavel") {
-          const quantidade = parseFloat((formData.get("quantidade") as string) || "0");
-          const precoMedio = parseMoneyString((formData.get("precoMedio") as string) || "0");
-          const precoAtual = parseMoneyString((formData.get("precoAtual") as string) || "0");
-          
-          const valorInvestido = quantidade * precoMedio;
-          const valorAtualCalculado = calcularValorAtualRendaVariavel({
-            quantidade,
-            precoAtualMercado: precoAtual,
-          });
-
-          const tipoRenda = formData.get("tipoRendaVariavel") as string;
-          const rendaVariavelPayload: any = {
-            tipoRendaVariavel: tipoRenda,
-            quantidade,
-            precoMedio,
-            valorInvestido,
-            valorAtual: valorAtualCalculado,
-            corretora: formData.get("corretora"),
-            categoriaRiscoRendaVariavel: formData.get("categoriaRiscoRendaVariavel"),
-          };
-
-          if (tipoRenda === "acoes") {
-            rendaVariavelPayload.dataCompra = formData.get("dataCompra");
-            rendaVariavelPayload.dividendosRecebidos = parseFloat((formData.get("dividendosRecebidos") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
-            rendaVariavelPayload.irEstimadoAcoes = formData.get("irEstimado") ? parseInt(formData.get("irEstimado") as string) : undefined;
-          }
-
-          payload.rendaVariavel = rendaVariavelPayload;
-          payload.valorAtual = valorAtualCalculado;
-        }
-      }
-
+      // Enviar para API
       const response = await fetch(
         `${API_URL}/ativos${tipo === "investimentos" ? "/completo" : ""}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         }
       );
@@ -406,7 +485,6 @@ export default function AtivosCreate() {
       const tipoFormatado = formatTipoAtivo(tipo);
       showAlert(`"${nomeRaw}" (${tipoFormatado}) criado com sucesso!`, "success");
 
-      // Mantém loading visível durante 1.5s
       await new Promise(resolve => setTimeout(resolve, 1500));
       navigate("/patrimonio");
       setIsLoading(false);
