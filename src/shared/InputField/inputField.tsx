@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 interface FieldProps {
   id: string;
   name: string;
-  label: string;
-  icon: IconDefinition;
+  label?: string;
+  icon?: IconDefinition;
   type?: string;
   inputMode?: "search" | "decimal" | "text" | "email" | "tel" | "url" | "numeric" | "none";
   placeholder?: string;

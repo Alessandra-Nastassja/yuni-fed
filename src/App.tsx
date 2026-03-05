@@ -8,12 +8,13 @@ import Patrimonio from './pages/Patrimonio/patrimonio'
 import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
 import AtivosCreate from './pages/Patrimonio/components/Ativos/ativosCreate';
+import NaoAtivosCreate from './pages/Patrimonio/components/NaoAtivos/naoAtivosCreate';
+import Login from './pages/Onboarding/components/Login/login';
 
 import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
 import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
-import NaoAtivosCreate from './pages/Patrimonio/components/NaoAtivos/naoAtivosCreate';
 
 function AppContent() {
   const location = useLocation();
@@ -44,10 +45,11 @@ function AppContent() {
           <Route path="/novo-nao-ativo" element={<NaoAtivosCreate />} />
           <Route path='/financas' element={<Financas />} />
           <Route path='/configuracoes' element={<Configuracoes />} />
+          <Route path='/login' element={<Login />} />
         </Routes>
       </div>
       
-      {location.pathname !== '/' && <Footer />}
+      {['/', '/login'].includes(location.pathname)===false && <Footer />}
     </>
   )
 }

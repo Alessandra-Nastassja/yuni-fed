@@ -1,27 +1,23 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
 
-import yuni from '../../assets/pig.png';
+import Welcome from "./components/Welcome/welcome";
+import Logando from "./components/Logando/logando";
 
 export default function Onboarding() {
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowWelcome(false);
+    }, 1000); // 1 segundos
+
+    // Limpa o timeout se o componente for desmontado
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className='flex flex-col justify-between gap-8 p-4 h-screen items-center'>
-      <header>
-        <Link to="/home" className="text-blue-600 hover:underline">
-          <FontAwesomeIcon icon={faClose} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
-        </Link>
-      </header>
-
-      <section className='flex flex-col justify-between items-center'>
-        <img src={yuni} alt="Yuni" className="w-48 mb-4" />
-        <h1 className="text-2xl font-bold mb-4 text-blue-400">Bem-vindo!</h1>
-        <p className='text-base text-gray-500'>Olá, eu sou a Yuni! Te ajudarei nessa jornada.</p>
-      </section>
-
-      <footer>
-        <small className='text-sm text-gray-500'>Desenvolvido por Alessandra Nastassja</small>
-      </footer>
-    </main>
+    <>
+      {showWelcome ? <Welcome /> : <Logando />}
+    </>
   );
 }
