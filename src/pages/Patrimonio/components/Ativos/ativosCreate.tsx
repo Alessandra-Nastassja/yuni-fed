@@ -26,7 +26,6 @@ import {
   RISCO_MEDIO_ALTO,
 } from "@const/ativos";
 import {
-  calcularAliquotaIR,
   calcularReservaEmergencia,
   calcularValorAtualRendaFixa,
   calcularValorAtualRendaVariavel,
@@ -451,7 +450,7 @@ export default function AtivosCreate() {
         Object.assign(payload, construirPayloadInvestimentos(formData));
       } else {
         // Ativos simples
-        const valorAtual = parseFloat((formData.get("valorAtual") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+        const valorAtual = parseMoneyString((formData.get("valorAtual") as string) || "0");
         payload.valorAtual = valorAtual;
       }
 

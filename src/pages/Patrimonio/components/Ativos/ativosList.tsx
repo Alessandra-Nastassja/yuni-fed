@@ -80,7 +80,7 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
       // Se não existe, adiciona novo item agrupado
       acc.push({
         id: `${ativo.tipo}-${ativo.id}`, // Usar tipo + id para garantir chave única
-        nome: formatTipoAtivo(ativo.tipo),
+        nome: formatTipoAtivo(ativo.nome ? ativo.nome : ativo.tipo),
         tipo: ativo.tipo,
         categoriaRisco: ativo.categoriaRisco,
         valorAtual: ativo.valorAtual
