@@ -67,6 +67,13 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
   const ativosVazios = !ativos || ativos.length === 0;
   const totalAtivos = ativos.reduce((acc, ativo) => acc + ativo.valorAtual, 0);
 
+  // Contar quantos ativos existem de cada tipo
+  const contadorPorTipo = ativos.reduce((acc, ativo) => {
+    const tipoNormalizado = (ativo.tipo || '').trim().toLowerCase();
+    acc[tipoNormalizado] = (acc[tipoNormalizado] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
   // Agrupar ativos por tipo e somar valores
   const ativosAgrupados = ativos.reduce((acc, ativo) => {
     // Normalizar o tipo (trim e lowercase) para garantir agrupamento correto
@@ -77,10 +84,14 @@ export default function AtivosList({ title, className, iconColor = "bg-green-500
       // Se já existe um ativo desse tipo, soma o valor
       tipoExistente.valorAtual += ativo.valorAtual;
     } else {
+      // Verificar se há múltiplos ativos deste tipo
+      const quantidadeDoTipo = contadorPorTipo[tipoNormalizado] || 1;
+      const deveMostrarNome = quantidadeDoTipo === 1 && ativo.nome;
+      
       // Se não existe, adiciona novo item agrupado
       acc.push({
         id: `${ativo.tipo}-${ativo.id}`, // Usar tipo + id para garantir chave única
-        nome: formatTipoAtivo(ativo.nome ? ativo.nome : ativo.tipo),
+        nome: deveMostrarNome ? ativo.nome : formatTipoAtivo(ativo.tipo),
         tipo: ativo.tipo,
         categoriaRisco: ativo.categoriaRisco,
         valorAtual: ativo.valorAtual

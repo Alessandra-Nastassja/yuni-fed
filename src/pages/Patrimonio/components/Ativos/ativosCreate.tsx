@@ -299,7 +299,7 @@ export default function AtivosCreate() {
   };
 
   const construirPayloadTesouroDireto = (formData: FormData) => {
-    const valorInvestido = parseFloat((formData.get("valorInvestido") as string)?.replace(/[^\d,.-]/g, "").replace(",", ".") || "0");
+    const valorInvestido = parseMoneyString((formData.get("valorInvestido") as string) || "0");
     const taxaRentabilidade = parseFloat((formData.get("taxaRentabilidade") as string) || "0");
     const dataCompra = formData.get("dataCompra") as string;
     const dataVencimento = formData.get("dataVencimento") as string;
