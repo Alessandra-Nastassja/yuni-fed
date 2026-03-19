@@ -78,7 +78,7 @@ export default function NaoAtivosList({ title, className, iconColor = "bg-yellow
       // Se não existe, adiciona novo item agrupado
       acc.push({
         id: naoAtivo.id,
-        nome: formatTipoNaoAtivo(naoAtivo.tipo),
+        nome: formatTipoNaoAtivo(naoAtivo.nome ? naoAtivo.nome : naoAtivo.tipo),
         tipo: naoAtivo.tipo,
         valorAtual: naoAtivo.valorAtual
       });

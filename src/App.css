@@ -38,4 +38,15 @@
   color: #888;
 }
 
+/* Hide page title on screens smaller than 375px */
+.header-title {
+  display: none;
+}
+
+@media (max-width: 375px) {
+  .header-title {
+    display: none;
+  }
+}
+
 

@@ -21,7 +21,7 @@ export default function Footer() {
           <div className="h-6 w-6" aria-hidden="true">
             <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faHouse} />
           </div>
-          <p className="text-xs">Home</p>
+          <p className="hidden text-xs min-[375px]:block">Home</p>
         </NavLink>
 
         <NavLink
@@ -31,7 +31,7 @@ export default function Footer() {
           <div className="h-6 w-6" aria-hidden="true">
             <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faChartLine} />
           </div>
-          <p className="text-xs">Patrimônio</p>
+          <p className="hidden text-xs min-[375px]:block">Patrimônio</p>
         </NavLink>
 
         <NavLink
@@ -41,7 +41,7 @@ export default function Footer() {
           <div className="h-6 w-6" aria-hidden="true">
             <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faWallet} />
           </div>
-          <p className="text-xs">Finanças</p>
+          <p className="hidden text-xs min-[375px]:block">Finanças</p>
         </NavLink>
 
         <NavLink
@@ -51,7 +51,7 @@ export default function Footer() {
           <div className="h-6 w-6" aria-hidden="true">
             <FontAwesomeIcon size='xl' className="h-6 w-6" icon={faGear} />
           </div>
-          <p className="text-xs">Configurações</p>
+          <p className="hidden text-xs min-[375px]:block">Configurações</p>
         </NavLink>
 
         {['/financas', '/patrimonio'].includes(location.pathname) && (

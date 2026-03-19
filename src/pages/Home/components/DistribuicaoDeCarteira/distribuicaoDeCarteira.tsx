@@ -134,8 +134,41 @@ const INVESTMENT_PATTERNS: Array<{
   },
 ];
 
-const categorizeInvestimento = (nome: string): CategoriaInvestimento => {
-  const upperNome = nome.toUpperCase();
+const mapRiscoToClassificacao = (risco?: string): string => {
+  switch ((risco || '').toLowerCase()) {
+    case 'baixo':
+      return 'Conservador';
+    case 'medio':
+    case 'médio':
+      return 'Moderado';
+    case 'alto':
+      return 'Agressivo';
+    default:
+      return 'Moderado';
+  }
+};
+
+const categorizeInvestimento = (ativo: any): CategoriaInvestimento => {
+  const tipoInvestimento = (ativo?.tipoInvestimento || '').toLowerCase();
+  const risco =
+    ativo?.risco ||
+    ativo?.tesouroDireto?.risco ||
+    ativo?.rendaFixa?.risco ||
+    ativo?.rendaVariavel?.risco;
+
+  if (tipoInvestimento === 'tesouro_direto') {
+    return { tipo: 'Tesouro Direto', classificacao: 'Conservador' };
+  }
+
+  if (tipoInvestimento === 'renda_fixa') {
+    return { tipo: 'Renda Fixa', classificacao: mapRiscoToClassificacao(risco) };
+  }
+
+  if (tipoInvestimento === 'renda_variavel') {
+    return { tipo: 'Renda Variável', classificacao: mapRiscoToClassificacao(risco || 'alto') };
+  }
+
+  const upperNome = (ativo?.nome || '').toUpperCase();
 
   for (const pattern of INVESTMENT_PATTERNS) {
     if (pattern.keywords) {
@@ -168,7 +201,7 @@ const groupInvestmentsByType = (investimentos: any[]): ItemDistribuicao[] => {
   const tipoMap: { [key: string]: { nome: string; valor: number; classificacao: string; tipo: string } } = {};
 
   investimentos.forEach((ativo: any) => {
-    const categoria = categorizeInvestimento(ativo.nome);
+    const categoria = categorizeInvestimento(ativo);
     
     if (!tipoMap[categoria.tipo]) {
       tipoMap[categoria.tipo] = {

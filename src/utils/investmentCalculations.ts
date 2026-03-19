@@ -291,3 +291,67 @@ export const calcularValorLiquidoRendaFixa = (
   // Arredondar para 2 casas decimais
   return Math.round(valorLiquido * 100) / 100;
 };
+
+/**
+ * Calcula valores de reserva de emergência (liquidez diária)
+ * @param valorInvestido - Valor do aporte inicial
+ * @param percentualCdi - Percentual do CDI (ex: 110 para 110% do CDI)
+ * @param cdiAtual - Taxa CDI atual em % a.a (ex: 10.65)
+ * @param dataAporte - Data do aporte em formato string (YYYY-MM-DD)
+ * @returns Objeto com valorAtual, aliquotaIR e valorLiquido
+ */
+export const calcularReservaEmergencia = (
+  valorInvestido: number,
+  percentualCdi: number,
+  cdiAtual: number,
+  dataAporte: string
+) => {
+  if (!valorInvestido || !percentualCdi || !cdiAtual || !dataAporte) {
+    return { valorAtual: 0, aliquotaIR: 0, valorLiquido: 0 };
+  }
+
+  const hoje = new Date();
+  const aporte = new Date(dataAporte);
+  
+  // Calcular dias desde o aporte
+  const diffTime = hoje.getTime() - aporte.getTime();
+  const diasDecorridos = Math.ceil(diffTime / MS_PER_DAY);
+  
+  // Alíquota progressiva de IR baseada nos dias
+  let aliquotaIR: number;
+  if (diasDecorridos <= 180) {
+    aliquotaIR = 22.5;
+  } else if (diasDecorridos <= 360) {
+    aliquotaIR = 20;
+  } else if (diasDecorridos <= 720) {
+    aliquotaIR = 17.5;
+  } else {
+    aliquotaIR = 15;
+  }
+
+  // Calcular taxa efetiva: (CDI% × Percentual%) / 10000
+  // Ex: (10,65 × 110) / 10000 = 0,11715 (11,715% a.a)
+  const taxaEfetiva = (cdiAtual * percentualCdi) / 10000;
+  
+  // Calcular tempo em anos
+  const anos = diasDecorridos / 365;
+  
+  // Calcular valor atual com juros compostos até hoje
+  // VF = VI × (1 + taxa)^t
+  const valorAtual = valorInvestido * Math.pow(1 + taxaEfetiva, anos);
+  
+  // Calcular rendimento
+  const rendimento = valorAtual - valorInvestido;
+  
+  // Calcular IR sobre o rendimento
+  const valorIR = rendimento > 0 ? rendimento * (aliquotaIR / 100) : 0;
+  
+  // Calcular valor líquido
+  const valorLiquido = valorAtual - valorIR;
+  
+  return {
+    valorAtual: round2(clampNonNegative(valorAtual)),
+    aliquotaIR,
+    valorLiquido: round2(clampNonNegative(valorLiquido)),
+  };
+};

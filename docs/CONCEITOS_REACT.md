@@ -146,6 +146,48 @@ Inputs controlados pelo estado do React:
 />
 ```
 
+### onChange: referência direta vs função inline
+
+Diferença prática entre duas formas comuns:
+
+```tsx
+onChange={handleChange}
+```
+- Passa a função diretamente para o React.
+- O React chama `handleChange(event)` automaticamente.
+- Melhor quando a função ja tem a assinatura esperada.
+
+```tsx
+onChange={(e) => nomeFunction(e.target.value)}
+```
+- Cria uma função inline para transformar o argumento.
+- Em vez de passar o evento inteiro, passa so `e.target.value`.
+- Ideal quando voce quer adaptar os dados antes de chamar outra funcao.
+
+Exemplo equivalente:
+
+```tsx
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  nomeFunction(e.target.value);
+};
+
+<input onChange={handleChange} />
+```
+
+Erro comum:
+
+```tsx
+onChange={nomeFunction(e.target.value)}
+```
+- Isso executa na renderizacao (nao no evento).
+
+Outro erro comum:
+
+```tsx
+onChange={() => nomeFunction(e.target.value)}
+```
+- Falta o parametro `e` na funcao inline.
+
 ## 8. TypeScript (interface) ✅
 
 Tipagem estática para maior segurança:

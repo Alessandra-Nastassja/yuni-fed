@@ -7,7 +7,7 @@ import { ReadOnlyField } from "@shared/ReadOnlyField/ReadOnlyField";
 import { BANCOS_OPTIONS, INDICES } from "@const/ativos";
 import { useMoneyMask, useInputValueListener } from "../../../../../hooks";
 import { parseMoneyString, formatValue } from "@utils/currency";
-import { calcularAliquotaIR, calcularValorAtualRendaFixa, calcularValorFinalEstimadoRendaFixa } from "@utils/investmentCalculations";
+import { calcularReservaEmergencia } from "@utils/investmentCalculations";
 
 export function ReservaDeEmergenciaForm() {
   const [bancoSelecionado, setBancoSelecionado] = useState("");
@@ -20,43 +20,29 @@ export function ReservaDeEmergenciaForm() {
   const calcularValores = useCallback((values: Record<string, string>) => {
     const valorInvestido = parseMoneyString(values.valorInvestido || "");
     const percentualCdi = parseFloat((values.percentualCdi || "").replace(",", "."));
-    const dataCompra = values.dataCompra || "";
-    const dataVencimento = values.dataVencimento || "";
+    const dataAporte = values.dataCompra || "";
 
-    if (!valorInvestido || !percentualCdi || !dataCompra || !dataVencimento) {
+    if (!valorInvestido || !percentualCdi || !dataAporte) {
       setIrEstimado("");
       setValorAtual("");
       setValorLiquidoEstimado("");
       return;
     }
 
-    const aliquota = calcularAliquotaIR(dataCompra, dataVencimento);
-    setIrEstimado(String(aliquota));
-
-    const valorAtualCalculado = calcularValorAtualRendaFixa({
+    const resultados = calcularReservaEmergencia(
       valorInvestido,
-      tipoTaxa: "pos_fixado_cdi",
       percentualCdi,
-      cdiAtual: INDICES.cdiAtual,
-      dataCompra,
-      dataVencimento,
-    });
+      INDICES.cdiAtual,
+      dataAporte
+    );
 
-    setValorAtual(formatValue(valorAtualCalculado));
-
-    const valorLiquido = calcularValorFinalEstimadoRendaFixa({
-      valorAtual: valorAtualCalculado,
-      valorInvestido,
-      dataCompra,
-      dataVencimento,
-      isento: false,
-    });
-
-    setValorLiquidoEstimado(formatValue(valorLiquido));
+    setIrEstimado(String(resultados.aliquotaIR));
+    setValorAtual(formatValue(resultados.valorAtual));
+    setValorLiquidoEstimado(formatValue(resultados.valorLiquido));
   }, []);
 
   useInputValueListener(
-    ["valorInvestido", "percentualCdi", "dataCompra", "dataVencimento"],
+    ["valorInvestido", "percentualCdi", "dataCompra"],
     calcularValores
   );
 
@@ -116,36 +102,28 @@ export function ReservaDeEmergenciaForm() {
           <InputField
             id="dataCompra"
             name="dataCompra"
-            label="Data de compra"
-            icon={faTag}
-            type="date"
-          />
-
-          <InputField
-            id="dataVencimento"
-            name="dataVencimento"
-            label="Data de vencimento"
+            label="Data do aporte"
             icon={faTag}
             type="date"
           />
 
           <ReadOnlyField
             icon={faDollarSign}
-            label="Valor atual (R$)"
+            label="Valor atual (se resgatar hoje) (R$)"
             value={valorAtual}
             isSkeleton={false}
           />
 
           <ReadOnlyField
             icon={faPercent}
-            label="IR estimado (%)"
+            label="IR (se resgatar hoje) (%)"
             value={irEstimado ? `${irEstimado}%` : ""}
             isSkeleton={false}
           />
 
           <ReadOnlyField
             icon={faDollarSign}
-            label="Valor líquido estimado (R$)"
+            label="Valor líquido (se resgatar hoje) (R$)"
             value={valorLiquidoEstimado}
             isSkeleton={false}
           />

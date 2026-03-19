@@ -182,7 +182,7 @@ export const CORRETORAS_OPTIONS: Option[] = [
   { value: "ativa", label: "Ativa Investimentos" },
   { value: "modal", label: "Modal" },
   { value: "warren", label: "Warren" },
-  { value: "easynvest", label: "Easynvest" },
+  { value: "nubank", label: "Nubank" },
   { value: "c6_bank", label: "C6 Bank" },
   { value: "itau", label: "Itaú" },
   { value: "bradesco", label: "Bradesco" },
