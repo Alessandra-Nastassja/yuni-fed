@@ -28,21 +28,23 @@ export default function Header() {
   return (
     <>
       {['/', '/home', '/login'].includes(location.pathname) === false && (
-        <header className={`flex flex-row p-5 gap-5 items-center justify-start relative h-15 ${bgColor}`}>
+        <header className={`flex flex-row p-3 sm:p-5 gap-3 sm:gap-5 items-center justify-start relative h-12 sm:h-15 ${bgColor}`}>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline flex-shrink-0"
             aria-label="Voltar"
           >
 
             {['/financas', '/patrimonio', '/configuracoes'].includes(location.pathname) ? (
-              <FontAwesomeIcon icon={faArrowLeft} size='sm' className='left-4 cursor-pointer text-white' />
+              <FontAwesomeIcon icon={faArrowLeft} size='sm' className='cursor-pointer text-white' />
             ): (
-              <FontAwesomeIcon icon={faClose} size='sm' className='left-4 cursor-pointer text-white' />
+              <FontAwesomeIcon icon={faClose} size='sm' className='cursor-pointer text-white' />
             )}
           </button>
-          <p className="text-white text-medium">{pageTitle}</p>
+          <div className='header-title'>
+            <p className="text-white text-medium">{pageTitle}</p>
+          </div>
         </header>
       )}
     </>
