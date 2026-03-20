@@ -20,7 +20,7 @@ export default function InputField({ id, name, label, icon, type = "text", input
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm">
-        <FontAwesomeIcon icon={icon} className="text-gray-400" />
+        {icon && <FontAwesomeIcon icon={icon} className="text-gray-400" />}
         <label className="text-sm text-gray-600 whitespace-nowrap" htmlFor={id}>{label}</label>
         <input
           id={id}
