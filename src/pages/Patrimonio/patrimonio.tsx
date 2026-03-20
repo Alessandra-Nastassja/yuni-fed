@@ -49,9 +49,15 @@ type NaoAtivo = {
 };
 
 type PatrimonioData = {
-  ano: number;
+  data: string;
   ativos: number;
   naoAtivos: number;
+};
+
+type EventoPatrimonio = {
+  data: Date;
+  tipo: 'ativo' | 'naoAtivo';
+  valor: number;
 };
 
 export default function Patrimonio() {
@@ -73,55 +79,61 @@ export default function Patrimonio() {
       const { ativos } = await ativosResponse.json();
       const { naoAtivos } = await naoAtivosResponse.json();
       
-      // Agrupar por ano
-      const anoMap = new Map<number, { ativos: number; naoAtivos: number }>();
-      
-      // Processar ativos
+      // Montar linha do tempo de eventos e acumular por dia
+      const eventos: EventoPatrimonio[] = [];
+
       if (Array.isArray(ativos)) {
         ativos.forEach((ativo: Ativo) => {
-          const ano = new Date(ativo.dataCriacao).getFullYear();
-          if (!isNaN(ano)) {
-            if (!anoMap.has(ano)) {
-              anoMap.set(ano, { ativos: 0, naoAtivos: 0 });
-            }
-            anoMap.get(ano)!.ativos += ativo.valorAtual;
+          const data = new Date(ativo.dataCriacao);
+          if (!Number.isNaN(data.getTime())) {
+            eventos.push({ data, tipo: 'ativo', valor: Number(ativo.valorAtual) || 0 });
           }
         });
       }
-      
-      // Processar não ativos
+
       if (Array.isArray(naoAtivos)) {
         naoAtivos.forEach((naoAtivo: NaoAtivo) => {
-          const ano = new Date(naoAtivo.dataCompra).getFullYear();
-          if (!isNaN(ano)) {
-            if (!anoMap.has(ano)) {
-              anoMap.set(ano, { ativos: 0, naoAtivos: 0 });
-            }
-            anoMap.get(ano)!.naoAtivos += naoAtivo.valorAtual;
+          const data = new Date(naoAtivo.dataCompra);
+          if (!Number.isNaN(data.getTime())) {
+            eventos.push({ data, tipo: 'naoAtivo', valor: Number(naoAtivo.valorAtual) || 0 });
           }
         });
       }
-      
-      // Se não há dados, usar ano atual
-      if (anoMap.size === 0) {
-        const anoAtual = new Date().getFullYear();
-        anoMap.set(anoAtual, { ativos: 0, naoAtivos: 0 });
+
+      eventos.sort((a, b) => a.data.getTime() - b.data.getTime());
+
+      if (eventos.length === 0) {
+        setPatrimonioData([{ data: new Date().toISOString().slice(0, 10), ativos: 0, naoAtivos: 0 }]);
+        return;
       }
-      
-      // Converter para array e ordenar por ano
-      const anosOrdenados = Array.from(anoMap.entries())
-        .sort(([anoA], [anoB]) => anoA - anoB);
-      
-      // Calcular valores acumulados
+
+      const valoresPorDia = new Map<string, { ativos: number; naoAtivos: number }>();
+
+      eventos.forEach((evento) => {
+        const chaveDia = evento.data.toISOString().slice(0, 10);
+        if (!valoresPorDia.has(chaveDia)) {
+          valoresPorDia.set(chaveDia, { ativos: 0, naoAtivos: 0 });
+        }
+
+        const valorDia = valoresPorDia.get(chaveDia)!;
+        if (evento.tipo === 'ativo') {
+          valorDia.ativos += evento.valor;
+        } else {
+          valorDia.naoAtivos += evento.valor;
+        }
+      });
+
       let ativosAcumulado = 0;
       let naoAtivosAcumulado = 0;
-      
-      const dadosAcumulados: PatrimonioData[] = anosOrdenados.map(([ano, valores]) => {
+
+      const dadosAcumulados: PatrimonioData[] = Array.from(valoresPorDia.entries())
+        .sort(([dataA], [dataB]) => dataA.localeCompare(dataB))
+        .map(([data, valores]) => {
         ativosAcumulado += valores.ativos;
         naoAtivosAcumulado += valores.naoAtivos;
-        
+
         return {
-          ano,
+          data,
           ativos: ativosAcumulado,
           naoAtivos: naoAtivosAcumulado,
         };
@@ -140,9 +152,20 @@ export default function Patrimonio() {
     fetchData();
   }, []);
 
+  const anosPresentes = new Set(
+    patrimonioData.map((d) => new Date(`${d.data}T00:00:00`).getFullYear())
+  );
+
   // Preparar dados para o gráfico
   const labels = patrimonioData.length > 0 
-    ? patrimonioData.map(d => d.ano.toString())
+    ? patrimonioData.map((d) => {
+        const data = new Date(`${d.data}T00:00:00`);
+        return data.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          ...(anosPresentes.size > 1 ? { year: '2-digit' as const } : {}),
+        });
+      })
     : ['Atual'];
   
   const ativosData = patrimonioData.length > 0
@@ -151,6 +174,10 @@ export default function Patrimonio() {
     
   const naoAtivosData = patrimonioData.length > 0
     ? patrimonioData.map(d => d.naoAtivos)
+    : [0];
+
+  const totalData = patrimonioData.length > 0
+    ? patrimonioData.map(d => d.ativos + d.naoAtivos)
     : [0];
   
   const ativosTotal = patrimonioData.length > 0 
@@ -161,11 +188,30 @@ export default function Patrimonio() {
     ? patrimonioData[patrimonioData.length - 1].naoAtivos 
     : 0;
 
+  const patrimonioTotal = ativosTotal + naoAtivosTotal;
+
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
+      x: {
+        ticks: {
+          maxRotation: 0,
+          autoSkip: true,
+        },
+      },
       y: {
         min: 0,
+        ticks: {
+          callback: function(value: number | string) {
+            const numero = typeof value === 'string' ? Number(value) : value;
+            return new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+              maximumFractionDigits: 0,
+            }).format(numero);
+          },
+        },
       },
     },
     plugins: {
@@ -198,17 +244,29 @@ export default function Patrimonio() {
     datasets: [
       {
         fill: true,
-        label: `Total de Ativos: ${ativosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+        label: `Ativos (${ativosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`,
         data: ativosData,
         borderColor: 'rgb(75, 192, 75)',
         backgroundColor: 'rgba(75, 192, 75, 0.5)',
       },
       {
         fill: true,
-        label: `Total de Não Ativos: ${naoAtivosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+        label: `Não Ativos (${naoAtivosTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`,
         data: naoAtivosData,
         borderColor: 'rgb(255, 205, 86)',
         backgroundColor: 'rgba(255, 205, 86, 0.5)',
+      },
+      {
+        fill: false,
+        label: `Total (${patrimonioTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`,
+        data: totalData,
+        borderColor: 'rgb(59, 130, 246)',
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        borderWidth: 2,
+        borderDash: [8, 6],
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        tension: 0.2,
       },
     ],
   };
@@ -224,7 +282,9 @@ export default function Patrimonio() {
         <p className="text-lg">Evolução do patrimônio</p>
 
         {patrimonioData.length > 0 ? (
-          <Line data={data} options={options} />
+          <div className="h-56 sm:h-64">
+            <Line data={data} options={options} />
+          </div>
         ) : (
           <div className="flex items-center justify-center text-gray-500">
             <p className="text-sm">Nenhum dado para exibir</p>

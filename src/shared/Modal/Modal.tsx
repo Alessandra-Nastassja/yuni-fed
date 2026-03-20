@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function Modal({
   isOpen,
@@ -13,8 +14,8 @@ export default function Modal({
 }) {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center pointer-events-auto">
+  return createPortal(
+    <div className="fixed inset-0 z-[60] pointer-events-auto">
       <button
         type="button"
         aria-label="Fechar modal"
@@ -22,9 +23,10 @@ export default function Modal({
         className="absolute inset-0 bg-black/30"
       />
 
-      <div className={`relative w-full max-w-md rounded-t-3xl bg-white p-5 shadow-2xl ${className ?? ''}`}>
+      <div className={`fixed inset-x-0 bottom-0 mx-auto w-full max-w-md rounded-t-3xl bg-white p-5 shadow-2xl ${className ?? ''}`}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
