@@ -9,8 +9,8 @@ import InputField from "@/shared/InputField/inputField";
 import { useState } from "react";
 import { useAlert } from "@/shared/Alert/AlertContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-const CADASTROS_API = `${API_URL}/api/cadastros`;
+const API_URL = import.meta.env.VITE_API_URL;
+const CADASTROS_API = `${API_URL}/cadastros`;
 
 export default function Sign() {
 	const navigate = useNavigate();
@@ -64,7 +64,7 @@ export default function Sign() {
 
 			localStorage.setItem("yuni_user", JSON.stringify(data));
 			showAlert("Conta criada com sucesso", "success");
-			navigate("/home");
+			navigate("/login");
 		} catch {
 			showAlert("Erro ao conectar com o servidor", "error");
 		} finally {

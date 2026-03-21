@@ -5,8 +5,8 @@ import { useState } from "react";
 import InputField from "@/shared/InputField/inputField";
 import { useAlert } from "@/shared/Alert/AlertContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-const CADASTROS_API = `${API_URL}/api/cadastros`;
+const API_URL = import.meta.env.VITE_API_URL;
+const CADASTROS_API = `${API_URL}/cadastros`;
 
 export default function Login() {
   const navigate = useNavigate();
