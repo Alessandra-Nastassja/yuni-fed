@@ -46,7 +46,14 @@ export default function Login() {
 
       <footer className="text-center">
         <small className='text-sm text-gray-500'>
-          Ao entrar no Yuni, você concorda com os nossos Termos e Política de Privacidade.
+          Ao entrar no Yuni, você concorda com os nossos {" "}
+          <Link to="/" className="font-semibold text-blue-600 hover:underline">
+							Politicas de privacidade
+						</Link>{" "}
+						e{" "}
+						<Link to="/" className="font-semibold text-blue-600 hover:underline">
+							Termos de uso
+						</Link>
         </small>
       </footer>
     </main>

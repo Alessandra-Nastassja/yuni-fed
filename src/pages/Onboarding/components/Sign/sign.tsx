@@ -58,7 +58,7 @@ export default function Sign() {
 						maxLength={30}
 					/>
 
-					{/* <small className="px-2 text-center text-xs text-gray-500">
+					<small className="px-2 text-center text-xs text-gray-500">
 						Ao continuar voce concorda com as{" "}
 						<Link to="/" className="font-semibold text-blue-600 hover:underline">
 							Politicas de privacidade
@@ -67,7 +67,7 @@ export default function Sign() {
 						<Link to="/" className="font-semibold text-blue-600 hover:underline">
 							Termos de uso
 						</Link>
-					</small> */}
+					</small>
 
 					<button
 						type="submit"
