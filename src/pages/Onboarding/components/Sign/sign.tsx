@@ -6,13 +6,70 @@ import {
 
 import { Link, useNavigate } from "react-router-dom";
 import InputField from "@/shared/InputField/inputField";
+import { useState } from "react";
+import { useAlert } from "@/shared/Alert/AlertContext";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const CADASTROS_API = `${API_URL}/api/cadastros`;
 
 export default function Sign() {
 	const navigate = useNavigate();
+	const { showAlert } = useAlert();
 
-	const handleSignUp = (event: React.FormEvent<HTMLFormElement>) => {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		navigate("/home");
+
+		if (!nome.trim() || !email.trim() || !senha || !confirmarSenha) {
+			showAlert("Preencha todos os campos", "warning");
+			return;
+		}
+
+		if (senha.length < 6) {
+			showAlert("A senha deve ter pelo menos 6 caracteres", "warning");
+			return;
+		}
+
+		if (senha !== confirmarSenha) {
+			showAlert("As senhas nao conferem", "error");
+			return;
+		}
+
+		setIsSubmitting(true);
+
+		try {
+			const response = await fetch(CADASTROS_API, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					nome: nome.trim(),
+					email: email.trim().toLowerCase(),
+					senha,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				showAlert(data.message || data.error || "Nao foi possivel criar a conta", "error");
+				return;
+			}
+
+			localStorage.setItem("yuni_user", JSON.stringify(data));
+			showAlert("Conta criada com sucesso", "success");
+			navigate("/home");
+		} catch {
+			showAlert("Erro ao conectar com o servidor", "error");
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	return (
@@ -31,6 +88,8 @@ export default function Sign() {
 						icon={faUser}
 						placeholder="Digite seu nome completo"
 						maxLength={40}
+						value={nome}
+						onChange={(event) => setNome(event.target.value)}
 					/>
 
 					<InputField
@@ -40,6 +99,8 @@ export default function Sign() {
 						type="email"
 						placeholder="Digite seu e-mail"
 						maxLength={60}
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
 					/>
 
 					<InputField
@@ -49,6 +110,8 @@ export default function Sign() {
 						type="password"
 						placeholder="Digite sua senha"
 						maxLength={30}
+						value={senha}
+						onChange={(event) => setSenha(event.target.value)}
 					/>
 
 					<InputField
@@ -58,16 +121,17 @@ export default function Sign() {
 						type="password"
 						placeholder="Digite novamente sua senha"
 						maxLength={30}
+						value={confirmarSenha}
+						onChange={(event) => setConfirmarSenha(event.target.value)}
 					/>
 
-          <Link to="/login" className="flex flex-col justify-between">
-            <button
-              type="submit"
-              className="rounded-4xl bg-blue-400 px-8 py-2 font-semibold text-white transition hover:bg-blue-600"
-            >
-              Cadastrar
-            </button>
-          </Link>
+					<button
+						type="submit"
+						disabled={isSubmitting}
+						className="rounded-4xl bg-blue-400 px-8 py-2 font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+					>
+						{isSubmitting ? "Cadastrando..." : "Cadastrar"}
+					</button>
 				</form>
 
         <p className="text-sm text-gray-500">

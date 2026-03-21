@@ -15,11 +15,22 @@ app.use(json());
 
 const readDb = async () => {
   await db.read();
-  db.data ||= { ativos: [], metas: [] };
+  db.data ||= { ativos: [], metas: [], usuarios: [] };
+  db.data.ativos ||= [];
+  db.data.metas ||= [];
+  db.data.usuarios ||= [];
 };
 
 // Gerar timestamp ISO
 const getTimestamp = () => new Date().toISOString();
+
+const buildError = (status, error, message, path) => ({
+  timestamp: getTimestamp(),
+  status,
+  error,
+  message,
+  path,
+});
 
 // Calcular percentual de progresso da meta
 const calcularProgresso = (valorAtual, valorMeta) => {
@@ -260,6 +271,127 @@ app.delete('/metas/:id', async (req, res) => {
   await db.write();
   
   res.status(204).send();
+});
+
+// ===== USUARIOS E AUTENTICACAO =====
+
+app.post('/usuarios', async (req, res) => {
+  await readDb();
+  const { nome, email, senha } = req.body || {};
+
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ error: 'Nome, e-mail e senha sao obrigatorios' });
+  }
+
+  const emailNormalizado = String(email).trim().toLowerCase();
+  const usuarioExistente = db.data.usuarios.find(
+    u => String(u.email).trim().toLowerCase() === emailNormalizado
+  );
+
+  if (usuarioExistente) {
+    return res.status(409).json({ error: 'Ja existe usuario com este e-mail' });
+  }
+
+  const novoUsuario = {
+    id: db.data.usuarios.length > 0 ? Math.max(...db.data.usuarios.map(u => u.id)) + 1 : 1,
+    nome: String(nome).trim(),
+    email: emailNormalizado,
+    senha,
+    dataCriacao: getTimestamp(),
+    dataAtualizacao: getTimestamp()
+  };
+
+  db.data.usuarios.push(novoUsuario);
+  await db.write();
+
+  const { senha: _senha, ...usuarioSemSenha } = novoUsuario;
+  res.status(201).json({ usuario: usuarioSemSenha });
+});
+
+app.post('/auth/login', async (req, res) => {
+  await readDb();
+  const { email, senha } = req.body || {};
+
+  if (!email || !senha) {
+    return res.status(400).json({ error: 'E-mail e senha sao obrigatorios' });
+  }
+
+  const emailNormalizado = String(email).trim().toLowerCase();
+  const usuario = db.data.usuarios.find(
+    u => String(u.email).trim().toLowerCase() === emailNormalizado && u.senha === senha
+  );
+
+  if (!usuario) {
+    return res.status(401).json({ error: 'Credenciais invalidas' });
+  }
+
+  const { senha: _senha, ...usuarioSemSenha } = usuario;
+  res.json({ usuario: usuarioSemSenha });
+});
+
+// ===== API CADASTROS (COMPATIBILIDADE COM BACKEND PRINCIPAL) =====
+
+app.post('/api/cadastros', async (req, res) => {
+  await readDb();
+  const { nome, email, senha } = req.body || {};
+
+  if (!nome || !email || !senha) {
+    return res.status(400).json(
+      buildError(400, 'Bad Request', 'Nome, email e senha sao obrigatorios', '/api/cadastros')
+    );
+  }
+
+  const emailNormalizado = String(email).trim().toLowerCase();
+  const usuarioExistente = db.data.usuarios.find(
+    u => String(u.email).trim().toLowerCase() === emailNormalizado
+  );
+
+  if (usuarioExistente) {
+    return res.status(400).json(
+      buildError(400, 'Bad Request', `Email ja cadastrado: ${emailNormalizado}`, '/api/cadastros')
+    );
+  }
+
+  const novoUsuario = {
+    id: db.data.usuarios.length > 0 ? Math.max(...db.data.usuarios.map(u => u.id)) + 1 : 1,
+    nome: String(nome).trim(),
+    email: emailNormalizado,
+    senha,
+    dataCriacao: getTimestamp(),
+    dataAtualizacao: null,
+    ativo: true,
+  };
+
+  db.data.usuarios.push(novoUsuario);
+  await db.write();
+
+  const { senha: _senha, ...usuarioSemSenha } = novoUsuario;
+  res.status(201).json(usuarioSemSenha);
+});
+
+app.post('/api/cadastros/autenticar', async (req, res) => {
+  await readDb();
+  const email = String(req.query.email || '').trim().toLowerCase();
+  const senha = String(req.query.senha || '');
+
+  if (!email || !senha) {
+    return res.status(400).json(
+      buildError(400, 'Bad Request', 'Email ou senha invalidos', '/api/cadastros/autenticar')
+    );
+  }
+
+  const usuario = db.data.usuarios.find(
+    u => String(u.email).trim().toLowerCase() === email && u.senha === senha && (u.ativo ?? true)
+  );
+
+  if (!usuario) {
+    return res.status(400).json(
+      buildError(400, 'Bad Request', 'Email ou senha invalidos', '/api/cadastros/autenticar')
+    );
+  }
+
+  const { senha: _senha, ...usuarioSemSenha } = usuario;
+  res.json(usuarioSemSenha);
 });
 
 app.listen(PORT, () => {

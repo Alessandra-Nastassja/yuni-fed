@@ -32,7 +32,7 @@ function AppContent() {
       </div>
     )}
 
-      {location.pathname !== '/' && <Menu />}
+      {['/', '/login', '/cadastrar'].includes(location.pathname) === false && <Menu />}
       
       <div className={location.pathname !== '/' ? 'pb-24' : ''}>
         <Routes>
