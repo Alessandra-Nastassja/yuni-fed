@@ -12,6 +12,7 @@ export default function Login() {
 
   return (
     <main className='flex flex-col justify-between gap-8 p-4 h-screen items-center'>
+      <div></div>
 
       <section className='flex flex-col justify-between items-center w-full'>
        <form className="flex flex-col gap-4 w-full">
@@ -31,9 +32,11 @@ export default function Login() {
             placeholder="Digite sua senha"
             maxLength={30} />
 
-            <button className='bg-blue-400 text-white px-8 py-2 rounded-4xl'onClick={login}>
-              Entrar
-            </button>
+            <Link to="/home" className="flex flex-col justify-between">
+              <button className='bg-blue-400 text-white px-8 py-2 rounded-4xl'onClick={login}>
+                Entrar
+              </button>
+            </Link>
         </form>
 
         <p className="text-sm text-gray-500 py-4">

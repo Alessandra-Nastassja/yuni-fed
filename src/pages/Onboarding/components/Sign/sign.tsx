@@ -17,7 +17,9 @@ export default function Sign() {
 
 	return (
 		<main className="flex h-screen flex-col items-center justify-between gap-8 p-4">
-			<section className="flex w-full max-w-sm flex-col items-center gap-4">
+			<div></div>
+
+      <section className="flex w-full max-w-sm flex-col items-center gap-4">
 				<p className="text-center text-sm text-gray-500">
 					Crie sua conta para começar a ter um controle financeiro mais eficiente e organizado!
 				</p>
@@ -58,7 +60,26 @@ export default function Sign() {
 						maxLength={30}
 					/>
 
-					<small className="px-2 text-center text-xs text-gray-500">
+          <Link to="/login" className="flex flex-col justify-between">
+            <button
+              type="submit"
+              className="rounded-4xl bg-blue-400 px-8 py-2 font-semibold text-white transition hover:bg-blue-600"
+            >
+              Cadastrar
+            </button>
+          </Link>
+				</form>
+
+        <p className="text-sm text-gray-500">
+					Já é cadastrado?{" "}
+					<Link to="/login" className="font-semibold text-blue-400 hover:underline">
+						Entrar
+					</Link>
+				</p>
+			</section>
+
+			<footer className="text-center">
+        <small className="px-2 text-center text-xs text-gray-500">
 						Ao continuar voce concorda com as{" "}
 						<Link to="/" className="font-semibold text-blue-600 hover:underline">
 							Politicas de privacidade
@@ -68,24 +89,7 @@ export default function Sign() {
 							Termos de uso
 						</Link>
 					</small>
-
-					<button
-						type="submit"
-						className="rounded-4xl bg-blue-400 px-8 py-2 font-semibold text-white transition hover:bg-blue-600"
-					>
-						Cadastrar
-					</button>
-				</form>
-
-				<p className="text-sm text-gray-500">
-					Já é cadastrado?{" "}
-					<Link to="/login" className="font-semibold text-blue-400 hover:underline">
-						Entrar
-					</Link>
-				</p>
-			</section>
-
-			<footer className="h-8" />
+      </footer>
 		</main>
 	);
 }
