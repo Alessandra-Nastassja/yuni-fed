@@ -1,5 +1,4 @@
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 
 import InputField from "@/shared/InputField/inputField";
@@ -13,33 +12,36 @@ export default function Login() {
 
   return (
     <main className='flex flex-col justify-between gap-8 p-4 h-screen items-center'>
-      <header>
-        <Link to="/" className="text-blue-600 hover:underline">
-          <FontAwesomeIcon icon={faClose} size='2xl' className='absolute top-4 left-4 cursor-pointer text-gray-300' />
-        </Link>
-      </header>
 
       <section className='flex flex-col justify-between items-center w-full'>
        <form className="flex flex-col gap-4 w-full">
           <InputField
-            id="nome"
-            name="nome"
-            // label="Nome"
-            // icon={faTag}
-            placeholder="Digite seu usuário"
+            id="email"
+            name="email"
+            // label="E-mail"
+            icon={faEnvelope}
+            placeholder="Digite seu e-mail"
             maxLength={30} />
             
             <InputField
-            id="email"
-            name="email"
-            // label="Nome"
-            // icon={faTag}
+            id="senha"
+            name="senha"
+            // label="Senha"
+            icon={faLock}
             placeholder="Digite sua senha"
             maxLength={30} />
-            <button 
-            className='bg-blue-400 text-white px-8 py-2 rounded-4xl'
-            onClick={login}>Entrar</button>
+
+            <button className='bg-blue-400 text-white px-8 py-2 rounded-4xl'onClick={login}>
+              Entrar
+            </button>
         </form>
+
+        <p className="text-sm text-gray-500 py-4">
+					Ainda não tem uma conta?{" "}
+					<Link to="/cadastrar" className="font-semibold text-blue-400 hover:underline">
+						Cadastrar-se
+					</Link>
+				</p>
       </section>
 
       <footer className="text-center">

@@ -15,6 +15,7 @@ import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
 import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
+import Sign from './pages/Onboarding/components/Sign/sign';
 
 function AppContent() {
   const location = useLocation();
@@ -46,10 +47,11 @@ function AppContent() {
           <Route path='/financas' element={<Financas />} />
           <Route path='/configuracoes' element={<Configuracoes />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/cadastrar' element={<Sign />} />
         </Routes>
       </div>
       
-      {['/', '/login'].includes(location.pathname)===false && <Footer />}
+      {['/', '/login', '/cadastrar'].includes(location.pathname)===false && <Footer />}
     </>
   )
 }

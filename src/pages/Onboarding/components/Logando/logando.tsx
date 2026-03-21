@@ -10,7 +10,9 @@ export default function Logando() {
       </section>
 
       <footer className="flex flex-col gap-4">
-        <button className='bg-blue-400 text-white px-8 py-2 rounded-4xl'>Começar agora</button>
+        <Link to="/cadastrar" className="text-center">
+          <button className='bg-blue-400 text-white px-8 py-2 rounded-4xl'>Começar agora</button>
+        </Link>
         <Link to="/login" className="text-center">
           <button className='text-sm text-blue-400 hover:underline'>Já tenho uma conta</button>
         </Link>
