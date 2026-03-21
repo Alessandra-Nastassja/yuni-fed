@@ -27,7 +27,7 @@ export default function Header() {
 
   return (
     <>
-      {['/', '/home', '/login'].includes(location.pathname) === false && (
+      {['/', '/home', '/login', '/cadastrar'].includes(location.pathname) === false && (
         <header className={`flex flex-row p-3 sm:p-5 gap-3 sm:gap-5 items-center justify-start relative h-12 sm:h-15 ${bgColor}`}>
           <button
             type="button"

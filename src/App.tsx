@@ -1,9 +1,8 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 
 import './App.css'
 
 import Home from './pages/Home/home'
-import Onboarding from './pages/Onboarding/onboarding';
 import Patrimonio from './pages/Patrimonio/patrimonio'
 import Financas from './pages/Financas/financas';
 import Configuracoes from './pages/Configuracoes/configuracoes';
@@ -15,10 +14,24 @@ import Footer from './shared/Footer/footer';
 import Alert from './shared/Alert/Alert';
 import Menu from './shared/Menu/menu';
 import { AlertProvider, useAlert } from './shared/Alert/AlertContext';
+import Sign from './pages/Onboarding/components/Sign/sign';
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const isAuthenticated = Boolean(localStorage.getItem('yuni_user'));
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
 
 function AppContent() {
   const location = useLocation();
   const { alert, hideAlert } = useAlert();
+  const isAuthenticated = Boolean(localStorage.getItem('yuni_user'));
+  const publicRoutes = ['/login', '/cadastrar'];
+  const isPublicRoute = publicRoutes.includes(location.pathname);
 
   return (
     <>
@@ -31,25 +44,27 @@ function AppContent() {
       </div>
     )}
 
-      {location.pathname !== '/' && <Menu />}
+      {isPublicRoute === false && isAuthenticated && <Menu />}
       
-      <div className={location.pathname !== '/' ? 'pb-24' : ''}>
+      <div className={isPublicRoute ? '' : 'pb-24'}>
         <Routes>
-          <Route path="/" element={<Onboarding />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Navigate to={isAuthenticated ? '/home' : '/login'} replace />} />
+          <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route
             path="/patrimonio"
-            element={<Patrimonio />}
+            element={<ProtectedRoute><Patrimonio /></ProtectedRoute>}
           />
-          <Route path="/novo-ativo" element={<AtivosCreate />} />
-          <Route path="/novo-nao-ativo" element={<NaoAtivosCreate />} />
-          <Route path='/financas' element={<Financas />} />
-          <Route path='/configuracoes' element={<Configuracoes />} />
+          <Route path="/novo-ativo" element={<ProtectedRoute><AtivosCreate /></ProtectedRoute>} />
+          <Route path="/novo-nao-ativo" element={<ProtectedRoute><NaoAtivosCreate /></ProtectedRoute>} />
+          <Route path='/financas' element={<ProtectedRoute><Financas /></ProtectedRoute>} />
+          <Route path='/configuracoes' element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
           <Route path='/login' element={<Login />} />
+          <Route path='/cadastrar' element={<Sign />} />
+          <Route path="*" element={<Navigate to={isAuthenticated ? '/home' : '/login'} replace />} />
         </Routes>
       </div>
       
-      {['/', '/login'].includes(location.pathname)===false && <Footer />}
+      {isPublicRoute === false && isAuthenticated && <Footer />}
     </>
   )
 }
